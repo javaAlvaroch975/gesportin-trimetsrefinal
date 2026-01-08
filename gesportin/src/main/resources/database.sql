@@ -1,4 +1,8 @@
 
+
+
+
+
 -- phpMyAdmin SQL Dump
 -- version 5.2.2
 -- https://www.phpmyadmin.net/
@@ -42,9 +46,14 @@ CREATE TABLE jugador (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
 
 
+--Tabla tipo usuario Marcos
+CREATE TABLE `tipo_usuario` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `descripcion` varchar(255) CHARACTER SET utf32 COLLATE utf32_unicode_ci NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 COMMIT;
-
-
 
 
 
