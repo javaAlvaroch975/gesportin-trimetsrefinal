@@ -1,6 +1,8 @@
 package net.ausiasmarch.gesportin.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -54,13 +56,19 @@ public class EquipoApi {
     @GetMapping("/rellena/{numPosts}")
     public ResponseEntity<Long> creaEquipo(
             @PathVariable Long numPosts) {
-        return ResponseEntity.ok(oEquipoService.creaEquipo(numPosts));
+        return ResponseEntity.ok(oEquipoService.crearEquipo(numPosts));
     }
 
     // Vaciar la tabla (solo para administradores)
     @DeleteMapping("/empty")
     public ResponseEntity<Long> empty() {
         return ResponseEntity.ok(oEquipoService.empty());
+    }
+
+    // Listado paginado de equipos
+    @GetMapping("")
+    public ResponseEntity<Page<EquipoEntity>> getPage(Pageable oPageable) {
+        return ResponseEntity.ok(oEquipoService.getPage(oPageable));
     }
 
     @GetMapping("/count")

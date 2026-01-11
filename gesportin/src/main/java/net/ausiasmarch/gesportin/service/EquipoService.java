@@ -3,9 +3,12 @@ package net.ausiasmarch.gesportin.service;
 import java.util.ArrayList;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import net.ausiasmarch.gesportin.entity.EquipoEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
+import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.EquipoRepository;
 
 @Service
@@ -18,6 +21,9 @@ public class EquipoService {
 
     @Autowired
     AleatorioService oAleatorioService;
+
+    @Autowired
+    SessionService oSessionService;
 
     ArrayList<String> equipos = new ArrayList<>();
 
@@ -34,7 +40,11 @@ public class EquipoService {
         equipos.add("Celta de Vigo");
     }
 
-    public Long creaEquipo(Long numPosts) {
+    public Long crearEquipo(Long numPosts) {
+        if (!oSessionService.isSessionActive()) {
+            throw new UnauthorizedException("Sesión no activa");
+        }
+
         for (long j = 0; j < numPosts; j++) {
 
             // Crea una entidad y la rellana con datos aleatorios
@@ -46,6 +56,8 @@ public class EquipoService {
             oEquipoEntity.setId_club(azar.nextLong(1, 10));
 
             oEquipoEntity.setId_entrenador(azar.nextLong(1, 10));
+
+            oEquipoEntity.setId_categoria(azar.nextLong(1, 10));
 
             oEquipoEntity.setId_liga(azar.nextLong(1, 10));
 
@@ -60,31 +72,56 @@ public class EquipoService {
     // -------------------------------------------------- CRUD --------------------------------------------------
 
     public EquipoEntity get(Long id) {
+        if (!oSessionService.isSessionActive()) {
+            throw new UnauthorizedException("Sesión no activa");
+        }
+
         return oEquipoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado"));
     }
 
     public Long create(EquipoEntity EquipoEntity) {
+        if (!oSessionService.isSessionActive()) {
+            throw new UnauthorizedException("Sesión no activa");
+        }
+
         oEquipoRepository.save(EquipoEntity);
         return EquipoEntity.getId();
     }
 
     public Long update(EquipoEntity EquipoEntity) {
-        EquipoEntity oExistingBlog = oEquipoRepository.findById(EquipoEntity.getId())
+        if (!oSessionService.isSessionActive()) {
+            throw new UnauthorizedException("Sesión no activa");
+        }
+
+        EquipoEntity oExistingEquipo = oEquipoRepository.findById(EquipoEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado"));
-        oExistingBlog.setNombre(EquipoEntity.getNombre());
-        oExistingBlog.setId_club(EquipoEntity.getId_club());
-        oExistingBlog.setId_entrenador(EquipoEntity.getId_entrenador());
-        oExistingBlog.setId_categoria(EquipoEntity.getId_categoria());
-        oExistingBlog.setId_liga(EquipoEntity.getId_liga());
-        oExistingBlog.setId_temporada(EquipoEntity.getId_temporada());
-        oEquipoRepository.save(oExistingBlog);
-        return oExistingBlog.getId();
+        oExistingEquipo.setNombre(EquipoEntity.getNombre());
+        oExistingEquipo.setId_club(EquipoEntity.getId_club());
+        oExistingEquipo.setId_entrenador(EquipoEntity.getId_entrenador());
+        oExistingEquipo.setId_categoria(EquipoEntity.getId_categoria());
+        oExistingEquipo.setId_liga(EquipoEntity.getId_liga());
+        oExistingEquipo.setId_temporada(EquipoEntity.getId_temporada());
+        oEquipoRepository.save(oExistingEquipo);
+        return oExistingEquipo.getId();
     }
 
     public Long delete(Long id) {
+        if (!oSessionService.isSessionActive()) {
+            throw new UnauthorizedException("Sesión no activa");
+        }
+
         oEquipoRepository.deleteById(id);
         return id;
     }
+
+    public Page<EquipoEntity> getPage(Pageable oPageable) {
+        if (!oSessionService.isSessionActive()) {
+            throw new UnauthorizedException("Sesión no activa");
+        } else {
+            return oEquipoRepository.findAll(oPageable);
+        }
+    }
+
 
     public Long count() {
         return oEquipoRepository.count();
@@ -92,6 +129,10 @@ public class EquipoService {
 
     // Vaciar la tabla (solo para administradores)
     public Long empty() {
+        if (!oSessionService.isSessionActive()) {
+            throw new UnauthorizedException("Sesión no activa");
+        }
+
         Long total = oEquipoRepository.count();
         oEquipoRepository.deleteAll();
         return total;
