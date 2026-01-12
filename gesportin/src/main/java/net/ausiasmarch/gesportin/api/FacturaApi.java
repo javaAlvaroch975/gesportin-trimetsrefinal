@@ -2,6 +2,10 @@ package net.ausiasmarch.gesportin.api;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,10 +16,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
 import net.ausiasmarch.gesportin.entity.FacturaEntity;
 import net.ausiasmarch.gesportin.service.FacturaService;
@@ -49,12 +49,11 @@ public class FacturaApi{
     public ResponseEntity<Long> update(@RequestBody FacturaEntity facturaEntity) {
         return ResponseEntity.ok(oFacturaService.update(facturaEntity));
     }
-
-    // Allow deletion by GET for convenience in browser (calls same service)
-    @GetMapping({"/borrar/{id}", "/delete/{id}"})
-    public ResponseEntity<String> deleteViaGet(@PathVariable Long id) {
-        oFacturaService.delete(id);
-        return ResponseEntity.ok("Factura " + id + " eliminada");
+    
+    //Borrar Factura
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Long> delete(@PathVariable Long id) {
+        return ResponseEntity.ok(oFacturaService.delete(id));
     }
 
     //Borrar Todas las Facturas

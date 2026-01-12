@@ -2,14 +2,15 @@ package net.ausiasmarch.gesportin.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;    
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import net.ausiasmarch.gesportin.entity.PagoEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
 import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.PagoRepository;
 
-
+@Service
 public class PagoService {
     @Autowired
     PagoRepository oPagoRepository;

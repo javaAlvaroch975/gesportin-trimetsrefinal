@@ -1,13 +1,13 @@
 package net.ausiasmarch.gesportin.service;
 
-
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
 import net.ausiasmarch.gesportin.entity.PartidoEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
 import net.ausiasmarch.gesportin.exception.UnauthorizedException;
@@ -22,43 +22,26 @@ public class PartidoService {
     @Autowired
     SessionService oSessionService;
 
-        @Autowired
-        AleatorioService oAleatorioService;
+    @Autowired
+    AleatorioService oAleatorioService;
 
-        private List<String> alRivales = Arrays.asList(
+    private List<String> alRivales = Arrays.asList(
             "Atlético", "Barcelona", "Real Madrid", "Sevilla", "Valencia", "Villarreal", "Betis",
             "Real Sociedad", "Granada", "Celta", "Getafe", "Espanyol", "Mallorca", "Osasuna", "Alavés");
 
     // -------------CRUD-----------------
-
     //GET:
-
     public PartidoEntity get(Long id) {
-        if (oSessionService.isSessionActive()) {
-            return oPartidoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post not found"));
-        } else{
-            PartidoEntity partidoEntity = oPartidoRepository.findByIdAndPublicadoTrue(id);
-            if (partidoEntity == null) {
-                throw new ResourceNotFoundException("Post not found or not published");
-            }
-            return partidoEntity;
-        }
+        return oPartidoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Partido not found"));
     }
 
     //GET PAGE:
-
-     public Page<PartidoEntity> getPage(Pageable oPageable) {
-        // si no hay session activa, solo devolver los publicados
-        if (!oSessionService.isSessionActive()) {
-            return oPartidoRepository.findByPublicadoTrue(oPageable);
-        } else {
-            return oPartidoRepository.findAll(oPageable);
-        }
+    public Page<PartidoEntity> getPage(Pageable oPageable) {
+        return oPartidoRepository.findAll(oPageable);
     }
 
     //CREATE:
-
-     public Long create(PartidoEntity partidoEntity) {
+    public Long create(PartidoEntity partidoEntity) {
         if (!oSessionService.isSessionActive()) {
             throw new UnauthorizedException("No active session");
         }
@@ -71,7 +54,6 @@ public class PartidoService {
     }
 
     //UPDATE:
-
     public Long update(PartidoEntity partidoEntity) {
         if (!oSessionService.isSessionActive()) {
             throw new UnauthorizedException("No active session");
@@ -87,7 +69,6 @@ public class PartidoService {
     }
 
     //DELETE:
-
     public Long delete(Long id) {
         if (!oSessionService.isSessionActive()) {
             throw new UnauthorizedException("No active session");
@@ -97,7 +78,6 @@ public class PartidoService {
     }
 
     //FILL:
-
     public Long rellenaPartido(Long numPosts) {
 
         if (!oSessionService.isSessionActive()) {
@@ -119,7 +99,6 @@ public class PartidoService {
     }
 
     //EMPTY (VACIAR TABLA):
-
     public Long empty() {
         if (!oSessionService.isSessionActive()) {
             throw new UnauthorizedException("No active session");
@@ -130,9 +109,8 @@ public class PartidoService {
     }
 
     //COUNT:
-
     public Long count() {
         return oPartidoRepository.count();
     }
-    
+
 }

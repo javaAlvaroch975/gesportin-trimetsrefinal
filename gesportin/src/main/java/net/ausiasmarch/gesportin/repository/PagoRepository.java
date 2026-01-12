@@ -9,9 +9,9 @@ import net.ausiasmarch.gesportin.entity.PagoEntity;
 
 public interface PagoRepository extends JpaRepository<PagoEntity, Long> {
     
-    Page<PagoEntity> findByPublicadoTrue(Pageable oPageable);
+    Page<PagoEntity> findByAbonadoTrue(Pageable oPageable);
 
-    Page<PagoEntity> findByPublicadoFalse(Pageable oPageable);
+    Page<PagoEntity> findByAbonadoFalse(Pageable oPageable);
 
-    PagoEntity findByIdAndPublicadoTrue(Long id);
+    PagoEntity findByIdAndAbonadoTrue(Long id);
 }

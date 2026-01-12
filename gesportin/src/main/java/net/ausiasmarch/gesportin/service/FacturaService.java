@@ -17,8 +17,7 @@ public class FacturaService {
     @Autowired
     FacturaRepository oFacturaRepository;
 
-    @Autowired
-    SessionService oSessionService;
+
 
     public FacturaEntity get(Long id) {
     return oFacturaRepository.findById(id)

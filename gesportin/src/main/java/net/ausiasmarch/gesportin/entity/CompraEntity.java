@@ -34,7 +34,7 @@ public class CompraEntity {
     @NotNull
     private Long id_articulo;
 
-    @NotNull
+    @NotNull    
     private Long id_factura;
 
 }
