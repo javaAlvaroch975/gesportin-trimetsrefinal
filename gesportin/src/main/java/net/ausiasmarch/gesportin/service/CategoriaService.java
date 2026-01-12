@@ -28,9 +28,7 @@ public class CategoriaService {
     // ----------------------------CRUD---------------------------------
     public CategoriaEntity get(Long id){
         if(!sessionService.isSessionActive()) {
-            // To-Do
-            return new CategoriaEntity();
-            //return categoriaRepository.findByIdAndPublicadoTrue(id).orElseThrow(() -> new ResourceNotFoundException("Category not found or not published"));
+            throw new UnauthorizedException("No active session");
         } else {
             return categoriaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         }
@@ -38,9 +36,7 @@ public class CategoriaService {
 
     public Page<CategoriaEntity> getPage(Pageable pageable) {
         if(!sessionService.isSessionActive()) {
-            //To-Do
-            return categoriaRepository.findAll(pageable);
-            //return categoriaRepository.findByPublicadoTrue(pageable);
+            throw new UnauthorizedException("No active session");
         } else {
             return categoriaRepository.findAll(pageable);
         }
