@@ -50,7 +50,7 @@ public class CuotaApi {
     }
 
     // generar datos
-    @PostMapping("/generar-datos/{cantidad}")
+    @GetMapping("/fill/{cantidad}")
     public ResponseEntity<Long> generarDatos(@PathVariable int cantidad){
         return ResponseEntity.ok(oCuotaService.generarDatos(cantidad));
     }

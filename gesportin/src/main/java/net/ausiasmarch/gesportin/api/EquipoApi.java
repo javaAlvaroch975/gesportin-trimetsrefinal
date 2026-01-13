@@ -61,7 +61,7 @@ public class EquipoApi {
         return ResponseEntity.ok(equipoService.empty());
     }
 
-    @PostMapping("/fill/{amount}")
+    @GetMapping("/fill/{amount}")
     public ResponseEntity<Long> fill(@PathVariable("amount") Long amount) {
         return ResponseEntity.ok(equipoService.fill(amount));
     }
