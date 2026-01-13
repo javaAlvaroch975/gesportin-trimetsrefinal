@@ -21,7 +21,7 @@ import lombok.Setter;
 public class ComentariosEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @NotNull
     @Size(min = 3, max = 1024)
     private String contenido;

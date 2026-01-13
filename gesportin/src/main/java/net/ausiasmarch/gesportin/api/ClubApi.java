@@ -87,7 +87,7 @@ public class ClubApi {
 
     // COUNT
     @GetMapping("/count")
-    public long count() {
+    public Long count() {
         return clubService.count();
     }
 }

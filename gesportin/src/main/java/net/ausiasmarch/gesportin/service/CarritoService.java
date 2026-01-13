@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 import net.ausiasmarch.gesportin.entity.CarritoEntity;
-import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.CarritoRepository;
 
 @Service
@@ -18,9 +17,6 @@ public class CarritoService {
 
     @Autowired
     AleatorioService oAleatorioService;
-
-    @Autowired
-    SessionService oSessionService;
 
     public CarritoEntity get(Long id) {
         return oCarritoRepository.findById(id)
@@ -56,11 +52,11 @@ public class CarritoService {
     }
 
     public Long fill(Long cantidad) {
-        for (long i = 0; i < cantidad; i++) {
+        for (long i = 0L; i < cantidad; i++) {
             CarritoEntity oCarritoEntity = new CarritoEntity();
             oCarritoEntity.setCantidad(oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
-            oCarritoEntity.setId_articulo((long)oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
-            oCarritoEntity.setId_usuario((long)oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
+            oCarritoEntity.setId_articulo((Long) (long)oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
+            oCarritoEntity.setId_usuario((Long) (long)oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
             oCarritoRepository.save(oCarritoEntity);
         }
 

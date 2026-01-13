@@ -54,8 +54,8 @@ public class ComentariosService {
             oComentariosEntity.setContenido(contenidoGenerado.trim());
             
             // Generar id_articulo e id_usuario aleatorios entre 0 y 50
-            oComentariosEntity.setId_articulo((long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 50));
-            oComentariosEntity.setId_usuario((long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 50));
+            oComentariosEntity.setId_articulo((Long) (long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 50));
+            oComentariosEntity.setId_usuario((Long) (long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 50));
             
             // Guardar entity en base de datos
             oComentariosRepository.save(oComentariosEntity);
@@ -72,10 +72,10 @@ public class ComentariosService {
     public Long create(ComentariosEntity comentariosEntity) {
         // Si no se especifican id_articulo o id_usuario, generar valores aleatorios
         if (comentariosEntity.getId_articulo() == null) {
-            comentariosEntity.setId_articulo((long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 50));
+            comentariosEntity.setId_articulo((Long) (long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 50));
         }
         if (comentariosEntity.getId_usuario() == null) {
-            comentariosEntity.setId_usuario((long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 50));
+            comentariosEntity.setId_usuario((Long) (long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 50));
         }
         oComentariosRepository.save(comentariosEntity);
         return comentariosEntity.getId();

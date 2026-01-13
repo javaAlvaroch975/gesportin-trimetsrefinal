@@ -18,7 +18,7 @@ public class CategoriaEntity {
     
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotNull
     @Size(min=4, max=255)

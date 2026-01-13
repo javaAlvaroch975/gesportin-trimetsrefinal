@@ -19,12 +19,9 @@ public class PartidoService {
     PartidoRepository oPartidoRepository;
 
     @Autowired
-    SessionService oSessionService;
-
-    @Autowired
     AleatorioService oAleatorioService;
 
-    private List<String> alRivales = Arrays.asList(
+    private final List<String> alRivales = Arrays.asList(
             "Atlético", "Barcelona", "Real Madrid", "Sevilla", "Valencia", "Villarreal", "Betis",
             "Real Sociedad", "Granada", "Celta", "Getafe", "Espanyol", "Mallorca", "Osasuna", "Alavés");
 
@@ -42,7 +39,7 @@ public class PartidoService {
     //CREATE:
     public Long create(PartidoEntity partidoEntity) {
         partidoEntity.setNombre_rival(null);
-        partidoEntity.setId_equipo(0);
+        partidoEntity.setId_equipo(0L);
         partidoEntity.setLocal(null);
         partidoEntity.setResultado(null);
         oPartidoRepository.save(partidoEntity);
@@ -74,7 +71,7 @@ public class PartidoService {
             PartidoEntity oPartidoEntity = new PartidoEntity();
             String rival = alRivales.get(oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, alRivales.size() - 1));
             oPartidoEntity.setNombre_rival(rival);
-            oPartidoEntity.setId_equipo(oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
+            oPartidoEntity.setId_equipo((long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
             oPartidoEntity.setLocal(oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 1) == 1);
             int golesLocal = oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 10);
             int golesVisitante = oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 10);

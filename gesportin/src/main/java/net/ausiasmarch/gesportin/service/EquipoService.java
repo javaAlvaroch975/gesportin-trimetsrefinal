@@ -64,11 +64,11 @@ public class EquipoService {
         for (int i = 0; i < cantidad; i++) {
             EquipoEntity equipoEntity = new EquipoEntity();
             equipoEntity.setNombre("Equipo " + i);
-            equipoEntity.setId_club((long) aleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
-            equipoEntity.setId_entrenador((long) aleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
-            equipoEntity.setId_categoria((long) aleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
-            equipoEntity.setId_liga((long) aleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
-            equipoEntity.setId_temporada((long) aleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
+            equipoEntity.setId_club((Long) (long) aleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
+            equipoEntity.setId_entrenador((Long) (long) aleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
+            equipoEntity.setId_categoria((Long) (long) aleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
+            equipoEntity.setId_liga((Long) (long) aleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
+            equipoEntity.setId_temporada((Long) (long) aleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
             equipoRepository.save(equipoEntity);
         }
         return count();

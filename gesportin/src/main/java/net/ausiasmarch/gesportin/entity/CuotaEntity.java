@@ -27,7 +27,7 @@ public class CuotaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @NotNull
     @Size(max=255)
     private String nombre;
@@ -38,5 +38,5 @@ public class CuotaEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private LocalDateTime fecha;
     @Nullable
-    private long id_temporada;
+    private Long id_temporada;
 }

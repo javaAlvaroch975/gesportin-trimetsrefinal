@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import net.ausiasmarch.gesportin.entity.NoticiaEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
-import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.NoticiaRepository;
 
 @Service
@@ -21,9 +20,6 @@ public class NoticiaService {
 
     @Autowired
     AleatorioService oAleatorioService;
-
-    @Autowired
-    SessionService oSessionService;
 
     ArrayList<String> alFrases = new ArrayList<>();
 
@@ -64,10 +60,9 @@ public class NoticiaService {
                 }
             }
             oNoticiaEntity.setContenido(contenidoGenerado.trim());
-            contenidoGenerado += "\n";
             oNoticiaEntity.setFecha(LocalDateTime.now());
             // id_club aleatorio entre 1 y 10 (puedes ajustar el rango)
-            oNoticiaEntity.setId_club((long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 10));
+            oNoticiaEntity.setId_club((Long) (long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 10));
             // imagen null (o puedes poner datos de prueba)
             oNoticiaEntity.setImagen(null);
             oNoticiaRepository.save(oNoticiaEntity);

@@ -22,7 +22,7 @@ public class TemporadaEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @NotNull
     @Size(min = 1, max = 256)
     private String descripcion;

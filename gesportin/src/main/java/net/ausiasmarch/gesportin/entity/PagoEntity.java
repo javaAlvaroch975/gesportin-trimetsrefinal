@@ -21,11 +21,11 @@ import lombok.Setter;
 public class PagoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @NotNull
-    private long id_cuota;
+    private Long id_cuota;
     @NotNull
-    private long id_usuario;
+    private Long id_usuario;
     @NotNull
     @BooleanFlag
     private boolean abonado;

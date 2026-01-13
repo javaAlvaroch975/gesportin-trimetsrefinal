@@ -25,12 +25,12 @@ public class FacturaEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private LocalDateTime fecha;
 
     @NotNull
-    private long id_usuario;
+    private Long id_usuario;
 }

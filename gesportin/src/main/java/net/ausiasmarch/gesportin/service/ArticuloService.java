@@ -96,8 +96,8 @@ public class ArticuloService {
             articulo.setDescripcion(descripciones[i % descripciones.length] + " " + (i + 1));
             articulo.setPrecio(BigDecimal.valueOf(random.nextDouble() * 100 + 5).setScale(2, RoundingMode.HALF_UP));
             articulo.setDescuento(random.nextBoolean() ? BigDecimal.valueOf(random.nextDouble() * 30).setScale(2, RoundingMode.HALF_UP) : null);
-            articulo.setIdTipoarticulo((long) (random.nextInt(50) + 1));
-            articulo.setIdClub((long) (random.nextInt(50) + 1));
+            articulo.setIdTipoarticulo((Long) (long) (Long) (long)(random.nextInt(50) + 1));
+            articulo.setIdClub((Long) (long) (random.nextInt(50) + 1));
             articuloRepository.save(articulo);
         }
         return cantidad;

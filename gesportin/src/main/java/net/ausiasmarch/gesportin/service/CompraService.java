@@ -30,9 +30,6 @@ public class CompraService {
     @Autowired
     AleatorioService oAleatorioService;
 
-    @Autowired
-    SessionService oSessionService;
-
     public Long fill(Long cantidad) {
 
         for (long j = 0; j < cantidad; j++) {

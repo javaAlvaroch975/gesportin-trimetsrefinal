@@ -82,8 +82,8 @@ public class PagoService {
         }
         for (int i = 0; i < cantidad; i++) {
             PagoEntity pago = new PagoEntity();
-            pago.setId_cuota((long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
-            pago.setId_usuario((long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
+            pago.setId_cuota((Long) (long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
+            pago.setId_usuario((Long) (long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
             pago.setAbonado(oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 1) == 1);
             oPagoRepository.save(pago);
         }

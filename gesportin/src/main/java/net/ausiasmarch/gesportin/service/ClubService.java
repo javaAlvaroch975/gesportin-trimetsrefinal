@@ -55,7 +55,7 @@ public class ClubService {
     }
 
     // COUNT
-    public long count() {
+    public Long count() {
         return clubRepository.count();
     }
 
@@ -75,8 +75,8 @@ public class ClubService {
             club.setFechaAlta(LocalDateTime.now());
 
             // claves ajenas aleatorias (1–50)
-            club.setIdPresidente((long) (random.nextInt(50) + 1));
-            club.setIdVicepresidente((long) (random.nextInt(50) + 1));
+            club.setIdPresidente((Long) (long) (random.nextInt(50) + 1));
+            club.setIdVicepresidente((Long) (long) (random.nextInt(50) + 1));
 
             club.setImagen(("imagen" + i).getBytes());
 

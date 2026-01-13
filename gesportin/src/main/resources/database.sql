@@ -71,7 +71,7 @@ CREATE TABLE `club` (
   `fecha_alta` datetime NOT NULL,
   `id_presidente` bigint NOT NULL,
   `id_vicepresidente` bigint NOT NULL,
-  `imagen` longblob NOT NULL
+  `imagen` Longblob NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
 
 -- --------------------------------------------------------
@@ -168,7 +168,7 @@ CREATE TABLE `noticia` (
   `titulo` varchar(255) NOT NULL,
   `contenido` text NOT NULL,
   `fecha` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `imagen` longblob,
+  `imagen` Longblob,
   `id_club` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

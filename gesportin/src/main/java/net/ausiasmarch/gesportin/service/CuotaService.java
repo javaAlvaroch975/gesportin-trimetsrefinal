@@ -57,13 +57,13 @@ public class CuotaService {
     public Long generarDatos(int cantidad) {
         Random rnd = new Random();
         String[] nombres = {"Matrícula", "Mensualidad", "Cuota Extra", "Inscripción", "Cuota Anual"};
-        long created = 0;
+        Long created = 0L;
         for (int i = 0; i < cantidad; i++) {
             CuotaEntity c = new CuotaEntity();
             c.setNombre(nombres[rnd.nextInt(nombres.length)] + " " + (rnd.nextInt(9000) + 1000));
             c.setCantidad((float) (rnd.nextDouble() * 100.0 + 1.0));
             c.setFecha(LocalDateTime.now().minusDays(rnd.nextInt(365)));
-            c.setId_temporada((long) (rnd.nextInt(5) + 1));
+            c.setId_temporada((Long) (long) (rnd.nextInt(5) + 1));
             oCuotaRepository.save(c);
             created++;
         }
