@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: database:3306
--- Tiempo de generación: 08-01-2026 a las 09:10:06
+-- Tiempo de generación: 14-01-2026 a las 09:34:15
 -- Versión del servidor: 8.4.5
 -- Versión de PHP: 8.2.28
 
@@ -16,6 +16,7 @@ SET time_zone = "+00:00";
 --
 CREATE DATABASE IF NOT EXISTS `gesportin` DEFAULT CHARACTER SET utf32 COLLATE utf32_unicode_ci;
 USE `gesportin`;
+
 
 -- --------------------------------------------------------
 
@@ -54,7 +55,8 @@ CREATE TABLE `carrito` (
 
 CREATE TABLE `categoria` (
   `id` bigint NOT NULL,
-  `nombre` varchar(255) CHARACTER SET utf32 COLLATE utf32_unicode_ci NOT NULL
+  `nombre` varchar(255) CHARACTER SET utf32 COLLATE utf32_unicode_ci NOT NULL,
+  `id_temporada` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
 
 -- --------------------------------------------------------
@@ -71,7 +73,7 @@ CREATE TABLE `club` (
   `fecha_alta` datetime NOT NULL,
   `id_presidente` bigint NOT NULL,
   `id_vicepresidente` bigint NOT NULL,
-  `imagen` Longblob NOT NULL
+  `imagen` longblob NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
 
 -- --------------------------------------------------------
@@ -83,7 +85,7 @@ CREATE TABLE `club` (
 CREATE TABLE `comentario` (
   `id` bigint NOT NULL,
   `contenido` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `id_articulo` bigint NOT NULL,
+  `id_noticia` bigint NOT NULL,
   `id_usuario` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
 
@@ -112,7 +114,7 @@ CREATE TABLE `cuota` (
   `descripcion` varchar(255) CHARACTER SET utf32 COLLATE utf32_unicode_ci NOT NULL,
   `cantidad` decimal(5,2) NOT NULL,
   `fecha` datetime NOT NULL,
-  `id_temporada` bigint NOT NULL
+  `id_equipo` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
 
 -- --------------------------------------------------------
@@ -124,11 +126,8 @@ CREATE TABLE `cuota` (
 CREATE TABLE `equipo` (
   `id` bigint NOT NULL,
   `nombre` varchar(255) CHARACTER SET utf32 COLLATE utf32_unicode_ci NOT NULL,
-  `id_club` bigint NOT NULL,
   `id_entrenador` bigint NOT NULL,
-  `id_categoria` bigint NOT NULL,
-  `id_liga` bigint NOT NULL,
-  `id_temporada` bigint NOT NULL
+  `id_categoria` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
 
 -- --------------------------------------------------------
@@ -155,20 +154,34 @@ CREATE TABLE `jugador` (
   `posicion` varchar(50) CHARACTER SET utf32 COLLATE utf32_unicode_ci NOT NULL,
   `capitan` tinyint(1) NOT NULL DEFAULT '0',
   `imagen` varchar(255) CHARACTER SET utf32 COLLATE utf32_unicode_ci DEFAULT NULL,
-  `id_usuario` bigint NOT NULL
+  `id_usuario` bigint NOT NULL,
+  `id_equipo` bigint NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `liga`
+--
+
+CREATE TABLE `liga` (
+  `id` bigint NOT NULL,
+  `nombre` varchar(255) CHARACTER SET utf32 COLLATE utf32_unicode_ci NOT NULL,
+  `id_equipo` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `noticia`
+--
 
 CREATE TABLE `noticia` (
   `id` bigint NOT NULL,
   `titulo` varchar(255) NOT NULL,
   `contenido` text NOT NULL,
   `fecha` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `imagen` Longblob,
+  `imagen` longblob,
   `id_club` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -181,8 +194,9 @@ CREATE TABLE `noticia` (
 CREATE TABLE `pago` (
   `id` bigint NOT NULL,
   `id_cuota` bigint NOT NULL,
-  `id_usuario` bigint NOT NULL,
-  `abonado` tinyint NOT NULL
+  `id_jugador` bigint NOT NULL,
+  `abonado` tinyint NOT NULL,
+  `fecha` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
 
 -- --------------------------------------------------------
@@ -193,8 +207,8 @@ CREATE TABLE `pago` (
 
 CREATE TABLE `partido` (
   `id` bigint NOT NULL,
-  `nombre_rival` varchar(255) CHARACTER SET utf32 COLLATE utf32_unicode_ci NOT NULL,
-  `id_equipo` bigint NOT NULL,
+  `rival` varchar(255) CHARACTER SET utf32 COLLATE utf32_unicode_ci NOT NULL,
+  `id_liga` bigint NOT NULL,
   `local` tinyint(1) NOT NULL,
   `resultado` varchar(255) CHARACTER SET utf32 COLLATE utf32_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
@@ -208,7 +222,7 @@ CREATE TABLE `partido` (
 CREATE TABLE `puntuacion` (
   `id` bigint NOT NULL,
   `puntuacion` tinyint NOT NULL,
-  `id_articulo` bigint NOT NULL,
+  `id_noticia` bigint NOT NULL,
   `id_usuario` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -220,7 +234,8 @@ CREATE TABLE `puntuacion` (
 
 CREATE TABLE `temporada` (
   `id` bigint NOT NULL,
-  `descripcion` varchar(256) CHARACTER SET utf32 COLLATE utf32_unicode_ci NOT NULL
+  `descripcion` varchar(256) CHARACTER SET utf32 COLLATE utf32_unicode_ci NOT NULL,
+  `id_club` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
 
 -- --------------------------------------------------------
@@ -327,6 +342,12 @@ ALTER TABLE `factura`
 -- Indices de la tabla `jugador`
 --
 ALTER TABLE `jugador`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `liga`
+--
+ALTER TABLE `liga`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -439,6 +460,12 @@ ALTER TABLE `factura`
 -- AUTO_INCREMENT de la tabla `jugador`
 --
 ALTER TABLE `jugador`
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `liga`
+--
+ALTER TABLE `liga`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --

@@ -26,7 +26,7 @@ public class ComentarioEntity {
     @Size(min = 3, max = 1024)
     private String contenido;
     @NotNull
-    private Long id_articulo;
+    private Long id_noticia;
     @NotNull
     private Long id_usuario;
     

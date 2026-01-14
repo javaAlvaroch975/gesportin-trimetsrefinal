@@ -59,6 +59,8 @@ public class JugadorService {
 
             oJugadorEntity.setIdUsuario(Long.valueOf(oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50)));
             
+            oJugadorEntity.setIdEquipo(Long.valueOf(oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50)));
+            
             // Guardar la entidad en la base de datos
             oJugadorRepository.save(oJugadorEntity);
         }
@@ -95,6 +97,7 @@ public class JugadorService {
         oExistingJugador.setCapitan(JugadorEntity.getCapitan());
         oExistingJugador.setImagen(JugadorEntity.getImagen());
         oExistingJugador.setIdUsuario(JugadorEntity.getIdUsuario());
+        oExistingJugador.setIdEquipo(JugadorEntity.getIdEquipo());
         oJugadorRepository.save(oExistingJugador);
         return oExistingJugador.getId();
     }

@@ -53,8 +53,8 @@ public class ComentarioService {
             }
             oComentariosEntity.setContenido(contenidoGenerado.trim());
             
-            // Generar id_articulo e id_usuario aleatorios entre 0 y 50
-            oComentariosEntity.setId_articulo((Long) (long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 50));
+            // Generar id_noticia e id_usuario aleatorios entre 0 y 50
+            oComentariosEntity.setId_noticia((Long) (long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 50));
             oComentariosEntity.setId_usuario((Long) (long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 50));
             
             // Guardar entity en base de datos
@@ -70,9 +70,9 @@ public class ComentarioService {
     }
 
     public Long create(ComentarioEntity comentariosEntity) {
-        // Si no se especifican id_articulo o id_usuario, generar valores aleatorios
-        if (comentariosEntity.getId_articulo() == null) {
-            comentariosEntity.setId_articulo((Long) (long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 50));
+        // Si no se especifican id_noticia o id_usuario, generar valores aleatorios
+        if (comentariosEntity.getId_noticia() == null) {
+            comentariosEntity.setId_noticia((Long) (long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 50));
         }
         if (comentariosEntity.getId_usuario() == null) {
             comentariosEntity.setId_usuario((Long) (long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 50));
@@ -85,7 +85,7 @@ public class ComentarioService {
         ComentarioEntity existingComentario = oComentariosRepository.findById(comentariosEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Comentario not found"));
         existingComentario.setContenido(comentariosEntity.getContenido());
-        existingComentario.setId_articulo(comentariosEntity.getId_articulo());
+        existingComentario.setId_noticia(comentariosEntity.getId_noticia());
         existingComentario.setId_usuario(comentariosEntity.getId_usuario());
         oComentariosRepository.save(existingComentario);
         return existingComentario.getId();

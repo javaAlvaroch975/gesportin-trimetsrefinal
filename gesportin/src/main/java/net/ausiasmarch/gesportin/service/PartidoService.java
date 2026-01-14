@@ -38,8 +38,8 @@ public class PartidoService {
 
     //CREATE:
     public Long create(PartidoEntity partidoEntity) {
-        partidoEntity.setNombre_rival(null);
-        partidoEntity.setId_equipo(0L);
+        partidoEntity.setRival(null);
+        partidoEntity.setId_liga(0L);
         partidoEntity.setLocal(null);
         partidoEntity.setResultado(null);
         oPartidoRepository.save(partidoEntity);
@@ -50,8 +50,8 @@ public class PartidoService {
     public Long update(PartidoEntity partidoEntity) {
         PartidoEntity existingPartido = oPartidoRepository.findById(partidoEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
-        existingPartido.setNombre_rival(partidoEntity.getNombre_rival());
-        existingPartido.setId_equipo(partidoEntity.getId_equipo());
+        existingPartido.setRival(partidoEntity.getRival());
+        existingPartido.setId_liga(partidoEntity.getId_liga());
         existingPartido.setLocal(partidoEntity.getLocal());
         existingPartido.setResultado(partidoEntity.getResultado());
         oPartidoRepository.save(existingPartido);
@@ -70,8 +70,8 @@ public class PartidoService {
         for (long j = 0; j < numPosts; j++) {
             PartidoEntity oPartidoEntity = new PartidoEntity();
             String rival = alRivales.get(oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, alRivales.size() - 1));
-            oPartidoEntity.setNombre_rival(rival);
-            oPartidoEntity.setId_equipo((long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
+            oPartidoEntity.setRival(rival);
+            oPartidoEntity.setId_liga((long) oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(1, 50));
             oPartidoEntity.setLocal(oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 1) == 1);
             int golesLocal = oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 10);
             int golesVisitante = oAleatorioService.GenerarNumeroAleatorioEnteroEnRango(0, 10);

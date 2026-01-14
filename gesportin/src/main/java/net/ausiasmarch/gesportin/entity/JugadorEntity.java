@@ -45,4 +45,8 @@ public class JugadorEntity {
     @NotNull
     @Column(name = "id_usuario")
     private Long idUsuario;
+    
+    @NotNull
+    @Column(name = "id_equipo")
+    private Long idEquipo;
 }

@@ -1,0 +1,113 @@
+package net.ausiasmarch.gesportin.service;
+
+import java.time.LocalDateTime;
+import java.util.Random;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import net.ausiasmarch.gesportin.entity.UsuarioEntity;
+import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
+import net.ausiasmarch.gesportin.repository.UsuarioRepository;
+
+@Service
+public class UsuarioService {
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    private final Random random = new Random();
+
+    private final String[] nombres = {
+        "Juan", "María", "Carlos", "Ana", "Luis", "Laura", "Pedro", "Carmen", "José", "Isabel",
+        "Francisco", "Dolores", "Antonio", "Pilar", "Manuel", "Teresa", "David", "Rosa", "Javier", "Ángeles",
+        "Miguel", "Concepción", "Alejandro", "Josefa", "Rafael", "Francisca", "Daniel", "Antonia", "Fernando", "Mercedes",
+        "Sergio", "Dolores", "Jorge", "Julia", "Alberto", "Cristina", "Raúl", "Lucía", "Pablo", "Elena",
+        "Rubén", "Marta", "Adrián", "Sara", "Diego", "Patricia", "Iván", "Beatriz", "Óscar", "Rocío"
+    };
+
+    private final String[] apellidos = {
+        "García", "Rodríguez", "González", "Fernández", "López", "Martínez", "Sánchez", "Pérez", "Gómez", "Martín",
+        "Jiménez", "Ruiz", "Hernández", "Díaz", "Moreno", "Muñoz", "Álvarez", "Romero", "Alonso", "Gutiérrez",
+        "Navarro", "Torres", "Domínguez", "Vázquez", "Ramos", "Gil", "Ramírez", "Serrano", "Blanco", "Suárez",
+        "Molina", "Castro", "Ortega", "Rubio", "Morales", "Delgado", "Ortiz", "Marín", "Iglesias", "Santos",
+        "Castillo", "Garrido", "Calvo", "Peña", "Cruz", "Cano", "Núñez", "Prieto", "Díez", "Lozano"
+    };
+
+    public UsuarioEntity get(Long id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
+    }
+
+    public Page<UsuarioEntity> getPage(Pageable pageable, String nombre, String username, Long idTipousuario, Long idClub) {
+        if (nombre != null && !nombre.isEmpty()) {
+            return usuarioRepository.findByNombreContainingIgnoreCase(nombre, pageable);
+        } else if (username != null && !username.isEmpty()) {
+            return usuarioRepository.findByUsernameContainingIgnoreCase(username, pageable);
+        } else if (idTipousuario != null) {
+            return usuarioRepository.findByIdTipousuario(idTipousuario, pageable);
+        } else if (idClub != null) {
+            return usuarioRepository.findByIdClub(idClub, pageable);
+        } else {
+            return usuarioRepository.findAll(pageable);
+        }
+    }
+
+    public UsuarioEntity create(UsuarioEntity usuario) {
+        usuario.setId(null);
+        return usuarioRepository.save(usuario);
+    }
+
+    public UsuarioEntity update(UsuarioEntity usuario) {
+        UsuarioEntity usuarioExistente = usuarioRepository.findById(usuario.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + usuario.getId()));
+        
+        usuarioExistente.setNombre(usuario.getNombre());
+        usuarioExistente.setApellido1(usuario.getApellido1());
+        usuarioExistente.setApellido2(usuario.getApellido2());
+        usuarioExistente.setUsername(usuario.getUsername());
+        usuarioExistente.setPassword(usuario.getPassword());
+        usuarioExistente.setFechaAlta(usuario.getFechaAlta());
+        usuarioExistente.setGenero(usuario.getGenero());
+        usuarioExistente.setIdTipousuario(usuario.getIdTipousuario());
+        usuarioExistente.setIdClub(usuario.getIdClub());
+        
+        return usuarioRepository.save(usuarioExistente);
+    }
+
+    public Long delete(Long id) {
+        UsuarioEntity usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
+        usuarioRepository.delete(usuario);
+        return id;
+    }
+
+    public Long empty() {
+        usuarioRepository.deleteAll();
+        usuarioRepository.flush();
+        return 0L;
+    }
+
+    public Long count() {
+        return usuarioRepository.count();
+    }
+
+    public Long fill(Long cantidad) {
+        for (int i = 0; i < cantidad; i++) {
+            UsuarioEntity usuario = new UsuarioEntity();
+            usuario.setNombre(nombres[random.nextInt(nombres.length)]);
+            usuario.setApellido1(apellidos[random.nextInt(apellidos.length)]);
+            usuario.setApellido2(apellidos[random.nextInt(apellidos.length)]);
+            usuario.setUsername("user" + (i + 1) + "_" + random.nextInt(1000));
+            usuario.setPassword("password" + (i + 1));
+            usuario.setFechaAlta(LocalDateTime.now().minusDays(random.nextInt(365)));
+            usuario.setGenero(random.nextInt(2));
+            usuario.setIdTipousuario((long) (random.nextInt(5) + 1));
+            usuario.setIdClub((long) (random.nextInt(50) + 1));
+            usuarioRepository.save(usuario);
+        }
+        return cantidad;
+    }
+}
