@@ -15,74 +15,70 @@ public class TemporadaService {
     @Autowired
     private TemporadaRepository oTemporadaRepository;
 
-    // ---------------------------- CRUD ----------------------------
+    private final String[] nombres = {
+        "Temporada 2019/2020",
+        "Temporada 2020/2021",
+        "Temporada 2021/2022",
+        "Temporada 2022/2023",
+        "Temporada 2023/2024",
+        "Temporada Primavera",
+        "Temporada Verano",
+        "Temporada Otoño",
+        "Temporada Invierno",
+        "Temporada Especial",
+        "Temporada Juvenil",
+        "Temporada Senior"
+    };
 
     public TemporadaEntity get(Long id) {
         return oTemporadaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Temporada not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Temporada no encontrado con id: " + id));
     }
 
-    public TemporadaEntity create(TemporadaEntity oTemporadaEntity) {
-        oTemporadaEntity.setId(null);
-        return oTemporadaRepository.save(oTemporadaEntity);
+    public Page<TemporadaEntity> getPage(Pageable pageable) {
+        return oTemporadaRepository.findAll(pageable);
     }
 
-    public TemporadaEntity update(TemporadaEntity oTemporadaEntity) {
-        TemporadaEntity existing = oTemporadaRepository.findById(oTemporadaEntity.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Temporada not found"));
+    public TemporadaEntity create(TemporadaEntity temporada) {
+        temporada.setId(null);
+        return oTemporadaRepository.save(temporada);
+    }
 
-        existing.setDescripcion(oTemporadaEntity.getDescripcion());
-        existing.setIdClub(oTemporadaEntity.getIdClub());
+    public TemporadaEntity update(TemporadaEntity temporada) {
+        TemporadaEntity existing = oTemporadaRepository.findById(temporada.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Temporada no encontrado con id: " + temporada.getId()));
+
+        existing.setDescripcion(temporada.getDescripcion());
+        existing.setIdClub(temporada.getIdClub());
         return oTemporadaRepository.save(existing);
     }
 
     public Long delete(Long id) {
-        oTemporadaRepository.deleteById(id);
+        TemporadaEntity temporada = oTemporadaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Temporada no encontrado con id: " + id));
+        oTemporadaRepository.delete(temporada);
         return id;
-    }
-
-    public Page<TemporadaEntity> getPage(Pageable oPageable) {
-        return oTemporadaRepository.findAll(oPageable);
-    }
-
-    public Long count() {
-        return oTemporadaRepository.count();
-    }
-
-    // ---------------------------- EXTRA ----------------------------
-
-    public Long fill(Long cantidad) {
-
-        String[] nombres = {
-            "Temporada 2019/2020",
-            "Temporada 2020/2021",
-            "Temporada 2021/2022",
-            "Temporada 2022/2023",
-            "Temporada 2023/2024",
-            "Temporada Primavera",
-            "Temporada Verano",
-            "Temporada Otoño",
-            "Temporada Invierno",
-            "Temporada Especial",
-            "Temporada Juvenil",
-            "Temporada Senior"
-        };
-
-        for (long i = 0; i < cantidad; i++) {
-            TemporadaEntity t = new TemporadaEntity();
-            int indice = (int) (Math.random() * nombres.length);
-            t.setDescripcion(nombres[indice]);
-            t.setIdClub((long)(Math.random() * 50 + 1));
-            oTemporadaRepository.save(t);
-        }
-
-        return cantidad;
     }
 
     public Long empty() {
         oTemporadaRepository.deleteAll();
         oTemporadaRepository.flush();
         return 0L;
+    }
+
+    public Long count() {
+        return oTemporadaRepository.count();
+    }
+
+    public Long fill(Long cantidad) {
+        for (long i = 0; i < cantidad; i++) {
+            TemporadaEntity temporada = new TemporadaEntity();
+            int indice = (int) (Math.random() * nombres.length);
+            temporada.setDescripcion(nombres[indice]);
+            temporada.setIdClub((long) (Math.random() * 50 + 1));
+            oTemporadaRepository.save(temporada);
+        }
+        return cantidad;
     }
 }
 

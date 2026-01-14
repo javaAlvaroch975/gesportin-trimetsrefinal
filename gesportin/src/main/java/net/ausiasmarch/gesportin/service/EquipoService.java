@@ -13,57 +13,56 @@ import net.ausiasmarch.gesportin.repository.EquipoRepository;
 public class EquipoService {
 
     @Autowired
-    EquipoRepository equipoRepository;
+    private EquipoRepository oEquipoRepository;
 
     @Autowired
-    AleatorioService aleatorioService;
+    private AleatorioService oAleatorioService;
 
     public EquipoEntity get(Long id) {
-        return equipoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Equipo not found"));
+        return oEquipoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado con id: " + id));
     }
 
     public Page<EquipoEntity> getPage(Pageable pageable) {
-        return equipoRepository.findAll(pageable);
+        return oEquipoRepository.findAll(pageable);
     }
 
-    public EquipoEntity create(EquipoEntity equipoEntity) {
-        equipoEntity.setId(null);
-        return equipoRepository.save(equipoEntity);
+    public EquipoEntity create(EquipoEntity equipo) {
+        equipo.setId(null);
+        return oEquipoRepository.save(equipo);
     }
 
-    public EquipoEntity update(EquipoEntity equipoEntity) {
-        EquipoEntity oEquipoEntity = equipoRepository.findById(equipoEntity.getId()).orElseThrow(() -> new ResourceNotFoundException("Equipo not found"));
-        oEquipoEntity.setNombre(equipoEntity.getNombre());
-        oEquipoEntity.setIdEntrenador(equipoEntity.getIdEntrenador());
-        oEquipoEntity.setIdCategoria(equipoEntity.getIdCategoria());
-        return equipoRepository.save(oEquipoEntity);
+    public EquipoEntity update(EquipoEntity equipo) {
+        EquipoEntity oEquipoEntity = oEquipoRepository.findById(equipo.getId()).orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado con id: " + equipo.getId()));
+        oEquipoEntity.setNombre(equipo.getNombre());
+        oEquipoEntity.setIdEntrenador(equipo.getIdEntrenador());
+        oEquipoEntity.setIdCategoria(equipo.getIdCategoria());
+        return oEquipoRepository.save(oEquipoEntity);
     }
 
     public Long delete(Long id) {
-        if (!equipoRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Equipo not found");
-        }
-        equipoRepository.deleteById(id);
+        EquipoEntity equipo = oEquipoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado con id: " + id));
+        oEquipoRepository.delete(equipo);
         return id;
     }
 
-    public Long count() {
-        return equipoRepository.count();
+    public Long empty() {
+        oEquipoRepository.deleteAll();
+        oEquipoRepository.flush();
+        return 0L;
     }
 
-    public Long empty() {
-        equipoRepository.deleteAll();
-        equipoRepository.flush();
-        return 0L;
+    public Long count() {
+        return oEquipoRepository.count();
     }
 
     public Long fill(Long cantidad) {
         for (int i = 0; i < cantidad; i++) {
-            EquipoEntity equipoEntity = new EquipoEntity();
-            equipoEntity.setNombre("Equipo " + i);
-            equipoEntity.setIdEntrenador((long) aleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
-            equipoEntity.setIdCategoria((long) aleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
-            equipoRepository.save(equipoEntity);
+            EquipoEntity equipo = new EquipoEntity();
+            equipo.setNombre("Equipo " + i);
+            equipo.setIdEntrenador((long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
+            equipo.setIdCategoria((long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
+            oEquipoRepository.save(equipo);
         }
         return cantidad;
     }

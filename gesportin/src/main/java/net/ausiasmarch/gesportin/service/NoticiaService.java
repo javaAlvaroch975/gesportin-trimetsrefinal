@@ -16,10 +16,10 @@ import net.ausiasmarch.gesportin.repository.NoticiaRepository;
 public class NoticiaService {
 
     @Autowired
-    NoticiaRepository oNoticiaRepository;
+    private NoticiaRepository oNoticiaRepository;
 
     @Autowired
-    AleatorioService oAleatorioService;
+    private AleatorioService oAleatorioService;
 
     ArrayList<String> alFrases = new ArrayList<>();
 
@@ -42,15 +42,53 @@ public class NoticiaService {
         alFrases.add("El tiempo lo dirá.");
     }
 
-    public Long fill(Long numPosts) {
+    public NoticiaEntity get(Long id) {
+        return oNoticiaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Noticia no encontrado con id: " + id));
+    }
 
-        // if (!oSessionService.isSessionActive()) {
-        //     throw new UnauthorizedException("No active session");
-        // }
+    public Page<NoticiaEntity> getPage(Pageable pageable) {
+        return oNoticiaRepository.findAll(pageable);
+    }
 
-        for (long j = 0; j < numPosts; j++) {
-            NoticiaEntity oNoticiaEntity = new NoticiaEntity();
-            oNoticiaEntity.setTitulo(alFrases.get(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, alFrases.size() - 1)));
+    public NoticiaEntity create(NoticiaEntity noticia) {
+        noticia.setId(null);
+        noticia.setFecha(LocalDateTime.now());
+        return oNoticiaRepository.save(noticia);
+    }
+
+    public NoticiaEntity update(NoticiaEntity noticia) {
+        NoticiaEntity existingNoticia = oNoticiaRepository.findById(noticia.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Noticia no encontrado con id: " + noticia.getId()));
+        existingNoticia.setTitulo(noticia.getTitulo());
+        existingNoticia.setContenido(noticia.getContenido());
+        existingNoticia.setFecha(noticia.getFecha());
+        existingNoticia.setIdClub(noticia.getIdClub());
+        existingNoticia.setImagen(noticia.getImagen());
+        return oNoticiaRepository.save(existingNoticia);
+    }
+
+    public Long delete(Long id) {
+        NoticiaEntity noticia = oNoticiaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Noticia no encontrado con id: " + id));
+        oNoticiaRepository.delete(noticia);
+        return id;
+    }
+
+    public Long empty() {
+        Long total = oNoticiaRepository.count();
+        oNoticiaRepository.deleteAll();
+        return total;
+    }
+
+    public Long count() {
+        return oNoticiaRepository.count();
+    }
+
+    public Long fill(Long cantidad) {
+        for (long j = 0; j < cantidad; j++) {
+            NoticiaEntity noticia = new NoticiaEntity();
+            noticia.setTitulo(alFrases.get(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, alFrases.size() - 1)));
             String contenidoGenerado = "";
             int numFrases = oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 30);
             for (int i = 1; i <= numFrases; i++) {
@@ -59,96 +97,12 @@ public class NoticiaService {
                     contenidoGenerado += "\n";
                 }
             }
-            oNoticiaEntity.setContenido(contenidoGenerado.trim());
-            oNoticiaEntity.setFecha(LocalDateTime.now());
-            // id_club aleatorio entre 1 y 10 (puedes ajustar el rango)
-            oNoticiaEntity.setIdClub((Long) (long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 10));
-            // imagen null (o puedes poner datos de prueba)
-            oNoticiaEntity.setImagen(null);
-            oNoticiaRepository.save(oNoticiaEntity);
+            noticia.setContenido(contenidoGenerado.trim());
+            noticia.setFecha(LocalDateTime.now());
+            noticia.setIdClub((long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 10));
+            noticia.setImagen(null);
+            oNoticiaRepository.save(noticia);
         }
-        return oNoticiaRepository.count();
+        return cantidad;
     }
-
-    // ----------------------------CRUD---------------------------------
-    public NoticiaEntity get(Long id){
-        return oNoticiaRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Noticia no encontrada"));
-    }
-
-    public NoticiaEntity create(NoticiaEntity noticiaEntity) {
-        // if (!oSessionService.isSessionActive()) {
-        //     throw new UnauthorizedException("No active session");
-        // }
-        noticiaEntity.setId(null);
-        noticiaEntity.setFecha(LocalDateTime.now());
-        return oNoticiaRepository.save(noticiaEntity);
-    }
-
-    public NoticiaEntity update(NoticiaEntity noticiaEntity) {
-        // if (!oSessionService.isSessionActive()) {
-        //     throw new UnauthorizedException("No active session");
-        // }
-        NoticiaEntity existingNoticia = oNoticiaRepository.findById(noticiaEntity.getId())
-            .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
-        existingNoticia.setTitulo(noticiaEntity.getTitulo());
-        existingNoticia.setContenido(noticiaEntity.getContenido());
-        existingNoticia.setFecha(noticiaEntity.getFecha());
-        existingNoticia.setIdClub(noticiaEntity.getIdClub());
-        existingNoticia.setImagen(noticiaEntity.getImagen());
-        return oNoticiaRepository.save(existingNoticia);
-    }
-
-    public Long delete(Long id) {
-        // if (!oSessionService.isSessionActive()) {
-        //     throw new UnauthorizedException("No active session");
-        // }
-        oNoticiaRepository.deleteById(id);
-        return id;
-    }
-
-    public Page<NoticiaEntity> getPage(Pageable oPageable) {
-        // si no hay session activa, solo devolver los publicados
-        // if (!oSessionService.isSessionActive()) {
-        //     return oNoticiaRepository.findByPublicadoTrue(oPageable);
-        // } else {
-            return oNoticiaRepository.findAll(oPageable);
-        //}
-    }
-
-    public Long count() {
-        return oNoticiaRepository.count();
-    }
-
-    // ---
-    public Long publicar(Long id) {
-        // if (!oSessionService.isSessionActive()) {
-        //     throw new UnauthorizedException("No active session");
-        // }
-        NoticiaEntity existingNoticia = oNoticiaRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
-        oNoticiaRepository.save(existingNoticia);
-        return existingNoticia.getId();
-    }
-
-    public Long despublicar(Long id) {
-        // if (!oSessionService.isSessionActive()) {
-        //     throw new UnauthorizedException("No active session");
-        // }
-        NoticiaEntity existingNoticia = oNoticiaRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
-        oNoticiaRepository.save(existingNoticia);
-        return existingNoticia.getId();
-    }
-
-    // vaciar tabla Noticia (solo administrador)
-    public Long empty() {
-        // if (!oSessionService.isSessionActive()) {
-        //     throw new UnauthorizedException("No active session");
-        // }
-        Long total = oNoticiaRepository.count();
-        oNoticiaRepository.deleteAll();
-        return total;
-    }
-
 }

@@ -15,13 +15,10 @@ import net.ausiasmarch.gesportin.repository.JugadorRepository;
 public class JugadorService {
 
     @Autowired
-    JugadorRepository oJugadorRepository;
+    private JugadorRepository oJugadorRepository;
 
     @Autowired
-    AleatorioService oAleatorioService;
-
-    // @Autowired
-    // SessionService oSessionService;
+    private AleatorioService oAleatorioService;
 
     ArrayList<String> posiciones = new ArrayList<>();
 
@@ -38,100 +35,59 @@ public class JugadorService {
         posiciones.add("Delantero centro");
     }
 
-    public Long fill(Long numPosts) {
-        // if (!oSessionService.isSessionActive()) {
-        //     throw new UnauthorizedException("Sesión no activa");
-        // }
-
-        for (long j = 0; j < numPosts; j++) {
-
-            // Crea una entidad y la rellana con datos aleatorios
-            JugadorEntity oJugadorEntity = new JugadorEntity();
-
-                oJugadorEntity.setDorsal(oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 99));
-
-                oJugadorEntity.setPosicion(
-                    posiciones.get(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, posiciones.size() - 1)));
-            
-                oJugadorEntity.setCapitan(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 1) == 1);
-
-                oJugadorEntity.setImagen(null);
-
-                oJugadorEntity.setIdUsuario(Long.valueOf(oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50)));
-            
-                oJugadorEntity.setIdEquipo(Long.valueOf(oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50)));
-            
-            // Guardar la entidad en la base de datos
-            oJugadorRepository.save(oJugadorEntity);
-        }
-        return numPosts;
-    }
-
-    // -------------------------------------------------- CRUD --------------------------------------------------
-
     public JugadorEntity get(Long id) {
-        // if (!oSessionService.isSessionActive()) {
-        //     throw new UnauthorizedException("Sesión no activa");
-        // }
-
-        return oJugadorRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado"));
+        return oJugadorRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado con id: " + id));
     }
 
-    public JugadorEntity create(JugadorEntity jugadorEntity) {
-        // if (!oSessionService.isSessionActive()) {
-        //     throw new UnauthorizedException("Sesión no activa");
-        // }
-        jugadorEntity.setId(null);
-        return oJugadorRepository.save(jugadorEntity);
+    public Page<JugadorEntity> getPage(Pageable pageable) {
+        return oJugadorRepository.findAll(pageable);
     }
 
-    public JugadorEntity update(JugadorEntity JugadorEntity) {
-        // if (!oSessionService.isSessionActive()) {
-        //     throw new UnauthorizedException("Sesión no activa");
-        // }
+    public JugadorEntity create(JugadorEntity jugador) {
+        jugador.setId(null);
+        return oJugadorRepository.save(jugador);
+    }
 
-        JugadorEntity oExistingJugador = oJugadorRepository.findById(JugadorEntity.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado"));
-        oExistingJugador.setDorsal(JugadorEntity.getDorsal());
-        oExistingJugador.setPosicion(JugadorEntity.getPosicion());
-        oExistingJugador.setCapitan(JugadorEntity.getCapitan());
-        oExistingJugador.setImagen(JugadorEntity.getImagen());
-        oExistingJugador.setIdUsuario(JugadorEntity.getIdUsuario());
-        oExistingJugador.setIdEquipo(JugadorEntity.getIdEquipo());
+    public JugadorEntity update(JugadorEntity jugador) {
+        JugadorEntity oExistingJugador = oJugadorRepository.findById(jugador.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado con id: " + jugador.getId()));
+        oExistingJugador.setDorsal(jugador.getDorsal());
+        oExistingJugador.setPosicion(jugador.getPosicion());
+        oExistingJugador.setCapitan(jugador.getCapitan());
+        oExistingJugador.setImagen(jugador.getImagen());
+        oExistingJugador.setIdUsuario(jugador.getIdUsuario());
+        oExistingJugador.setIdEquipo(jugador.getIdEquipo());
         return oJugadorRepository.save(oExistingJugador);
     }
 
     public Long delete(Long id) {
-        // if (!oSessionService.isSessionActive()) {
-        //     throw new UnauthorizedException("Sesión no activa");
-        // }
-
-        oJugadorRepository.deleteById(id);
+        JugadorEntity jugador = oJugadorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado con id: " + id));
+        oJugadorRepository.delete(jugador);
         return id;
     }
 
-    public Page<JugadorEntity> getPage(Pageable oPageable) {
-        // if (!oSessionService.isSessionActive()) {
-        //     throw new UnauthorizedException("Sesión no activa");
-        // } else {
-        //     return oJugadorRepository.findAll(oPageable);
-        // }
-        return oJugadorRepository.findAll(oPageable);
+    public Long empty() {
+        oJugadorRepository.deleteAll();
+        oJugadorRepository.flush();
+        return 0L;
     }
-
 
     public Long count() {
         return oJugadorRepository.count();
     }
 
-    // Vaciar la tabla (solo para administradores)
-    public Long empty() {
-        // if (!oSessionService.isSessionActive()) {
-        //     throw new UnauthorizedException("Sesión no activa");
-        // }
-
-        oJugadorRepository.deleteAll();
-        oJugadorRepository.flush();
-        return 0L;
+    public Long fill(Long cantidad) {
+        for (long j = 0; j < cantidad; j++) {
+            JugadorEntity jugador = new JugadorEntity();
+            jugador.setDorsal(oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 99));
+            jugador.setPosicion(posiciones.get(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, posiciones.size() - 1)));
+            jugador.setCapitan(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 1) == 1);
+            jugador.setImagen(null);
+            jugador.setIdUsuario((long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
+            jugador.setIdEquipo((long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
+            oJugadorRepository.save(jugador);
+        }
+        return cantidad;
     }
 }

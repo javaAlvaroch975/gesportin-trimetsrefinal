@@ -5,60 +5,47 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import jakarta.persistence.EntityNotFoundException;
 import net.ausiasmarch.gesportin.entity.CarritoEntity;
+import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
 import net.ausiasmarch.gesportin.repository.CarritoRepository;
 
 @Service
 public class CarritoService {
     
     @Autowired
-    CarritoRepository oCarritoRepository;
+    private CarritoRepository oCarritoRepository;
 
     @Autowired
-    AleatorioService oAleatorioService;
+    private AleatorioService oAleatorioService;
 
     public CarritoEntity get(Long id) {
         return oCarritoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("No se encuentra el carrito con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Carrito no encontrado con id: " + id));
     }
 
-    public Page<CarritoEntity> getPage(Pageable oPageable) {
-        return oCarritoRepository.findAll(oPageable);
+    public Page<CarritoEntity> getPage(Pageable pageable) {
+        return oCarritoRepository.findAll(pageable);
     }
 
-    public CarritoEntity create(CarritoEntity oCarritoEntity) {
-        oCarritoEntity.setId(null);
-        return oCarritoRepository.save(oCarritoEntity);
+    public CarritoEntity create(CarritoEntity carrito) {
+        carrito.setId(null);
+        return oCarritoRepository.save(carrito);
     }
 
-    public CarritoEntity update(CarritoEntity oCarritoEntity) {
-        CarritoEntity existingCarrito = oCarritoRepository.findById(oCarritoEntity.getId())
-                .orElseThrow(() -> new EntityNotFoundException("No se puede actualizar ID no encontrado"));
-        existingCarrito.setCantidad(oCarritoEntity.getCantidad());
-        existingCarrito.setIdArticulo(oCarritoEntity.getIdArticulo());
-        existingCarrito.setIdUsuario(oCarritoEntity.getIdUsuario());
+    public CarritoEntity update(CarritoEntity carrito) {
+        CarritoEntity existingCarrito = oCarritoRepository.findById(carrito.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Carrito no encontrado con id: " + carrito.getId()));
+        existingCarrito.setCantidad(carrito.getCantidad());
+        existingCarrito.setIdArticulo(carrito.getIdArticulo());
+        existingCarrito.setIdUsuario(carrito.getIdUsuario());
         return oCarritoRepository.save(existingCarrito);
     }
 
     public Long delete(Long id) {
-        if (!oCarritoRepository.existsById(id)) {
-            throw new EntityNotFoundException("ID no encontrado");
-        }
-        oCarritoRepository.deleteById(id);
+        CarritoEntity carrito = oCarritoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Carrito no encontrado con id: " + id));
+        oCarritoRepository.delete(carrito);
         return id;
-    }
-
-    public Long fill(Long cantidad) {
-        for (long i = 0L; i < cantidad; i++) {
-            CarritoEntity oCarritoEntity = new CarritoEntity();
-            oCarritoEntity.setCantidad(oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
-            oCarritoEntity.setIdArticulo((Long) (long)oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
-            oCarritoEntity.setIdUsuario((Long) (long)oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
-            oCarritoRepository.save(oCarritoEntity);
-        }
-
-        return cantidad;
     }
 
     public Long empty() {
@@ -71,5 +58,13 @@ public class CarritoService {
         return oCarritoRepository.count();
     }
 
-
-}
+    public Long fill(Long cantidad) {
+        for (long i = 0L; i < cantidad; i++) {
+            CarritoEntity carrito = new CarritoEntity();
+            carrito.setCantidad(oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
+            carrito.setIdArticulo((long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
+            carrito.setIdUsuario((long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
+            oCarritoRepository.save(carrito);
+        }
+        return cantidad;
+    }}

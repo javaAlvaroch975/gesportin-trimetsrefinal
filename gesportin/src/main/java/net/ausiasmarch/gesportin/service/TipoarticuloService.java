@@ -15,7 +15,7 @@ import net.ausiasmarch.gesportin.repository.TipoarticuloRepository;
 public class TipoarticuloService {
 
     @Autowired
-    private TipoarticuloRepository tipoarticuloRepository;
+    private TipoarticuloRepository oTipoarticuloRepository;
 
     private final Random random = new Random();
 
@@ -33,50 +33,50 @@ public class TipoarticuloService {
     };
 
     public TipoarticuloEntity get(Long id) {
-        return tipoarticuloRepository.findById(id)
+        return oTipoarticuloRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tipoarticulo no encontrado con id: " + id));
     }
 
     public Page<TipoarticuloEntity> getPage(Pageable pageable, String descripcion, Long idClub) {
         if (descripcion != null && !descripcion.isEmpty()) {
-            return tipoarticuloRepository.findByDescripcionContainingIgnoreCase(descripcion, pageable);
+            return oTipoarticuloRepository.findByDescripcionContainingIgnoreCase(descripcion, pageable);
         } else if (idClub != null) {
-            return tipoarticuloRepository.findByIdClub(idClub, pageable);
+            return oTipoarticuloRepository.findByIdClub(idClub, pageable);
         } else {
-            return tipoarticuloRepository.findAll(pageable);
+            return oTipoarticuloRepository.findAll(pageable);
         }
     }
 
     public TipoarticuloEntity create(TipoarticuloEntity tipoarticulo) {
         tipoarticulo.setId(null);
-        return tipoarticuloRepository.save(tipoarticulo);
+        return oTipoarticuloRepository.save(tipoarticulo);
     }
 
     public TipoarticuloEntity update(TipoarticuloEntity tipoarticulo) {
-        TipoarticuloEntity tipoarticuloExistente = tipoarticuloRepository.findById(tipoarticulo.getId())
+        TipoarticuloEntity tipoarticuloExistente = oTipoarticuloRepository.findById(tipoarticulo.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Tipoarticulo no encontrado con id: " + tipoarticulo.getId()));
         
         tipoarticuloExistente.setDescripcion(tipoarticulo.getDescripcion());
         tipoarticuloExistente.setIdClub(tipoarticulo.getIdClub());
         
-        return tipoarticuloRepository.save(tipoarticuloExistente);
+        return oTipoarticuloRepository.save(tipoarticuloExistente);
     }
 
     public Long delete(Long id) {
-        TipoarticuloEntity tipoarticulo = tipoarticuloRepository.findById(id)
+        TipoarticuloEntity tipoarticulo = oTipoarticuloRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tipoarticulo no encontrado con id: " + id));
-        tipoarticuloRepository.delete(tipoarticulo);
+        oTipoarticuloRepository.delete(tipoarticulo);
         return id;
     }
 
     public Long empty() {
-        tipoarticuloRepository.deleteAll();
-        tipoarticuloRepository.flush();
+        oTipoarticuloRepository.deleteAll();
+        oTipoarticuloRepository.flush();
         return 0L;
     }
 
     public Long count() {
-        return tipoarticuloRepository.count();
+        return oTipoarticuloRepository.count();
     }
 
     public Long fill(Long cantidad) {
@@ -84,7 +84,7 @@ public class TipoarticuloService {
             TipoarticuloEntity tipoarticulo = new TipoarticuloEntity();
             tipoarticulo.setDescripcion(descripciones[i % descripciones.length] + " " + (i + 1));
             tipoarticulo.setIdClub((long) (random.nextInt(50) + 1));
-            tipoarticuloRepository.save(tipoarticulo);
+            oTipoarticuloRepository.save(tipoarticulo);
         }
         return cantidad;
     }

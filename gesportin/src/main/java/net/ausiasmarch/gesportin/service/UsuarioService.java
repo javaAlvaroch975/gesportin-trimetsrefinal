@@ -16,7 +16,7 @@ import net.ausiasmarch.gesportin.repository.UsuarioRepository;
 public class UsuarioService {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UsuarioRepository oUsuarioRepository;
 
     private final Random random = new Random();
 
@@ -37,31 +37,31 @@ public class UsuarioService {
     };
 
     public UsuarioEntity get(Long id) {
-        return usuarioRepository.findById(id)
+        return oUsuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
     }
 
     public Page<UsuarioEntity> getPage(Pageable pageable, String nombre, String username, Long idTipousuario, Long idClub) {
         if (nombre != null && !nombre.isEmpty()) {
-            return usuarioRepository.findByNombreContainingIgnoreCase(nombre, pageable);
+            return oUsuarioRepository.findByNombreContainingIgnoreCase(nombre, pageable);
         } else if (username != null && !username.isEmpty()) {
-            return usuarioRepository.findByUsernameContainingIgnoreCase(username, pageable);
+            return oUsuarioRepository.findByUsernameContainingIgnoreCase(username, pageable);
         } else if (idTipousuario != null) {
-            return usuarioRepository.findByIdTipousuario(idTipousuario, pageable);
+            return oUsuarioRepository.findByIdTipousuario(idTipousuario, pageable);
         } else if (idClub != null) {
-            return usuarioRepository.findByIdClub(idClub, pageable);
+            return oUsuarioRepository.findByIdClub(idClub, pageable);
         } else {
-            return usuarioRepository.findAll(pageable);
+            return oUsuarioRepository.findAll(pageable);
         }
     }
 
     public UsuarioEntity create(UsuarioEntity usuario) {
         usuario.setId(null);
-        return usuarioRepository.save(usuario);
+        return oUsuarioRepository.save(usuario);
     }
 
     public UsuarioEntity update(UsuarioEntity usuario) {
-        UsuarioEntity usuarioExistente = usuarioRepository.findById(usuario.getId())
+        UsuarioEntity usuarioExistente = oUsuarioRepository.findById(usuario.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + usuario.getId()));
         
         usuarioExistente.setNombre(usuario.getNombre());
@@ -74,24 +74,24 @@ public class UsuarioService {
         usuarioExistente.setIdTipousuario(usuario.getIdTipousuario());
         usuarioExistente.setIdClub(usuario.getIdClub());
         
-        return usuarioRepository.save(usuarioExistente);
+        return oUsuarioRepository.save(usuarioExistente);
     }
 
     public Long delete(Long id) {
-        UsuarioEntity usuario = usuarioRepository.findById(id)
+        UsuarioEntity usuario = oUsuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
-        usuarioRepository.delete(usuario);
+        oUsuarioRepository.delete(usuario);
         return id;
     }
 
     public Long empty() {
-        usuarioRepository.deleteAll();
-        usuarioRepository.flush();
+        oUsuarioRepository.deleteAll();
+        oUsuarioRepository.flush();
         return 0L;
     }
 
     public Long count() {
-        return usuarioRepository.count();
+        return oUsuarioRepository.count();
     }
 
     public Long fill(Long cantidad) {
@@ -106,7 +106,7 @@ public class UsuarioService {
             usuario.setGenero(random.nextInt(2));
             usuario.setIdTipousuario((long) (random.nextInt(5) + 1));
             usuario.setIdClub((long) (random.nextInt(50) + 1));
-            usuarioRepository.save(usuario);
+            oUsuarioRepository.save(usuario);
         }
         return cantidad;
     }

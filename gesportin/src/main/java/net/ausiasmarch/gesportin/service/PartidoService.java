@@ -16,76 +16,67 @@ import net.ausiasmarch.gesportin.repository.PartidoRepository;
 public class PartidoService {
 
     @Autowired
-    PartidoRepository oPartidoRepository;
+    private PartidoRepository oPartidoRepository;
 
     @Autowired
-    AleatorioService oAleatorioService;
+    private AleatorioService oAleatorioService;
 
     private final List<String> alRivales = Arrays.asList(
             "Atlético", "Barcelona", "Real Madrid", "Sevilla", "Valencia", "Villarreal", "Betis",
             "Real Sociedad", "Granada", "Celta", "Getafe", "Espanyol", "Mallorca", "Osasuna", "Alavés");
 
-    // -------------CRUD-----------------
-    //GET:
     public PartidoEntity get(Long id) {
-        return oPartidoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Partido not found"));
+        return oPartidoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Partido no encontrado con id: " + id));
     }
 
-    //GET PAGE:
-    public Page<PartidoEntity> getPage(Pageable oPageable) {
-        return oPartidoRepository.findAll(oPageable);
+    public Page<PartidoEntity> getPage(Pageable pageable) {
+        return oPartidoRepository.findAll(pageable);
     }
 
-    //CREATE:
-    public PartidoEntity create(PartidoEntity partidoEntity) {
-        partidoEntity.setId(null);
-        return oPartidoRepository.save(partidoEntity);
+    public PartidoEntity create(PartidoEntity partido) {
+        partido.setId(null);
+        return oPartidoRepository.save(partido);
     }
 
-    //UPDATE:
-    public PartidoEntity update(PartidoEntity partidoEntity) {
-        PartidoEntity existingPartido = oPartidoRepository.findById(partidoEntity.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
-        existingPartido.setRival(partidoEntity.getRival());
-        existingPartido.setIdLiga(partidoEntity.getIdLiga());
-        existingPartido.setLocal(partidoEntity.getLocal());
-        existingPartido.setResultado(partidoEntity.getResultado());
+    public PartidoEntity update(PartidoEntity partido) {
+        PartidoEntity existingPartido = oPartidoRepository.findById(partido.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Partido no encontrado con id: " + partido.getId()));
+        existingPartido.setRival(partido.getRival());
+        existingPartido.setIdLiga(partido.getIdLiga());
+        existingPartido.setLocal(partido.getLocal());
+        existingPartido.setResultado(partido.getResultado());
         return oPartidoRepository.save(existingPartido);
     }
 
-    //DELETE:
     public Long delete(Long id) {
-        oPartidoRepository.deleteById(id);
+        PartidoEntity partido = oPartidoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Partido no encontrado con id: " + id));
+        oPartidoRepository.delete(partido);
         return id;
     }
 
-    //FILL:
-    public Long fill(Long numPosts) {
-
-        for (long j = 0; j < numPosts; j++) {
-            PartidoEntity oPartidoEntity = new PartidoEntity();
-            String rival = alRivales.get(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, alRivales.size() - 1));
-            oPartidoEntity.setRival(rival);
-            oPartidoEntity.setIdLiga((long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
-            oPartidoEntity.setLocal(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 1) == 1);
-            int golesLocal = oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 10);
-            int golesVisitante = oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 10);
-            oPartidoEntity.setResultado(golesLocal + "-" + golesVisitante);
-            oPartidoRepository.save(oPartidoEntity);
-        }
-        return numPosts;
-    }
-
-    //EMPTY (VACIAR TABLA):
     public Long empty() {
         oPartidoRepository.deleteAll();
         oPartidoRepository.flush();
         return 0L;
     }
 
-    //COUNT:
     public Long count() {
         return oPartidoRepository.count();
     }
 
+    public Long fill(Long cantidad) {
+        for (long j = 0; j < cantidad; j++) {
+            PartidoEntity partido = new PartidoEntity();
+            String rival = alRivales.get(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, alRivales.size() - 1));
+            partido.setRival(rival);
+            partido.setIdLiga((long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
+            partido.setLocal(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 1) == 1);
+            int golesLocal = oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 10);
+            int golesVisitante = oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 10);
+            partido.setResultado(golesLocal + "-" + golesVisitante);
+            oPartidoRepository.save(partido);
+        }
+        return cantidad;
+    }
 }

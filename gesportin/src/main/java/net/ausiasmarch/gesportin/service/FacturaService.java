@@ -15,62 +15,62 @@ import net.ausiasmarch.gesportin.repository.FacturaRepository;
 public class FacturaService {
 
     @Autowired
-    FacturaRepository oFacturaRepository;
+    private FacturaRepository oFacturaRepository;
 
     @Autowired
-    AleatorioService oAleatorioService;
+    private AleatorioService oAleatorioService;
 
     public FacturaEntity get(Long id) {
-    return oFacturaRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Factura no encontrada"));
+        return oFacturaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Factura no encontrado con id: " + id));
     }
 
-    public FacturaEntity create(FacturaEntity facturaEntity) {
-        facturaEntity.setId(null);
-        facturaEntity.setFecha(LocalDateTime.now());
-        Long idUsuario = facturaEntity.getIdUsuario();
+    public Page<FacturaEntity> getPage(Pageable pageable) {
+        return oFacturaRepository.findAll(pageable);
+    }
+
+    public FacturaEntity create(FacturaEntity factura) {
+        factura.setId(null);
+        factura.setFecha(LocalDateTime.now());
+        Long idUsuario = factura.getIdUsuario();
         if (idUsuario == null || idUsuario <= 0) {
-            facturaEntity.setIdUsuario((long)oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
+            factura.setIdUsuario((long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
         }
-        return oFacturaRepository.save(facturaEntity);
+        return oFacturaRepository.save(factura);
     }
 
-    public FacturaEntity update(FacturaEntity facturaEntity) {
-        FacturaEntity existingFacturaCompra = oFacturaRepository.findById(facturaEntity.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Factura no encontrada"));
-        existingFacturaCompra.setIdUsuario(facturaEntity.getIdUsuario());
-        existingFacturaCompra.setFecha(facturaEntity.getFecha());
-        return oFacturaRepository.save(existingFacturaCompra);
+    public FacturaEntity update(FacturaEntity factura) {
+        FacturaEntity existingFactura = oFacturaRepository.findById(factura.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Factura no encontrado con id: " + factura.getId()));
+        existingFactura.setIdUsuario(factura.getIdUsuario());
+        existingFactura.setFecha(factura.getFecha());
+        return oFacturaRepository.save(existingFactura);
     }
 
     public Long delete(Long id) {
         FacturaEntity factura = oFacturaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Factura no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Factura no encontrado con id: " + id));
         oFacturaRepository.delete(factura);
         return id;
-    }
-
-    public Page<FacturaEntity> getPage(Pageable oPageable) {
-        return oFacturaRepository.findAll(oPageable);
-    }
-
-    public Long count() {
-        return oFacturaRepository.count();
-    }
-
-    public Long fill(Long numQuestions) {
-        for (int i = 0; i < numQuestions; i++) {
-            FacturaEntity oFacturaEntity = new FacturaEntity();
-            oFacturaEntity.setFecha(LocalDateTime.now());
-            oFacturaEntity.setIdUsuario((long)oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
-            oFacturaRepository.save(oFacturaEntity);
-        }
-        return numQuestions;
     }
 
     public Long empty() {
         oFacturaRepository.deleteAll();
         oFacturaRepository.flush();
         return 0L;
+    }
+
+    public Long count() {
+        return oFacturaRepository.count();
+    }
+
+    public Long fill(Long cantidad) {
+        for (int i = 0; i < cantidad; i++) {
+            FacturaEntity factura = new FacturaEntity();
+            factura.setFecha(LocalDateTime.now());
+            factura.setIdUsuario((long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
+            oFacturaRepository.save(factura);
+        }
+        return cantidad;
     }
 }

@@ -15,7 +15,7 @@ import net.ausiasmarch.gesportin.repository.LigaRepository;
 public class LigaService {
 
     @Autowired
-    private LigaRepository ligaRepository;
+    private LigaRepository oLigaRepository;
 
     private final Random random = new Random();
 
@@ -33,50 +33,50 @@ public class LigaService {
     };
 
     public LigaEntity get(Long id) {
-        return ligaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Liga no encontrada con id: " + id));
+        return oLigaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Liga no encontrado con id: " + id));
     }
 
     public Page<LigaEntity> getPage(Pageable pageable, String nombre, Long idEquipo) {
         if (nombre != null && !nombre.isEmpty()) {
-            return ligaRepository.findByNombreContainingIgnoreCase(nombre, pageable);
+            return oLigaRepository.findByNombreContainingIgnoreCase(nombre, pageable);
         } else if (idEquipo != null) {
-            return ligaRepository.findByIdEquipo(idEquipo, pageable);
+            return oLigaRepository.findByIdEquipo(idEquipo, pageable);
         } else {
-            return ligaRepository.findAll(pageable);
+            return oLigaRepository.findAll(pageable);
         }
     }
 
     public LigaEntity create(LigaEntity liga) {
         liga.setId(null);
-        return ligaRepository.save(liga);
+        return oLigaRepository.save(liga);
     }
 
     public LigaEntity update(LigaEntity liga) {
-        LigaEntity ligaExistente = ligaRepository.findById(liga.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Liga no encontrada con id: " + liga.getId()));
+        LigaEntity ligaExistente = oLigaRepository.findById(liga.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Liga no encontrado con id: " + liga.getId()));
         
         ligaExistente.setNombre(liga.getNombre());
         ligaExistente.setIdEquipo(liga.getIdEquipo());
         
-        return ligaRepository.save(ligaExistente);
+        return oLigaRepository.save(ligaExistente);
     }
 
     public Long delete(Long id) {
-        LigaEntity liga = ligaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Liga no encontrada con id: " + id));
-        ligaRepository.delete(liga);
+        LigaEntity liga = oLigaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Liga no encontrado con id: " + id));
+        oLigaRepository.delete(liga);
         return id;
     }
 
     public Long empty() {
-        ligaRepository.deleteAll();
-        ligaRepository.flush();
+        oLigaRepository.deleteAll();
+        oLigaRepository.flush();
         return 0L;
     }
 
     public Long count() {
-        return ligaRepository.count();
+        return oLigaRepository.count();
     }
 
     public Long fill(Long cantidad) {
@@ -84,7 +84,7 @@ public class LigaService {
             LigaEntity liga = new LigaEntity();
             liga.setNombre(nombres[i % nombres.length] + " " + (i + 1));
             liga.setIdEquipo((long) (random.nextInt(50) + 1));
-            ligaRepository.save(liga);
+            oLigaRepository.save(liga);
         }
         return cantidad;
     }
