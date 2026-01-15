@@ -28,18 +28,16 @@ public class CarritoEntity {
     @NotNull
     @Column(nullable = false)
     private Integer cantidad;
-    
+
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_articulo")
     private ArticuloEntity articulo;
-    
+
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario")
     private UsuarioEntity usuario;
 
-    
 
-    
 }
