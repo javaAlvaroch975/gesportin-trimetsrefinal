@@ -1254,6 +1254,124 @@ Cuenta el total de comentarios.
 
 ---
 
+## 12.1 Comentarios de Artículos
+
+### Modelo de Datos: ComentarioartEntity
+
+| Campo | Tipo | Restricciones | Descripción |
+|-------|------|---------------|-------------|
+| id | Long | Auto-generado | Identificador único |
+| contenido | String | Not null, Size(3-1024) | Contenido del comentario |
+| idArticulo | Long | Not null | FK: Artículo comentado |
+| idUsuario | Long | Not null | FK: Usuario que comenta |
+
+### Endpoints
+
+#### GET /comentarioart/{id}
+Obtiene un comentario de artículo por su ID.
+
+**Response 200:**
+```json
+{
+  "id": 1,
+  "contenido": "Gran análisis del artículo, gracias!",
+  "idArticulo": 3,
+  "idUsuario": 15
+}
+```
+
+---
+
+#### GET /comentarioart
+Obtiene una página de comentarios de artículos.
+
+**Parámetros de Query:**
+- `page`, `size`, `sort`: Paginación (size por defecto: 1000)
+
+**Response 200:**
+```json
+{
+  "content": [
+    {
+      "id": 1,
+      "contenido": "Gran análisis del artículo, gracias!",
+      "idArticulo": 3,
+      "idUsuario": 15
+    }
+  ],
+  "totalElements": 1,
+  "totalPages": 1
+}
+```
+
+---
+
+#### POST /comentarioart
+Crea un nuevo comentario de artículo.
+
+**Request Body:**
+```json
+{
+  "contenido": "Me ha gustado mucho este artículo",
+  "idArticulo": 3,
+  "idUsuario": 15
+}
+```
+
+**Response 200:**
+```json
+1
+```
+(Retorna el ID del comentario creado)
+
+---
+
+#### PUT /comentarioart
+Actualiza un comentario de artículo existente.
+
+**Request Body (ejemplo):**
+```json
+{
+  "id": 1,
+  "contenido": "Actualizado: una corrección en el comentario",
+  "idArticulo": 3,
+  "idUsuario": 15
+}
+```
+
+**Response 200:**
+```json
+1
+```
+(Retorna el ID del comentario actualizado)
+
+---
+
+#### DELETE /comentarioart/{id}
+Elimina un comentario de artículo.
+
+**Response 200:**
+```json
+1
+```
+
+---
+
+#### GET /comentarioart/fill/{cantidad}
+Genera comentarios de artículos aleatorios.
+
+---
+
+#### DELETE /comentarioart/empty
+Vacía todos los comentarios de artículos.
+
+---
+
+#### GET /comentarioart/count
+Cuenta el total de comentarios de artículos.
+
+---
+
 ## 13. Puntuaciones
 
 ### Modelo de Datos: PuntuacionEntity
@@ -1341,7 +1459,6 @@ Cuenta el total de puntuaciones.
 | descuento | BigDecimal | Nullable | Descuento aplicable |
 | imagen | byte[] | Nullable | Imagen del artículo (BLOB) |
 | idTipoarticulo | Long | Not null | FK: Tipo de artículo |
-| idClub | Long | Not null | FK: Club que vende |
 
 ### Endpoints
 
@@ -1356,8 +1473,7 @@ Obtiene un artículo por su ID.
   "precio": 49.99,
   "descuento": 5.00,
   "imagen": [...],
-  "idTipoarticulo": 2,
-  "idClub": 1
+  "idTipoarticulo": 2
 }
 ```
 
@@ -1369,7 +1485,6 @@ Obtiene una página de artículos con filtros opcionales.
 **Parámetros de Query (opcionales):**
 - `descripcion` (String): Filtrar por descripción
 - `idTipoarticulo` (Long): Filtrar por tipo de artículo
-- `idClub` (Long): Filtrar por club
 - `page`, `size`, `sort`: Paginación (size por defecto: 1000)
 
 **Response 200:**
@@ -1382,8 +1497,7 @@ Obtiene una página de artículos con filtros opcionales.
       "precio": 49.99,
       "descuento": 5.00,
       "imagen": [...],
-      "idTipoarticulo": 2,
-      "idClub": 1
+      "idTipoarticulo": 2
     }
   ],
   "totalElements": 1,
@@ -1403,8 +1517,7 @@ Crea un nuevo artículo.
   "precio": 29.99,
   "descuento": 0,
   "imagen": [...],
-  "idTipoarticulo": 2,
-  "idClub": 1
+  "idTipoarticulo": 2
 }
 ```
 
@@ -1476,7 +1589,7 @@ Obtiene una página de tipos de artículo con filtros opcionales.
 
 **Parámetros de Query (opcionales):**
 - `descripcion` (String): Filtrar por descripción
-- `idClub` (Long): Filtrar por club
+ 
 - `page`, `size`, `sort`: Paginación (size por defecto: 1000)
 
 ---
