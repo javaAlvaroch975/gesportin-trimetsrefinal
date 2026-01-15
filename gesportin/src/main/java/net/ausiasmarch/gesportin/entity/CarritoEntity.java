@@ -24,19 +24,17 @@ public class CarritoEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @NotNull
     @Column(nullable = false)
     private Integer cantidad;
     
     @NotNull
-    @Column(name = "id_articulo", nullable = false)
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_articulo")
     private ArticuloEntity articulo;
     
     @NotNull
-    @Column(name = "id_usuario", nullable = false)
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario")
     private UsuarioEntity usuario;

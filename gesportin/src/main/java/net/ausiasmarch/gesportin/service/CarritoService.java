@@ -62,8 +62,8 @@ public class CarritoService {
         for (long i = 0L; i < cantidad; i++) {
             CarritoEntity carrito = new CarritoEntity();
             carrito.setCantidad(oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
-            carrito.setIdArticulo((long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
-            carrito.setIdUsuario((long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
+            //carrito.setIdArticulo((long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
+            //carrito.setIdUsuario((long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
             oCarritoRepository.save(carrito);
         }
         return cantidad;
