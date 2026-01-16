@@ -40,7 +40,6 @@ public class TipoarticuloEntity {
     @JoinColumn(name = "id_club")
     private ClubEntity club;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "tipoArticulo", fetch = FetchType.LAZY)
     private List<ArticuloEntity> articulos;
 }

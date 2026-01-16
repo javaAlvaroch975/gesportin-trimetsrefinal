@@ -39,7 +39,6 @@ public class CategoriaEntity {
     @JoinColumn(name = "id_temporada")
     private TemporadaEntity temporada;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "categoria", fetch = FetchType.LAZY)
     private List<EquipoEntity> equipos;
 }
