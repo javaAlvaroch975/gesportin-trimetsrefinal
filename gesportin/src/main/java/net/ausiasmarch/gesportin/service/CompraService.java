@@ -28,6 +28,12 @@ public class CompraService {
     private FacturaRepository oFacturaRepository;
 
     @Autowired
+    private ArticuloService oArticuloService;
+
+    @Autowired
+    private FacturaService oFacturaService;
+
+    @Autowired
     private AleatorioService oAleatorioService;
 
     public CompraEntity get(Long id) {
@@ -78,14 +84,14 @@ public class CompraService {
             if (totalArticulos > 0) {
                 List<ArticuloEntity> articulos = oArticuloRepository.findAll();
                 ArticuloEntity articulo = articulos.get(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, articulos.size() - 1));
-                //compra.setIdArticulo(articulo.getId());
+                compra.setArticulo(oArticuloService.getOneRandom());
                 //compra.setPrecio(articulo.getPrecio());
             }
             Long totalFacturas = oFacturaRepository.count();
             if (totalFacturas > 0) {
                 List<FacturaEntity> facturas = oFacturaRepository.findAll();
                 FacturaEntity factura = facturas.get(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, facturas.size() - 1));
-                //compra.setIdFactura(factura.getId());
+                compra.setFactura(oFacturaService.getOneRandom());
             }
             oCompraRepository.save(compra);
         }

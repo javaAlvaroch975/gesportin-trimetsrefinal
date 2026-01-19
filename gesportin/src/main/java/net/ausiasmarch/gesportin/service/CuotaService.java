@@ -19,6 +19,9 @@ public class CuotaService {
     @Autowired
     private CuotaRepository oCuotaRepository;
 
+    @Autowired
+    private EquipoService oEquipoService;
+
     public CuotaEntity get(Long id) {
         return oCuotaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cuota no encontrado con id: " + id));
@@ -72,7 +75,7 @@ public class CuotaService {
             cuota.setDescripcion(nombres[random.nextInt(nombres.length)] + " " + (random.nextInt(9000) + 1000));
             cuota.setCantidad(BigDecimal.valueOf(random.nextDouble() * 100.0 + 1.0));
             cuota.setFecha(LocalDateTime.now().minusDays(random.nextInt(365)));
-            // cuota.setEquipo((Equipo) (random.nextInt(5) + 1));
+            cuota.setEquipo(oEquipoService.getOneRandom());
             oCuotaRepository.save(cuota);
 
         }
