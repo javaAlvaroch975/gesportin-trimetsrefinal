@@ -37,18 +37,23 @@ public class FacturaService {
     }
 
     public FacturaEntity update(FacturaEntity oFacturaEntity) {
-        FacturaEntity facturaExistente = oFacturaRepository.findById(oFacturaEntity.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Factura no encontrado con id: " + oFacturaEntity.getId()));
-        facturaExistente.setUsuario(oUsuarioService.get(oFacturaEntity.getUsuario().getId()));
-        facturaExistente.setFecha(oFacturaEntity.getFecha());
-        return oFacturaRepository.save(facturaExistente);
+        FacturaEntity oFacturaExistente = oFacturaRepository.findById(oFacturaEntity.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Factura no encontrado con id: " + oFacturaEntity.getId()));
+        oFacturaExistente.setUsuario(oUsuarioService.get(oFacturaEntity.getUsuario().getId()));
+        oFacturaExistente.setFecha(oFacturaEntity.getFecha());
+        return oFacturaRepository.save(oFacturaExistente);
     }
 
     public Long delete(Long id) {
-        FacturaEntity factura = oFacturaRepository.findById(id)
+        FacturaEntity oFactura = oFacturaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Factura no encontrado con id: " + id));
-        oFacturaRepository.delete(factura);
+        oFacturaRepository.delete(oFactura);
         return id;
+    }
+
+    public Long count() {
+        return oFacturaRepository.count();
     }
 
     public Long empty() {
@@ -57,16 +62,12 @@ public class FacturaService {
         return 0L;
     }
 
-    public Long count() {
-        return oFacturaRepository.count();
-    }
-
     public Long fill(Long cantidad) {
         for (int i = 0; i < cantidad; i++) {
-            FacturaEntity factura = new FacturaEntity();
-            factura.setFecha(LocalDateTime.now());
-            factura.setUsuario(oUsuarioService.getOneRandom());
-            oFacturaRepository.save(factura);
+            FacturaEntity oFactura = new FacturaEntity();
+            oFactura.setFecha(LocalDateTime.now());
+            oFactura.setUsuario(oUsuarioService.getOneRandom());
+            oFacturaRepository.save(oFactura);
         }
         return cantidad;
     }

@@ -65,57 +65,47 @@ public class ComentarioartService {
         return oComentarioartRepository.count();
     }
 
-    // ----------------------------CRUD---------------------------------
     public ComentarioartEntity get(Long id) {
         return oComentarioartRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Comentarioart not found"));
-    }
-
-    public Long create(ComentarioartEntity oComentarioartEntity) {
-        // Si no se especifican id_articulo o id_usuario, generar valores aleatorios
-        // if (comentarioartEntity.getIdArticulo() == null) {
-        //     comentarioartEntity.setIdArticulo((Long) (long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 50));
-        // }
-        // if (comentarioartEntity.getIdUsuario() == null) {
-        //     comentarioartEntity.setIdUsuario((Long) (long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 50));
-        // }
-
-        oComentarioartEntity.setId(null);
-        oComentarioartEntity.setArticulo(oArticuloService.get(oComentarioartEntity.getArticulo().getId()));
-        oComentarioartEntity.setUsuario(oUsuarioService.get(oComentarioartEntity.getUsuario().getId()));
-
-        oComentarioartRepository.save(oComentarioartEntity);
-        return oComentarioartEntity.getId();
-    }
-
-    public Long update(ComentarioartEntity oComentarioartEntity) {
-        ComentarioartEntity oComentarioartExistente = oComentarioartRepository.findById(oComentarioartEntity.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Comentarioart not found"));
-        oComentarioartExistente.setContenido(oComentarioartEntity.getContenido());
-        oComentarioartExistente.setArticulo(oArticuloService.get(oComentarioartEntity.getArticulo().getId()));
-        oComentarioartExistente.setUsuario(oUsuarioService.get(oComentarioartEntity.getUsuario().getId()));
-        oComentarioartRepository.save(oComentarioartExistente);
-        return oComentarioartExistente.getId();
-    }
-
-    public Long delete(Long id) {
-        oComentarioartRepository.deleteById(id);
-        return id;
+                .orElseThrow(() -> new ResourceNotFoundException("Comentarioart no encontrado con id: " + id));
     }
 
     public Page<ComentarioartEntity> getPage(Pageable oPageable) {
         return oComentarioartRepository.findAll(oPageable);
     }
 
+    public ComentarioartEntity create(ComentarioartEntity oComentarioartEntity) {
+        oComentarioartEntity.setId(null);
+        oComentarioartEntity.setArticulo(oArticuloService.get(oComentarioartEntity.getArticulo().getId()));
+        oComentarioartEntity.setUsuario(oUsuarioService.get(oComentarioartEntity.getUsuario().getId()));
+        return oComentarioartRepository.save(oComentarioartEntity);
+    }
+
+    public ComentarioartEntity update(ComentarioartEntity oComentarioartEntity) {
+        ComentarioartEntity oComentarioartExistente = oComentarioartRepository.findById(oComentarioartEntity.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Comentarioart no encontrado con id: " + oComentarioartEntity.getId()));
+        oComentarioartExistente.setContenido(oComentarioartEntity.getContenido());
+        oComentarioartExistente.setArticulo(oArticuloService.get(oComentarioartEntity.getArticulo().getId()));
+        oComentarioartExistente.setUsuario(oUsuarioService.get(oComentarioartEntity.getUsuario().getId()));
+        return oComentarioartRepository.save(oComentarioartExistente);
+    }
+
+    public Long delete(Long id) {
+        ComentarioartEntity oComentarioart = oComentarioartRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Comentarioart no encontrado con id: " + id));
+        oComentarioartRepository.delete(oComentarioart);
+        return id;
+    }
+
     public Long count() {
         return oComentarioartRepository.count();
     }
 
-    // Vaciar tabla comentarioart
     public Long empty() {
-        Long total = oComentarioartRepository.count();
         oComentarioartRepository.deleteAll();
-        return total;
+        oComentarioartRepository.flush();
+        return 0L;
     }
 
 }

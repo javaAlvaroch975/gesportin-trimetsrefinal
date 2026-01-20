@@ -51,20 +51,20 @@ public class PuntuacionService {
     }
 
     public Long delete(Long id) {
-        PuntuacionEntity puntuacion = oPuntuacionRepository.findById(id)
+        PuntuacionEntity oPuntuacion = oPuntuacionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Puntuación no encontrado con id: " + id));
-        oPuntuacionRepository.delete(puntuacion);
+        oPuntuacionRepository.delete(oPuntuacion);
         return id;
+    }
+
+    public Long count() {
+        return oPuntuacionRepository.count();
     }
 
     public Long empty() {
         oPuntuacionRepository.deleteAll();
         oPuntuacionRepository.flush();
         return 0L;
-    }
-
-    public Long count() {
-        return oPuntuacionRepository.count();
     }
 
     public Long fill(Long cantidad) {

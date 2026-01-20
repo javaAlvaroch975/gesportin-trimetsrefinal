@@ -53,23 +53,20 @@ public class PagoService {
     }
 
     public Long delete(Long id) {
-        PagoEntity pago = oPagoRepository.findById(id)
+        PagoEntity oPago = oPagoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pago no encontrado con id: " + id));
-        oPagoRepository.delete(pago);
+        oPagoRepository.delete(oPago);
         return id;
     }
-
-
 
     public Long count() {
         return oPagoRepository.count();
     }
 
     public Long empty() {
-        Long total = oPagoRepository.count();
         oPagoRepository.deleteAll();
         oPagoRepository.flush();
-        return total;
+        return 0L;
     }
 
     public Long fill(Long cantidad) {
@@ -84,5 +81,5 @@ public class PagoService {
         return cantidad;
     }
 
-    
+
 }

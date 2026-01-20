@@ -37,18 +37,24 @@ public class EquipoService {
     }
 
     public EquipoEntity update(EquipoEntity oEquipoEntity) {
-        EquipoEntity oEquipoExistente = oEquipoRepository.findById(oEquipoEntity.getId()).orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado con id: " + oEquipoEntity.getId()));
+        EquipoEntity oEquipoExistente = oEquipoRepository.findById(oEquipoEntity.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Equipo no encontrado con id: " + oEquipoEntity.getId()));
         oEquipoExistente.setNombre(oEquipoEntity.getNombre());
         oEquipoExistente.setEntrenador(oUsuarioService.get(oEquipoEntity.getEntrenador().getId()));
         oEquipoExistente.setCategoria(oCategoriaService.get(oEquipoEntity.getCategoria().getId()));
-        return oEquipoRepository.save(oEquipoEntity);
+        return oEquipoRepository.save(oEquipoExistente);
     }
 
     public Long delete(Long id) {
-        EquipoEntity equipo = oEquipoRepository.findById(id)
+        EquipoEntity oEquipo = oEquipoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado con id: " + id));
-        oEquipoRepository.delete(equipo);
+        oEquipoRepository.delete(oEquipo);
         return id;
+    }
+
+    public Long count() {
+        return oEquipoRepository.count();
     }
 
     public Long empty() {
@@ -57,17 +63,13 @@ public class EquipoService {
         return 0L;
     }
 
-    public Long count() {
-        return oEquipoRepository.count();
-    }
-
     public Long fill(Long cantidad) {
         for (int i = 0; i < cantidad; i++) {
-            EquipoEntity equipo = new EquipoEntity();
-            equipo.setNombre("Equipo " + i);
-            equipo.setEntrenador(oUsuarioService.getOneRandom());
-            equipo.setCategoria(oCategoriaService.getOneRandom());
-            oEquipoRepository.save(equipo);
+            EquipoEntity oEquipo = new EquipoEntity();
+            oEquipo.setNombre("Equipo " + i);
+            oEquipo.setEntrenador(oUsuarioService.getOneRandom());
+            oEquipo.setCategoria(oCategoriaService.getOneRandom());
+            oEquipoRepository.save(oEquipo);
         }
         return cantidad;
     }

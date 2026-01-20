@@ -75,26 +75,26 @@ public class NoticiaService {
     }
 
     public Long delete(Long id) {
-        NoticiaEntity noticia = oNoticiaRepository.findById(id)
+        NoticiaEntity oNoticia = oNoticiaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Noticia no encontrado con id: " + id));
-        oNoticiaRepository.delete(noticia);
+        oNoticiaRepository.delete(oNoticia);
         return id;
-    }
-
-    public Long empty() {
-        Long total = oNoticiaRepository.count();
-        oNoticiaRepository.deleteAll();
-        return total;
     }
 
     public Long count() {
         return oNoticiaRepository.count();
     }
 
+    public Long empty() {
+        oNoticiaRepository.deleteAll();
+        oNoticiaRepository.flush();
+        return 0L;
+    }
+
     public Long fill(Long cantidad) {
         for (long j = 0; j < cantidad; j++) {
-            NoticiaEntity noticia = new NoticiaEntity();
-            noticia.setTitulo(
+            NoticiaEntity oNoticia = new NoticiaEntity();
+            oNoticia.setTitulo(
                     alFrases.get(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, alFrases.size() - 1)));
             String contenidoGenerado = "";
             int numFrases = oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 30);
@@ -105,11 +105,11 @@ public class NoticiaService {
                     contenidoGenerado += "\n";
                 }
             }
-            noticia.setContenido(contenidoGenerado.trim());
-            noticia.setFecha(LocalDateTime.now());
-            noticia.setClub(oClubService.getOneRandom());
-            noticia.setImagen(null);
-            oNoticiaRepository.save(noticia);
+            oNoticia.setContenido(contenidoGenerado.trim());
+            oNoticia.setFecha(LocalDateTime.now());
+            oNoticia.setClub(oClubService.getOneRandom());
+            oNoticia.setImagen(null);
+            oNoticiaRepository.save(oNoticia);
         }
         return cantidad;
     }

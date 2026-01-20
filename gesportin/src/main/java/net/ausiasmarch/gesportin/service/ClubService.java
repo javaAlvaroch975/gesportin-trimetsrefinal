@@ -47,10 +47,14 @@ public class ClubService {
     }
 
     public Long delete(Long id) {
-        ClubEntity club = oClubRepository.findById(id)
+        ClubEntity oClub = oClubRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Club no encontrado con id: " + id));
-        oClubRepository.delete(club);
+        oClubRepository.delete(oClub);
         return id;
+    }
+
+    public Long count() {
+        return oClubRepository.count();
     }
 
     public Long empty() {
@@ -59,19 +63,15 @@ public class ClubService {
         return 0L;
     }
 
-    public Long count() {
-        return oClubRepository.count();
-    }
-
     public Long fill(Long cantidad) {
         for (int i = 0; i < cantidad; i++) {
-            ClubEntity club = new ClubEntity();
-            club.setNombre("Club " + i);
-            club.setDireccion("Dirección " + i);
-            club.setTelefono("600000" + i);
-            club.setFechaAlta(LocalDateTime.now());
-            // club.setImagen(("imagen" + i).getBytes());
-            oClubRepository.save(club);
+            ClubEntity oClub = new ClubEntity();
+            oClub.setNombre("Club " + i);
+            oClub.setDireccion("Dirección " + i);
+            oClub.setTelefono("600000" + i);
+            oClub.setFechaAlta(LocalDateTime.now());
+            // oClub.setImagen(("imagen" + i).getBytes());
+            oClubRepository.save(oClub);
         }
         return cantidad;
     }

@@ -64,20 +64,20 @@ public class TipoarticuloService {
     }
 
     public Long delete(Long id) {
-        TipoarticuloEntity tipoarticulo = oTipoarticuloRepository.findById(id)
+        TipoarticuloEntity oTipoarticulo = oTipoarticuloRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tipoarticulo no encontrado con id: " + id));
-        oTipoarticuloRepository.delete(tipoarticulo);
+        oTipoarticuloRepository.delete(oTipoarticulo);
         return id;
+    }
+
+    public Long count() {
+        return oTipoarticuloRepository.count();
     }
 
     public Long empty() {
         oTipoarticuloRepository.deleteAll();
         oTipoarticuloRepository.flush();
         return 0L;
-    }
-
-    public Long count() {
-        return oTipoarticuloRepository.count();
     }
 
     public Long fill(Long cantidad) {

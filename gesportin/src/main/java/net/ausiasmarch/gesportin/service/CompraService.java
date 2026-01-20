@@ -58,10 +58,14 @@ public class CompraService {
     }
 
     public Long delete(Long id) {
-        CompraEntity compra = oCompraRepository.findById(id)
+        CompraEntity oCompra = oCompraRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Compra no encontrada con id: " + id));
-        oCompraRepository.delete(compra);
+        oCompraRepository.delete(oCompra);
         return id;
+    }
+
+    public Long count() {
+        return oCompraRepository.count();
     }
 
     public Long empty() {
@@ -70,28 +74,24 @@ public class CompraService {
         return 0L;
     }
 
-    public Long count() {
-        return oCompraRepository.count();
-    }
-
     public Long fill(Long cantidad) {
         for (long j = 0; j < cantidad; j++) {
-            CompraEntity compra = new CompraEntity();
-            compra.setCantidad(oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
+            CompraEntity oCompra = new CompraEntity();
+            oCompra.setCantidad(oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50));
             Long totalArticulos = oArticuloRepository.count();
             if (totalArticulos > 0) {
                 //List<ArticuloEntity> articulos = oArticuloRepository.findAll();
                 //ArticuloEntity articulo = articulos.get(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, articulos.size() - 1));
-                compra.setArticulo(oArticuloService.getOneRandom());
-                //compra.setPrecio(articulo.getPrecio());
+                oCompra.setArticulo(oArticuloService.getOneRandom());
+                //oCompra.setPrecio(articulo.getPrecio());
             }
             Long totalFacturas = oFacturaRepository.count();
             if (totalFacturas > 0) {
                 //List<FacturaEntity> facturas = oFacturaRepository.findAll();
                 //FacturaEntity factura = facturas.get(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, facturas.size() - 1));
-                compra.setFactura(oFacturaService.getOneRandom());
+                oCompra.setFactura(oFacturaService.getOneRandom());
             }
-            oCompraRepository.save(compra);
+            oCompraRepository.save(oCompra);
         }
         return cantidad;
     }

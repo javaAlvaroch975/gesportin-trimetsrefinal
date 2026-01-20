@@ -44,26 +44,31 @@ public class LigaService {
         }
     }
 
-    public LigaEntity create(LigaEntity liga) {
-        liga.setId(null);
-        return oLigaRepository.save(liga);
+    public LigaEntity create(LigaEntity oLigaEntity) {
+        oLigaEntity.setId(null);
+        return oLigaRepository.save(oLigaEntity);
     }
 
-    public LigaEntity update(LigaEntity liga) {
-        LigaEntity ligaExistente = oLigaRepository.findById(liga.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Liga no encontrado con id: " + liga.getId()));
+    public LigaEntity update(LigaEntity oLigaEntity) {
+        LigaEntity oLigaExistente = oLigaRepository.findById(oLigaEntity.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Liga no encontrado con id: " + oLigaEntity.getId()));
 
-        ligaExistente.setNombre(liga.getNombre());
-        // ligaExistente.setIdEquipo(liga.getIdEquipo());
+        oLigaExistente.setNombre(oLigaEntity.getNombre());
+        // oLigaExistente.setIdEquipo(oLigaEntity.getIdEquipo());
 
-        return oLigaRepository.save(ligaExistente);
+        return oLigaRepository.save(oLigaExistente);
     }
 
     public Long delete(Long id) {
-        LigaEntity liga = oLigaRepository.findById(id)
+        LigaEntity oLiga = oLigaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Liga no encontrado con id: " + id));
-        oLigaRepository.delete(liga);
+        oLigaRepository.delete(oLiga);
         return id;
+    }
+
+    public Long count() {
+        return oLigaRepository.count();
     }
 
     public Long empty() {
@@ -72,16 +77,12 @@ public class LigaService {
         return 0L;
     }
 
-    public Long count() {
-        return oLigaRepository.count();
-    }
-
     public Long fill(Long cantidad) {
         for (int i = 0; i < cantidad; i++) {
-            LigaEntity liga = new LigaEntity();
-            liga.setNombre(nombres[i % nombres.length] + " " + (i + 1));
-            liga.setEquipo(oEquipoService.getOneRandom());
-            oLigaRepository.save(liga);
+            LigaEntity oLiga = new LigaEntity();
+            oLiga.setNombre(nombres[i % nombres.length] + " " + (i + 1));
+            oLiga.setEquipo(oEquipoService.getOneRandom());
+            oLigaRepository.save(oLiga);
         }
         return cantidad;
     }

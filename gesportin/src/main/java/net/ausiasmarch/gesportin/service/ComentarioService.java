@@ -62,48 +62,47 @@ public class ComentarioService {
         return oComentariosRepository.count();
     }
 
-    // ----------------------------CRUD---------------------------------
     public ComentarioEntity get(Long id) {
         return oComentariosRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Comentario not found"));
-    }
-
-    public Long create(ComentarioEntity oComentarioEntity) {
-        oComentarioEntity.setId(null);
-        oComentarioEntity.setNoticia(oNoticaService.get(oComentarioEntity.getNoticia().getId()));
-        oComentarioEntity.setUsuario(oUsuarioService.get(oComentarioEntity.getUsuario().getId()));
-        oComentariosRepository.save(oComentarioEntity);
-        return oComentarioEntity.getId();
-    }
-
-    public Long update(ComentarioEntity oComentarioEntity) {
-        ComentarioEntity existingComentario = oComentariosRepository.findById(oComentarioEntity.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Comentario not found"));
-        existingComentario.setContenido(oComentarioEntity.getContenido());
-        existingComentario.setNoticia(oNoticaService.get(oComentarioEntity.getNoticia().getId()));
-        existingComentario.setUsuario(oUsuarioService.get(oComentarioEntity.getUsuario().getId()));
-        oComentariosRepository.save(existingComentario);
-        return existingComentario.getId();
-    }
-
-    public Long delete(Long id) {
-        oComentariosRepository.deleteById(id);
-        return id;
+                .orElseThrow(() -> new ResourceNotFoundException("Comentario no encontrado con id: " + id));
     }
 
     public Page<ComentarioEntity> getPage(Pageable oPageable) {
         return oComentariosRepository.findAll(oPageable);
     }
 
+    public ComentarioEntity create(ComentarioEntity oComentarioEntity) {
+        oComentarioEntity.setId(null);
+        oComentarioEntity.setNoticia(oNoticaService.get(oComentarioEntity.getNoticia().getId()));
+        oComentarioEntity.setUsuario(oUsuarioService.get(oComentarioEntity.getUsuario().getId()));
+        return oComentariosRepository.save(oComentarioEntity);
+    }
+
+    public ComentarioEntity update(ComentarioEntity oComentarioEntity) {
+        ComentarioEntity oComentarioExistente = oComentariosRepository.findById(oComentarioEntity.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Comentario no encontrado con id: " + oComentarioEntity.getId()));
+        oComentarioExistente.setContenido(oComentarioEntity.getContenido());
+        oComentarioExistente.setNoticia(oNoticaService.get(oComentarioEntity.getNoticia().getId()));
+        oComentarioExistente.setUsuario(oUsuarioService.get(oComentarioEntity.getUsuario().getId()));
+        return oComentariosRepository.save(oComentarioExistente);
+    }
+
+    public Long delete(Long id) {
+        ComentarioEntity oComentario = oComentariosRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Comentario no encontrado con id: " + id));
+        oComentariosRepository.delete(oComentario);
+        return id;
+    }
+
     public Long count() {
         return oComentariosRepository.count();
     }
 
-    // Vaciar tabla comentarios
     public Long empty() {
-        Long total = oComentariosRepository.count();
         oComentariosRepository.deleteAll();
-        return total;
+        oComentariosRepository.flush();
+        return 0L;
     }
 
 }

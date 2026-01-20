@@ -49,20 +49,20 @@ public class CuotaService {
     }
 
     public Long delete(Long id) {
-        CuotaEntity cuota = oCuotaRepository.findById(id)
+        CuotaEntity oCuota = oCuotaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cuota no encontrado con id: " + id));
-        oCuotaRepository.delete(cuota);
+        oCuotaRepository.delete(oCuota);
         return id;
+    }
+
+    public Long count() {
+        return oCuotaRepository.count();
     }
 
     public Long empty() {
         oCuotaRepository.deleteAll();
         oCuotaRepository.flush();
         return 0L;
-    }
-
-    public Long count() {
-        return oCuotaRepository.count();
     }
 
     public Long fill(Long cantidad) {
@@ -72,12 +72,12 @@ public class CuotaService {
         String[] nombres = {"Matrícula", "Mensualidad", "Cuota Extra", "Inscripción", "Cuota Anual"};
 
         for (int i = 0; i < cantidad; i++) {
-            CuotaEntity cuota = new CuotaEntity();
-            cuota.setDescripcion(nombres[random.nextInt(nombres.length)] + " " + (random.nextInt(9000) + 1000));
-            cuota.setCantidad(BigDecimal.valueOf(random.nextDouble() * 100.0 + 1.0));
-            cuota.setFecha(LocalDateTime.now().minusDays(random.nextInt(365)));
-            cuota.setEquipo(oEquipoService.getOneRandom());
-            oCuotaRepository.save(cuota);
+            CuotaEntity oCuota = new CuotaEntity();
+            oCuota.setDescripcion(nombres[random.nextInt(nombres.length)] + " " + (random.nextInt(9000) + 1000));
+            oCuota.setCantidad(BigDecimal.valueOf(random.nextDouble() * 100.0 + 1.0));
+            oCuota.setFecha(LocalDateTime.now().minusDays(random.nextInt(365)));
+            oCuota.setEquipo(oEquipoService.getOneRandom());
+            oCuotaRepository.save(oCuota);
 
         }
 

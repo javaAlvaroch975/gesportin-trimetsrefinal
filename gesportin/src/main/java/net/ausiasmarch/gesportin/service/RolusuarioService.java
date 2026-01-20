@@ -68,10 +68,14 @@ public class RolusuarioService {
     }
 
     public Long delete(Long id) {
-        RolusuarioEntity tipoarticulo = oRolusuarioRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Tipoarticulo no encontrado con id: " + id));
-        oRolusuarioRepository.delete(tipoarticulo);
+        RolusuarioEntity oRolusuario = oRolusuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Rolusuario no encontrado con id: " + id));
+        oRolusuarioRepository.delete(oRolusuario);
         return id;
+    }
+
+    public Long count() {
+        return oRolusuarioRepository.count();
     }
 
     public Long empty() {
@@ -80,15 +84,11 @@ public class RolusuarioService {
         return 0L;
     }
 
-    public Long count() {
-        return oRolusuarioRepository.count();
-    }
-
     public Long fill() {
         for (int i = 0; i < descripciones.length; i++) {
-            RolusuarioEntity oTipoarticulo = new RolusuarioEntity();
-            oTipoarticulo.setDescripcion(descripciones[i % descripciones.length] + " " + (i + 1));
-            oRolusuarioRepository.save(oTipoarticulo);
+            RolusuarioEntity oRolusuario = new RolusuarioEntity();
+            oRolusuario.setDescripcion(descripciones[i % descripciones.length] + " " + (i + 1));
+            oRolusuarioRepository.save(oRolusuario);
         }
         return (long) descripciones.length;
     }

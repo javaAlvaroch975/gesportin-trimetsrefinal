@@ -40,9 +40,9 @@ public class TipousuarioService {
 
     public Long fill() {
         for (int i = 0; i < TIPOS.length; i++) {
-            TipousuarioEntity tipousuario = new TipousuarioEntity();
-            tipousuario.setDescripcion(TIPOS[i % TIPOS.length]);
-            tipousuarioRepository.save(tipousuario);
+            TipousuarioEntity oTipousuario = new TipousuarioEntity();
+            oTipousuario.setDescripcion(TIPOS[i % TIPOS.length]);
+            tipousuarioRepository.save(oTipousuario);
         }
         return this.count();
     }
