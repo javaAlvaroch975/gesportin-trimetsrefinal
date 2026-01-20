@@ -38,6 +38,8 @@ public class PartidoService {
 
     public PartidoEntity create(PartidoEntity partido) {
         partido.setId(null);
+        // Validar y obtener la Liga usando el servicio
+        partido.setLiga(oLigaService.get(partido.getLiga().getId()));
         return oPartidoRepository.save(partido);
     }
 
@@ -45,7 +47,8 @@ public class PartidoService {
         PartidoEntity existingPartido = oPartidoRepository.findById(partido.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Partido no encontrado con id: " + partido.getId()));
         existingPartido.setRival(partido.getRival());
-        existingPartido.setLiga(oLigaService.getOneRandom());
+        // Validar y obtener la Liga usando el servicio con el ID proporcionado
+        existingPartido.setLiga(oLigaService.get(partido.getLiga().getId()));
         existingPartido.setLocal(partido.getLocal());
         existingPartido.setResultado(partido.getResultado());
         return oPartidoRepository.save(existingPartido);
