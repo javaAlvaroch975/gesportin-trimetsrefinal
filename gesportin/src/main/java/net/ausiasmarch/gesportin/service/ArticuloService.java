@@ -57,19 +57,18 @@ public class ArticuloService {
 
     public ArticuloEntity create(ArticuloEntity oArticuloEntity) {
         oArticuloEntity.setId(null);
-        oArticuloEntity.setTipoArticulo(oArticuloEntity.getTipoArticulo());
+        oArticuloEntity.setTipoarticulo(oTipoarticuloService.get(oArticuloEntity.getTipoarticulo().getId()));
         return oArticuloRepository.save(oArticuloEntity);
     }
 
     public ArticuloEntity update(ArticuloEntity oArticuloEntity) {
         ArticuloEntity oArticuloExistente = oArticuloRepository.findById(oArticuloEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Articulo no encontrado con id: " + oArticuloEntity.getId()));
-
         oArticuloExistente.setDescripcion(oArticuloEntity.getDescripcion());
         oArticuloExistente.setPrecio(oArticuloEntity.getPrecio());
         oArticuloExistente.setDescuento(oArticuloEntity.getDescuento());
         oArticuloExistente.setImagen(oArticuloEntity.getImagen());
-        oArticuloExistente.setTipoArticulo(oArticuloEntity.getTipoArticulo());
+        oArticuloExistente.setTipoarticulo(oTipoarticuloService.get(oArticuloEntity.getTipoarticulo().getId()));
         return oArticuloRepository.save(oArticuloExistente);
     }
 

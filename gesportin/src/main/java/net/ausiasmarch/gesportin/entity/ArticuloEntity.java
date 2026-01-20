@@ -43,7 +43,7 @@ public class ArticuloEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_tipoarticulo")
-    private TipoarticuloEntity tipoArticulo;
+    private TipoarticuloEntity tipoarticulo;
 
     @OneToMany(mappedBy = "articulo", fetch = FetchType.LAZY)
     private java.util.List<ComentarioartEntity> comentarioarts;
