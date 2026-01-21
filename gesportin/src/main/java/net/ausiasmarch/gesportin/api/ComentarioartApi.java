@@ -38,12 +38,12 @@ public class ComentarioartApi {
     }
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody ComentarioartEntity comentarioart) {
+    public ResponseEntity<ComentarioartEntity> create(@RequestBody ComentarioartEntity comentarioart) {
         return ResponseEntity.ok(oComentarioartService.create(comentarioart));
     }
 
     @PutMapping
-    public ResponseEntity<Long> update(@RequestBody ComentarioartEntity comentarioart) {
+    public ResponseEntity<ComentarioartEntity> update(@RequestBody ComentarioartEntity comentarioart) {
         return ResponseEntity.ok(oComentarioartService.update(comentarioart));
     }
 
@@ -54,7 +54,7 @@ public class ComentarioartApi {
 
     @PostMapping("/fill/{cantidad}")
     public ResponseEntity<Long> fill(@PathVariable Long cantidad) {
-        return ResponseEntity.ok(oComentarioartService.rellenaComentarios(cantidad));
+        return ResponseEntity.ok(oComentarioartService.fill(cantidad));
     }
 
     @DeleteMapping("/empty")

@@ -23,6 +23,9 @@ public class ComentarioService {
     @Autowired
     UsuarioService oUsuarioService;
 
+    @Autowired
+    NoticiaService oNoticaService;
+
     ArrayList<String> alComentarios = new ArrayList<>();
 
     public ComentarioService() {
@@ -43,68 +46,63 @@ public class ComentarioService {
         alComentarios.add("Muy útil para mi proyecto actual.");
     }
 
-    public Long rellenaComentarios(Long numComentarios) {
-        for (long j = 0; j < numComentarios; j++) {
-            ComentarioEntity oComentariosEntity = new ComentarioEntity();    
-            String contenidoGenerado = "";
-            int numFrases = oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 3);
-            for (int i = 1; i <= numFrases; i++) {
-                contenidoGenerado += alComentarios
-                        .get(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, alComentarios.size() - 1)) + " ";
-            }
-            oComentariosEntity.setContenido(contenidoGenerado.trim());        
-            oComentariosEntity.setUsuario(oUsuarioService.getOneRandom());
-            oComentariosRepository.save(oComentariosEntity);
-        }
-        return oComentariosRepository.count();
-    }
-
-    // ----------------------------CRUD---------------------------------
     public ComentarioEntity get(Long id) {
         return oComentariosRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Comentario not found"));
-    }
-
-    public Long create(ComentarioEntity comentariosEntity) {
-        // Si no se especifican id_noticia o id_usuario, generar valores aleatorios
-        // if (comentariosEntity.getIdNoticia() == null) {
-        //     comentariosEntity.setIdNoticia((Long) (long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 50));
-        // }
-        if (comentariosEntity.getIdUsuario() == null) {
-            comentariosEntity.setIdUsuario((Long) (long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 50));
-        }
-        oComentariosRepository.save(comentariosEntity);
-        return comentariosEntity.getId();
-    }
-
-    public Long update(ComentarioEntity comentariosEntity) {
-        ComentarioEntity existingComentario = oComentariosRepository.findById(comentariosEntity.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Comentario not found"));
-        existingComentario.setContenido(comentariosEntity.getContenido());
-        // existingComentario.setIdNoticia(comentariosEntity.getIdNoticia());
-        existingComentario.setIdUsuario(comentariosEntity.getIdUsuario());
-        oComentariosRepository.save(existingComentario);
-        return existingComentario.getId();
-    }
-
-    public Long delete(Long id) {
-        oComentariosRepository.deleteById(id);
-        return id;
+                .orElseThrow(() -> new ResourceNotFoundException("Comentario no encontrado con id: " + id));
     }
 
     public Page<ComentarioEntity> getPage(Pageable oPageable) {
         return oComentariosRepository.findAll(oPageable);
     }
 
+    public ComentarioEntity create(ComentarioEntity oComentarioEntity) {
+        oComentarioEntity.setId(null);
+        oComentarioEntity.setNoticia(oNoticaService.get(oComentarioEntity.getNoticia().getId()));
+        oComentarioEntity.setUsuario(oUsuarioService.get(oComentarioEntity.getUsuario().getId()));
+        return oComentariosRepository.save(oComentarioEntity);
+    }
+
+    public ComentarioEntity update(ComentarioEntity oComentarioEntity) {
+        ComentarioEntity oComentarioExistente = oComentariosRepository.findById(oComentarioEntity.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Comentario no encontrado con id: " + oComentarioEntity.getId()));
+        oComentarioExistente.setContenido(oComentarioEntity.getContenido());
+        oComentarioExistente.setNoticia(oNoticaService.get(oComentarioEntity.getNoticia().getId()));
+        oComentarioExistente.setUsuario(oUsuarioService.get(oComentarioEntity.getUsuario().getId()));
+        return oComentariosRepository.save(oComentarioExistente);
+    }
+
+    public Long delete(Long id) {
+        ComentarioEntity oComentario = oComentariosRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Comentario no encontrado con id: " + id));
+        oComentariosRepository.delete(oComentario);
+        return id;
+    }
+
     public Long count() {
         return oComentariosRepository.count();
     }
 
-    // Vaciar tabla comentarios
     public Long empty() {
-        Long total = oComentariosRepository.count();
         oComentariosRepository.deleteAll();
-        return total;
+        oComentariosRepository.flush();
+        return 0L;
+    }
+
+    public Long fill(Long numComentarios) {
+        for (long j = 0; j < numComentarios; j++) {
+            ComentarioEntity oComentariosEntity = new ComentarioEntity();
+            String contenidoGenerado = "";
+            int numFrases = oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 3);
+            for (int i = 1; i <= numFrases; i++) {
+                contenidoGenerado += alComentarios
+                        .get(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, alComentarios.size() - 1)) + " ";
+            }
+            oComentariosEntity.setContenido(contenidoGenerado.trim());
+            oComentariosEntity.setUsuario(oUsuarioService.getOneRandom());
+            oComentariosRepository.save(oComentariosEntity);
+        }
+        return oComentariosRepository.count();
     }
 
 }

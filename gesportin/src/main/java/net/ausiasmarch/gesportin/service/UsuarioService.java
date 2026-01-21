@@ -24,6 +24,9 @@ public class UsuarioService {
     @Autowired
     private TipousuarioService oTipousuarioService; 
 
+    @Autowired
+    private RolusuarioService oRolusuarioService;
+
     private final Random random = new Random();
 
     private final String[] nombres = {
@@ -66,6 +69,7 @@ public class UsuarioService {
         oUsuarioEntity.setId(null);
         oUsuarioEntity.setTipousuario(oTipousuarioService.get(oUsuarioEntity.getTipousuario().getId()));
         oUsuarioEntity.setClub(oClubService.get(oUsuarioEntity.getClub().getId()));
+        oUsuarioEntity.setRolusuario(oRolusuarioService.get(oUsuarioEntity.getRolusuario().getId()));
         return oUsuarioRepository.save(oUsuarioEntity);
     }
 
@@ -82,17 +86,19 @@ public class UsuarioService {
         oUsuarioExistente.setGenero(oUsuarioEntity.getGenero());
         oUsuarioExistente.setTipousuario(oTipousuarioService.get(oUsuarioEntity.getTipousuario().getId()));
         oUsuarioExistente.setClub(oClubService.get(oUsuarioEntity.getClub().getId()));
-
-
-
+        oUsuarioExistente.setRolusuario(oRolusuarioService.get(oUsuarioEntity.getRolusuario().getId()));
         return oUsuarioRepository.save(oUsuarioExistente);
     }
 
     public Long delete(Long id) {
-        UsuarioEntity usuario = oUsuarioRepository.findById(id)
+        UsuarioEntity oUsuario = oUsuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
-        oUsuarioRepository.delete(usuario);
+        oUsuarioRepository.delete(oUsuario);
         return id;
+    }
+
+    public Long count() {
+        return oUsuarioRepository.count();
     }
 
     public Long empty() {
@@ -101,23 +107,20 @@ public class UsuarioService {
         return 0L;
     }
 
-    public Long count() {
-        return oUsuarioRepository.count();
-    }
-
     public Long fill(Long cantidad) {
         for (int i = 0; i < cantidad; i++) {
-            UsuarioEntity usuario = new UsuarioEntity();
-            usuario.setNombre(nombres[random.nextInt(nombres.length)]);
-            usuario.setApellido1(apellidos[random.nextInt(apellidos.length)]);
-            usuario.setApellido2(apellidos[random.nextInt(apellidos.length)]);
-            usuario.setUsername("user" + (i + 1) + "_" + random.nextInt(1000));
-            usuario.setPassword("password" + (i + 1));
-            usuario.setFechaAlta(LocalDateTime.now().minusDays(random.nextInt(365)));
-            usuario.setGenero(random.nextInt(2));
-            usuario.setTipousuario(oTipousuarioService.getOneRandom());
-            usuario.setClub(oClubService.getOneRandom());
-            oUsuarioRepository.save(usuario);
+            UsuarioEntity oUsuario = new UsuarioEntity();
+            oUsuario.setNombre(nombres[random.nextInt(nombres.length)]);
+            oUsuario.setApellido1(apellidos[random.nextInt(apellidos.length)]);
+            oUsuario.setApellido2(apellidos[random.nextInt(apellidos.length)]);
+            oUsuario.setUsername("user" + (i + 1) + "_" + random.nextInt(1000));
+            oUsuario.setPassword("password" + (i + 1));
+            oUsuario.setFechaAlta(LocalDateTime.now().minusDays(random.nextInt(365)));
+            oUsuario.setGenero(random.nextInt(2));
+            oUsuario.setTipousuario(oTipousuarioService.getOneRandom());
+            oUsuario.setClub(oClubService.getOneRandom());
+            oUsuario.setRolusuario(oRolusuarioService.getOneRandom());
+            oUsuarioRepository.save(oUsuario);
         }
         return cantidad;
     }

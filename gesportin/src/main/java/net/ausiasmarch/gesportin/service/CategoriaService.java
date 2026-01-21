@@ -24,41 +24,44 @@ public class CategoriaService {
     private static final String[] CATEGORIAS = {"Querubín", "Pre-benjamín", "Benjamín", "Alevín", "Infantil", "Cadete", "Juvenil", "Amateur"};
 
     public CategoriaEntity get(Long id) {
-        return oCategoriaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Categoria no encontrado con id: " + id));
+        return oCategoriaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Categoria no encontrado con id: " + id));
     }
 
     public Page<CategoriaEntity> getPage(Pageable pageable) {
         return oCategoriaRepository.findAll(pageable);
     }
 
-    public CategoriaEntity create(CategoriaEntity oCategoriaEntity) {        
+    public CategoriaEntity create(CategoriaEntity oCategoriaEntity) {
         oCategoriaEntity.setId(null);
         oCategoriaEntity.setTemporada(oTemporadaService.get(oCategoriaEntity.getTemporada().getId()));
         return oCategoriaRepository.save(oCategoriaEntity);
     }
 
     public CategoriaEntity update(CategoriaEntity oCategoriaEntity) {
-        CategoriaEntity oCategoriaExistente = oCategoriaRepository.findById(oCategoriaEntity.getId()).orElseThrow(() -> new ResourceNotFoundException("Categoria no encontrado con id: " + oCategoriaEntity.getId()));
+        CategoriaEntity oCategoriaExistente = oCategoriaRepository.findById(oCategoriaEntity.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Categoria no encontrado con id: " + oCategoriaEntity.getId()));
         oCategoriaExistente.setNombre(oCategoriaEntity.getNombre());
         oCategoriaExistente.setTemporada(oTemporadaService.get(oCategoriaEntity.getTemporada().getId()));
         return oCategoriaRepository.save(oCategoriaExistente);
     }
 
     public Long delete(Long id) {
-        CategoriaEntity categoria = oCategoriaRepository.findById(id)
+        CategoriaEntity oCategoria = oCategoriaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria no encontrado con id: " + id));
-        oCategoriaRepository.delete(categoria);
+        oCategoriaRepository.delete(oCategoria);
         return id;
+    }
+
+    public Long count() {
+        return oCategoriaRepository.count();
     }
 
     public Long empty() {
         oCategoriaRepository.deleteAll();
         oCategoriaRepository.flush();
         return 0L;
-    }
-
-    public Long count() {
-        return oCategoriaRepository.count();
     }
 
     public Long fill(Long cantidad) {

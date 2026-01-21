@@ -76,26 +76,26 @@ public class JugadorService {
         return id;
     }
 
+    public Long count() {
+        return oJugadorRepository.count();
+    }
+
     public Long empty() {
         oJugadorRepository.deleteAll();
         oJugadorRepository.flush();
         return 0L;
     }
 
-    public Long count() {
-        return oJugadorRepository.count();
-    }
-
     public Long fill(Long cantidad) {
         for (long j = 0; j < cantidad; j++) {
-            JugadorEntity jugador = new JugadorEntity();
-            jugador.setDorsal(oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 99));
-            jugador.setPosicion(posiciones.get(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, posiciones.size() - 1)));
-            jugador.setCapitan(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 1) == 1);
-            jugador.setImagen(null);
-            jugador.setUsuario(oUsuarioService.getOneRandom());
-            jugador.setEquipo(oEquipoService.getOneRandom());
-            oJugadorRepository.save(jugador);
+            JugadorEntity oJugador = new JugadorEntity();
+            oJugador.setDorsal(oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 99));
+            oJugador.setPosicion(posiciones.get(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, posiciones.size() - 1)));
+            oJugador.setCapitan(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 1) == 1);
+            oJugador.setImagen(null);
+            oJugador.setUsuario(oUsuarioService.getOneRandom());
+            oJugador.setEquipo(oEquipoService.getOneRandom());
+            oJugadorRepository.save(oJugador);
         }
         return cantidad;
     }

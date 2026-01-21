@@ -6,13 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import net.ausiasmarch.gesportin.entity.CuotaEntity;
-import net.ausiasmarch.gesportin.entity.JugadorEntity;
 import net.ausiasmarch.gesportin.entity.PagoEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
-import net.ausiasmarch.gesportin.repository.CuotaRepository;
-import net.ausiasmarch.gesportin.repository.JugadorRepository;
 import net.ausiasmarch.gesportin.repository.PagoRepository;
 
 @Service
@@ -22,89 +17,69 @@ public class PagoService {
     PagoRepository oPagoRepository;
 
     @Autowired
-    CuotaRepository oCuotaRepository;
+    CuotaService oCuotaService;
 
     @Autowired
-    JugadorRepository oJugadorRepository;
+    JugadorService oJugadorService;
 
     @Autowired
     AleatorioService oAleatorioService;
 
-    // ----------------------------CRUD---------------------------------
     public PagoEntity get(Long id) {
         return oPagoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pago no encontrado con id: " + id));
-    }
-
-    public PagoEntity create(PagoEntity oPagoEntity) {
-        oPagoEntity.setId(null);
-        oPagoEntity.setFecha(LocalDateTime.now());
-        if (oPagoEntity.getCuota() == null || oPagoEntity.getJugador() == null) {
-            throw new IllegalArgumentException("La cuota y el jugador no pueden ser nulos");
-        }
-        oPagoEntity.setCuota(oCuotaRepository.findById(oPagoEntity.getCuota().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Cuota no encontrada con id: " + oPagoEntity.getCuota().getId())));
-        oPagoEntity.setJugador(oJugadorRepository.findById(oPagoEntity.getJugador().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado con id: " + oPagoEntity.getJugador().getId())));
-        return oPagoRepository.save(oPagoEntity);
-    }
-
-    public PagoEntity update(PagoEntity oPagoEntity) {
-        PagoEntity oPagoExistente = oPagoRepository.findById(oPagoEntity.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Pago no encontrado con id: " + oPagoEntity.getId()));    
-        oPagoExistente.setCuota(oCuotaRepository.findById(oPagoEntity.getCuota().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Cuota no encontrada con id: " + oPagoEntity.getCuota().getId())));
-        oPagoExistente.setJugador(oJugadorRepository.findById(oPagoEntity.getJugador().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado con id: " + oPagoEntity.getJugador().getId())));
-        oPagoExistente.setAbonado(oPagoEntity.getAbonado());
-        oPagoExistente.setFecha(oPagoEntity.getFecha());
-        return oPagoRepository.save(oPagoExistente);
-    }
-
-    public Long delete(Long id) {
-        PagoEntity pago = oPagoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Pago no encontrado con id: " + id));
-        oPagoRepository.delete(pago);
-        return id;
     }
 
     public Page<PagoEntity> getPage(Pageable oPageable) {
         return oPagoRepository.findAll(oPageable);
     }
 
+    public PagoEntity create(PagoEntity oPagoEntity) {
+        oPagoEntity.setId(null);
+        oPagoEntity.setFecha(LocalDateTime.now());
+        oPagoEntity.setCuota(oCuotaService.get(oPagoEntity.getCuota().getId()));
+        oPagoEntity.setJugador(oJugadorService.get(oPagoEntity.getJugador().getId()));
+        return oPagoRepository.save(oPagoEntity);
+    }
+
+    public PagoEntity update(PagoEntity oPagoEntity) {
+        PagoEntity oPagoExistente = oPagoRepository.findById(oPagoEntity.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Pago no encontrado con id: " + oPagoEntity.getId()));
+        oPagoExistente.setCuota(oCuotaService.get(oPagoEntity.getCuota().getId()));
+        oPagoExistente.setJugador(oJugadorService.get(oPagoEntity.getJugador().getId()));
+        oPagoExistente.setAbonado(oPagoEntity.getAbonado());
+        oPagoExistente.setFecha(oPagoEntity.getFecha());
+        return oPagoRepository.save(oPagoExistente);
+    }
+
+    public Long delete(Long id) {
+        PagoEntity oPago = oPagoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Pago no encontrado con id: " + id));
+        oPagoRepository.delete(oPago);
+        return id;
+    }
+
     public Long count() {
         return oPagoRepository.count();
     }
 
-    // vaciar tabla pago
     public Long empty() {
-        Long total = oPagoRepository.count();
         oPagoRepository.deleteAll();
         oPagoRepository.flush();
-        return total;
+        return 0L;
     }
 
-    // llenar tabla pago con datos de prueba
     public Long fill(Long cantidad) {
         for (int i = 0; i < cantidad; i++) {
-
-            Long idCuotaAleatorio = (long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50);
-            Long idJugadorAleatorio = (long) oAleatorioService.generarNumeroAleatorioEnteroEnRango(1, 50);
-
-            CuotaEntity cuota = oCuotaRepository.findById(idCuotaAleatorio)
-                    .orElseThrow(() -> new ResourceNotFoundException("Cuota no encontrada con id: " + idCuotaAleatorio));
-
-            JugadorEntity jugador = oJugadorRepository.findById(idJugadorAleatorio)
-                    .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado con id: " + idJugadorAleatorio));
-
-            PagoEntity pago = new PagoEntity();
-            pago.setCuota(cuota);
-            pago.setJugador(jugador);
-            pago.setAbonado(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 1));
-            pago.setFecha(LocalDateTime.now());
-
-            oPagoRepository.save(pago);
+            PagoEntity oPagoNuevo = new PagoEntity();
+            oPagoNuevo.setCuota(oCuotaService.getOneRandom());
+            oPagoNuevo.setJugador(oJugadorService.getOneRandom());
+            oPagoNuevo.setAbonado(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 1));
+            oPagoNuevo.setFecha(LocalDateTime.now());
+            oPagoRepository.save(oPagoNuevo);
         }
         return cantidad;
     }
+
+
 }
