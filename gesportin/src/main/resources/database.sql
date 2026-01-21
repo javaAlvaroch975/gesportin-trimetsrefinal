@@ -1,28 +1,27 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
--- Host: database:3306
--- Generation Time: Jan 20, 2026 at 03:01 PM
--- Server version: 8.1.0
--- PHP Version: 8.2.10
+-- Servidor: database:3306
+-- Tiempo de generación: 21-01-2026 a las 09:00:24
+-- Versión del servidor: 8.4.5
+-- Versión de PHP: 8.2.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
 --
--- Database: `gesportin`
+-- Base de datos: `gesportin`
 --
-
--- --------------------------------------------------------
-
 
 CREATE DATABASE IF NOT EXISTS `gesportin` DEFAULT CHARACTER SET utf32 COLLATE utf32_unicode_ci;
 USE `gesportin`;
 
+-- --------------------------------------------------------
+
 --
--- Table structure for table `articulo`
+-- Estructura de tabla para la tabla `articulo`
 --
 
 CREATE TABLE `articulo` (
@@ -38,7 +37,7 @@ CREATE TABLE `articulo` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `carrito`
+-- Estructura de tabla para la tabla `carrito`
 --
 
 CREATE TABLE `carrito` (
@@ -51,7 +50,7 @@ CREATE TABLE `carrito` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `categoria`
+-- Estructura de tabla para la tabla `categoria`
 --
 
 CREATE TABLE `categoria` (
@@ -63,7 +62,7 @@ CREATE TABLE `categoria` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `club`
+-- Estructura de tabla para la tabla `club`
 --
 
 CREATE TABLE `club` (
@@ -72,13 +71,13 @@ CREATE TABLE `club` (
   `dirección` varchar(255) CHARACTER SET utf32 COLLATE utf32_unicode_ci NOT NULL,
   `teléfono` varchar(255) CHARACTER SET utf32 COLLATE utf32_unicode_ci NOT NULL,
   `fecha_alta` datetime NOT NULL,
-  `imagen` longblob NOT NULL
+  `imagen` longblob
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `comentario`
+-- Estructura de tabla para la tabla `comentario`
 --
 
 CREATE TABLE `comentario` (
@@ -91,7 +90,20 @@ CREATE TABLE `comentario` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `compra`
+-- Estructura de tabla para la tabla `comentarioart`
+--
+
+CREATE TABLE `comentarioart` (
+  `id` bigint NOT NULL,
+  `contenido` text CHARACTER SET utf32 COLLATE utf32_unicode_ci NOT NULL,
+  `id_articulo` bigint NOT NULL,
+  `id_usuario` bigint NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `compra`
 --
 
 CREATE TABLE `compra` (
@@ -105,7 +117,7 @@ CREATE TABLE `compra` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `cuota`
+-- Estructura de tabla para la tabla `cuota`
 --
 
 CREATE TABLE `cuota` (
@@ -119,7 +131,7 @@ CREATE TABLE `cuota` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `equipo`
+-- Estructura de tabla para la tabla `equipo`
 --
 
 CREATE TABLE `equipo` (
@@ -132,7 +144,7 @@ CREATE TABLE `equipo` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `factura`
+-- Estructura de tabla para la tabla `factura`
 --
 
 CREATE TABLE `factura` (
@@ -144,7 +156,7 @@ CREATE TABLE `factura` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jugador`
+-- Estructura de tabla para la tabla `jugador`
 --
 
 CREATE TABLE `jugador` (
@@ -160,7 +172,7 @@ CREATE TABLE `jugador` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `liga`
+-- Estructura de tabla para la tabla `liga`
 --
 
 CREATE TABLE `liga` (
@@ -172,13 +184,13 @@ CREATE TABLE `liga` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `noticia`
+-- Estructura de tabla para la tabla `noticia`
 --
 
 CREATE TABLE `noticia` (
   `id` bigint NOT NULL,
-  `titulo` varchar(255) NOT NULL,
-  `contenido` text NOT NULL,
+  `titulo` varchar(255) COLLATE utf32_unicode_ci NOT NULL,
+  `contenido` text COLLATE utf32_unicode_ci NOT NULL,
   `fecha` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `imagen` longblob,
   `id_club` bigint NOT NULL
@@ -187,7 +199,7 @@ CREATE TABLE `noticia` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pago`
+-- Estructura de tabla para la tabla `pago`
 --
 
 CREATE TABLE `pago` (
@@ -201,7 +213,7 @@ CREATE TABLE `pago` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `partido`
+-- Estructura de tabla para la tabla `partido`
 --
 
 CREATE TABLE `partido` (
@@ -215,7 +227,7 @@ CREATE TABLE `partido` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `puntuacion`
+-- Estructura de tabla para la tabla `puntuacion`
 --
 
 CREATE TABLE `puntuacion` (
@@ -228,7 +240,7 @@ CREATE TABLE `puntuacion` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `rolusuario`
+-- Estructura de tabla para la tabla `rolusuario`
 --
 
 CREATE TABLE `rolusuario` (
@@ -239,7 +251,7 @@ CREATE TABLE `rolusuario` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `temporada`
+-- Estructura de tabla para la tabla `temporada`
 --
 
 CREATE TABLE `temporada` (
@@ -251,7 +263,7 @@ CREATE TABLE `temporada` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tipoarticulo`
+-- Estructura de tabla para la tabla `tipoarticulo`
 --
 
 CREATE TABLE `tipoarticulo` (
@@ -263,7 +275,7 @@ CREATE TABLE `tipoarticulo` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tipousuario`
+-- Estructura de tabla para la tabla `tipousuario`
 --
 
 CREATE TABLE `tipousuario` (
@@ -274,7 +286,7 @@ CREATE TABLE `tipousuario` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `usuario`
+-- Estructura de tabla para la tabla `usuario`
 --
 
 CREATE TABLE `usuario` (
@@ -292,249 +304,261 @@ CREATE TABLE `usuario` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
 
 --
--- Indexes for dumped tables
+-- Índices para tablas volcadas
 --
 
 --
--- Indexes for table `articulo`
+-- Indices de la tabla `articulo`
 --
 ALTER TABLE `articulo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `carrito`
+-- Indices de la tabla `carrito`
 --
 ALTER TABLE `carrito`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `categoria`
+-- Indices de la tabla `categoria`
 --
 ALTER TABLE `categoria`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `club`
+-- Indices de la tabla `club`
 --
 ALTER TABLE `club`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `comentario`
+-- Indices de la tabla `comentario`
 --
 ALTER TABLE `comentario`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `compra`
+-- Indices de la tabla `comentarioart`
+--
+ALTER TABLE `comentarioart`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `compra`
 --
 ALTER TABLE `compra`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `cuota`
+-- Indices de la tabla `cuota`
 --
 ALTER TABLE `cuota`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `equipo`
+-- Indices de la tabla `equipo`
 --
 ALTER TABLE `equipo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `factura`
+-- Indices de la tabla `factura`
 --
 ALTER TABLE `factura`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `jugador`
+-- Indices de la tabla `jugador`
 --
 ALTER TABLE `jugador`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `liga`
+-- Indices de la tabla `liga`
 --
 ALTER TABLE `liga`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `noticia`
+-- Indices de la tabla `noticia`
 --
 ALTER TABLE `noticia`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `pago`
+-- Indices de la tabla `pago`
 --
 ALTER TABLE `pago`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `partido`
+-- Indices de la tabla `partido`
 --
 ALTER TABLE `partido`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `puntuacion`
+-- Indices de la tabla `puntuacion`
 --
 ALTER TABLE `puntuacion`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `rolusuario`
+-- Indices de la tabla `rolusuario`
 --
 ALTER TABLE `rolusuario`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `temporada`
+-- Indices de la tabla `temporada`
 --
 ALTER TABLE `temporada`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `tipoarticulo`
+-- Indices de la tabla `tipoarticulo`
 --
 ALTER TABLE `tipoarticulo`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `tipousuario`
+-- Indices de la tabla `tipousuario`
 --
 ALTER TABLE `tipousuario`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `usuario`
+-- Indices de la tabla `usuario`
 --
 ALTER TABLE `usuario`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT de las tablas volcadas
 --
 
 --
--- AUTO_INCREMENT for table `articulo`
+-- AUTO_INCREMENT de la tabla `articulo`
 --
 ALTER TABLE `articulo`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `carrito`
+-- AUTO_INCREMENT de la tabla `carrito`
 --
 ALTER TABLE `carrito`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `categoria`
+-- AUTO_INCREMENT de la tabla `categoria`
 --
 ALTER TABLE `categoria`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `club`
+-- AUTO_INCREMENT de la tabla `club`
 --
 ALTER TABLE `club`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `comentario`
+-- AUTO_INCREMENT de la tabla `comentario`
 --
 ALTER TABLE `comentario`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `compra`
+-- AUTO_INCREMENT de la tabla `comentarioart`
+--
+ALTER TABLE `comentarioart`
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `compra`
 --
 ALTER TABLE `compra`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `cuota`
+-- AUTO_INCREMENT de la tabla `cuota`
 --
 ALTER TABLE `cuota`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `equipo`
+-- AUTO_INCREMENT de la tabla `equipo`
 --
 ALTER TABLE `equipo`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `factura`
+-- AUTO_INCREMENT de la tabla `factura`
 --
 ALTER TABLE `factura`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `jugador`
+-- AUTO_INCREMENT de la tabla `jugador`
 --
 ALTER TABLE `jugador`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `liga`
+-- AUTO_INCREMENT de la tabla `liga`
 --
 ALTER TABLE `liga`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `noticia`
+-- AUTO_INCREMENT de la tabla `noticia`
 --
 ALTER TABLE `noticia`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `pago`
+-- AUTO_INCREMENT de la tabla `pago`
 --
 ALTER TABLE `pago`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `partido`
+-- AUTO_INCREMENT de la tabla `partido`
 --
 ALTER TABLE `partido`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `puntuacion`
+-- AUTO_INCREMENT de la tabla `puntuacion`
 --
 ALTER TABLE `puntuacion`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `rolusuario`
+-- AUTO_INCREMENT de la tabla `rolusuario`
 --
 ALTER TABLE `rolusuario`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `temporada`
+-- AUTO_INCREMENT de la tabla `temporada`
 --
 ALTER TABLE `temporada`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `tipoarticulo`
+-- AUTO_INCREMENT de la tabla `tipoarticulo`
 --
 ALTER TABLE `tipoarticulo`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `tipousuario`
+-- AUTO_INCREMENT de la tabla `tipousuario`
 --
 ALTER TABLE `tipousuario`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `usuario`
+-- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;

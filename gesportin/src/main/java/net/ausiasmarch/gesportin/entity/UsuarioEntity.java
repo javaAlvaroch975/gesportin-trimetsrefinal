@@ -15,8 +15,10 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -73,19 +75,45 @@ public class UsuarioEntity {
     @JoinColumn(name = "id_club")
     private ClubEntity club;
 
+    @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
     private List<ComentarioEntity> comentarios;
 
+    @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
     private List<PuntuacionEntity> puntuaciones;
 
+    @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
     private List<ComentarioartEntity> comentarioarts;
 
+    @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
     private List<CarritoEntity> carritos;
 
+    @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
     private List<FacturaEntity> facturas;
+
+    public int getComentarios() {
+        return comentarios.size();
+    }
+
+    public int getPuntuaciones() {
+        return puntuaciones.size();
+    }
+
+    public int getComentarioarts() {
+        return comentarioarts.size();
+    }
+
+    public int getCarritos() {
+        return carritos.size();
+    }
+
+    public int getFacturas() {
+        return facturas.size();
+    }
+
 
 }

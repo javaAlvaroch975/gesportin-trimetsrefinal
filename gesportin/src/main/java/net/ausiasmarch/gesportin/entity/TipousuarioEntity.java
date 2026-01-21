@@ -8,8 +8,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -26,6 +28,11 @@ public class TipousuarioEntity {
     @NotBlank
     private String descripcion;
 
+    @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "tipousuario", fetch = FetchType.LAZY)
     private java.util.List<UsuarioEntity> usuarios;
+
+    public int getUsuarios() {
+        return usuarios.size();
+    }
 }

@@ -19,7 +19,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "articulo")
@@ -50,19 +49,19 @@ public class ArticuloEntity {
 
     // https://www.baeldung.com/lombok-omit-getter-setter    
     
-    // @Getter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "articulo", fetch = FetchType.LAZY)
     private java.util.List<ComentarioartEntity> comentarioarts;
 
-    //@Getter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "articulo", fetch = FetchType.LAZY)
     private java.util.List<CompraEntity> compras;
 
-    // @Getter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "articulo", fetch = FetchType.LAZY)
     private java.util.List<CompraEntity> carritos;
 
-    /*
+    
     public int getComentarioarts() {
         return comentarioarts.size();
     }
@@ -74,7 +73,7 @@ public class ArticuloEntity {
     public int getCarritos() {
         return carritos.size();
     }
-    */
+    
 
     /*
 
