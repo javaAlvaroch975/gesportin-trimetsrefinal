@@ -12,8 +12,10 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -36,6 +38,11 @@ public class LigaEntity {
     @JoinColumn(name = "id_equipo")
     private EquipoEntity equipo;
 
+    @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "liga", fetch = FetchType.LAZY)
     private java.util.List<PartidoEntity> partidos;
+
+    public int getPartidos() {
+        return partidos.size();
+    }
 }

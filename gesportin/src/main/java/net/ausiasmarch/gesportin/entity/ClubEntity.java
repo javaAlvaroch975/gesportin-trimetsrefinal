@@ -45,34 +45,42 @@ public class ClubEntity {
     @Column(nullable = false)
     private byte[] imagen;
 
+    
     @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "club", fetch = FetchType.LAZY)
     private List<TemporadaEntity> temporadas;
 
+    
     @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "club", fetch = FetchType.LAZY)
     private List<NoticiaEntity> noticias;
 
+    
     @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "club", fetch = FetchType.LAZY)
     private List<TipoarticuloEntity> tipoarticulos;
 
+    
     @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "club", fetch = FetchType.LAZY)
     private List<UsuarioEntity> usuarios;
 
+   
     public int getTemporadas() {
         return temporadas.size();
     }
 
+   
     public int getNoticias() {
         return noticias.size();
     }
 
+   
     public int getTipoarticulos() {
         return tipoarticulos.size();
     }
 
+   
     public int getUsuarios() {
         return usuarios.size();
     }

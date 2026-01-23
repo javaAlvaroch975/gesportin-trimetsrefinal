@@ -15,8 +15,10 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jdk.jfr.BooleanFlag;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -25,36 +27,41 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class JugadorEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
     private int dorsal;
-    
+
     @NotNull
     @Size(min = 3, max = 255)
     private String posicion;
-    
+
     @NotNull
     @BooleanFlag
     private Boolean capitan;
-    
+
     @Nullable
-    @Size(min=3, max = 255)
+    @Size(min = 3, max = 255)
     private String imagen;
-    
+
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_usuario")
     private UsuarioEntity usuario;
-    
+
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_equipo")
     private EquipoEntity equipo;
 
+    @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "jugador", fetch = FetchType.LAZY)
     private List<PagoEntity> pagos;
+
+    public int getPagos() {
+        return pagos.size();
+    }
 }
