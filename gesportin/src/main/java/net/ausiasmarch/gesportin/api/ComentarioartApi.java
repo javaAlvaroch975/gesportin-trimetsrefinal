@@ -35,10 +35,11 @@ public class ComentarioartApi {
     @GetMapping
     public ResponseEntity<Page<ComentarioartEntity>> getPage(
             @PageableDefault(size = 1000) Pageable pageable,
+            @RequestParam(required = false) String contenido,
             @RequestParam(required = false) Long id_articulo,
             @RequestParam(required = false) Long id_usuario
-            ) {
-        return ResponseEntity.ok(oComentarioartService.getPage(pageable, id_articulo, id_usuario));
+    ) {
+        return ResponseEntity.ok(oComentarioartService.getPage(pageable, contenido, id_articulo, id_usuario));
     }
 
     @PostMapping
