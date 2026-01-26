@@ -107,6 +107,7 @@ public class ComentarioService {
             }
             oComentariosEntity.setContenido(contenidoGenerado.trim());
             oComentariosEntity.setUsuario(oUsuarioService.getOneRandom());
+            oComentariosEntity.setNoticia(oNoticaService.getOneRandom());
             oComentariosRepository.save(oComentariosEntity);
         }
         return oComentariosRepository.count();
