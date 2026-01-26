@@ -106,7 +106,6 @@ public class ArticuloService {
                     ? BigDecimal.valueOf(random.nextDouble() * 30).setScale(2, RoundingMode.HALF_UP)
                     : null);
             oArticulo.setTipoarticulo(oTipoarticuloService.getOneRandom());
-            oArticulo.set
             oArticuloRepository.save(oArticulo);
         }
         return cantidad;
