@@ -4,7 +4,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { IPage } from '../../../model/plist';
 import { IUsuario } from '../../../model/usuario';
 import { UsuarioService } from '../../../service/usuarioService';
-import { UsuarioSharedModule } from '../usuario-shared.module';
+import { UsuarioSharedModule } from './usuario-shared.module';
 
 @Component({
   selector: 'app-usuario-plist',
