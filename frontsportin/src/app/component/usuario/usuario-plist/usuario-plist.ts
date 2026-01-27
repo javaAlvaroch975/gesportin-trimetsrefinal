@@ -4,10 +4,11 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { IPage } from '../../../model/plist';
 import { IUsuario } from '../../../model/usuario';
 import { UsuarioService } from '../../../service/usuarioService';
+import { UsuarioSharedModule } from '../usuario-shared.module';
 
 @Component({
   selector: 'app-usuario-plist',
-  imports: [CommonModule],
+  imports: [CommonModule, UsuarioSharedModule],
   templateUrl: './usuario-plist.html',
   styleUrl: './usuario-plist.css',
   standalone: true
@@ -23,7 +24,6 @@ export class UsuarioPlist implements OnInit {
   fillErrorMessage: string = '';
   totalElementsCount: number = 0;
   fillAmount: number = 25;
-  rppOptions: number[] = [5, 10, 20, 50, 100];
 
   constructor(
     private oUsuarioService: UsuarioService,

@@ -36,14 +36,7 @@
             </div>
             <div class="d-flex align-items-center gap-2">
               <span class="text-muted small text-uppercase">Rpp</span>
-              <select
-                class="form-select form-select-sm rpp-select"
-                [value]="numRpp"
-                (change)="onRppChange($any($event.target).value)"
-                aria-label="Registros por pagina"
-              >
-                <option *ngFor="let opt of rppOptions" [value]="opt">{{ opt }}</option>
-              </select>
+              <app-botonera-rpp [numRpp]="numRpp" (rppChange)="onRppChange($event)"></app-botonera-rpp>
             </div>
           </div>
         </div>
@@ -131,24 +124,11 @@
           <div class="text-muted small">
             Pagina {{ numPage + 1 }} de {{ oPage?.totalPages || 1 }}
           </div>
-          <nav aria-label="Paginacion">
-            <ul class="pagination mb-0">
-              <li class="page-item" [class.disabled]="numPage === 0">
-                <a class="page-link" href="#" (click)="goToPage(numPage - 1)">Anterior</a>
-              </li>
-              <li class="page-item disabled">
-                <span class="page-link">
-                  {{ numPage + 1 }} / {{ oPage?.totalPages || 1 }}
-                </span>
-              </li>
-              <li
-                class="page-item"
-                [class.disabled]="numPage + 1 >= (oPage?.totalPages || 1)"
-              >
-                <a class="page-link" href="#" (click)="goToPage(numPage + 1)">Siguiente</a>
-              </li>
-            </ul>
-          </nav>
+          <app-paginacion
+            [numPage]="numPage"
+            [numPages]="oPage?.totalPages || 1"
+            (pageChange)="goToPage($event)"
+          ></app-paginacion>
         </div>
       </div>
 

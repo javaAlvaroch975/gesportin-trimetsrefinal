@@ -41,10 +41,6 @@
   width: 90px;
 }
 
-.usuario-plist .rpp-select {
-  width: 90px;
-}
-
 .usuario-plist .loading-state {
   display: flex;
   align-items: center;
