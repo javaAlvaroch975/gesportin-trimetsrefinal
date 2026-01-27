@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 import net.ausiasmarch.gesportin.entity.PagoEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
 import net.ausiasmarch.gesportin.repository.PagoRepository;
@@ -78,6 +79,7 @@ public class PagoService {
     public Long fill(Long cantidad) {
         for (int i = 0; i < cantidad; i++) {
             PagoEntity oPagoNuevo = new PagoEntity();
+            // la cuota y el jugador deben ser del mismo club
             oPagoNuevo.setCuota(oCuotaService.getOneRandom());
             oPagoNuevo.setJugador(oJugadorService.getOneRandom());
             oPagoNuevo.setAbonado(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 1));

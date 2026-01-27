@@ -27,8 +27,6 @@ public class CuotaService {
                 .orElseThrow(() -> new ResourceNotFoundException("Cuota no encontrado con id: " + id));
     }
 
-    
-
     public Page<CuotaEntity> getPage(Pageable pageable, String descripcion, Long id_equipo) {
         if (descripcion != null && !descripcion.isEmpty()) {
             return oCuotaRepository.findByDescripcionContainingIgnoreCase(descripcion, pageable);
@@ -77,16 +75,17 @@ public class CuotaService {
 
         Random random = new Random();
 
-        String[] nombres = {"Matrícula", "Mensualidad", "Cuota Extra", "Inscripción", "Cuota Anual"};
+        String[] nombres = {"Matrícula", "Mensualidad", "Cuota Extra", "Inscripción", "Cuota", "Pago", "Abono", "Loteria"};
 
         for (int i = 0; i < cantidad; i++) {
             CuotaEntity oCuota = new CuotaEntity();
-            oCuota.setDescripcion(nombres[random.nextInt(nombres.length)] + " " + (random.nextInt(9000) + 1000));
+            LocalDateTime fecha = LocalDateTime.now().minusDays(random.nextInt(365 * 5));
+            // el mes en español
+            oCuota.setDescripcion(nombres[random.nextInt(nombres.length)] + " " + fecha.getMonth().toString().toLowerCase() + " " + fecha.getYear());
             oCuota.setCantidad(BigDecimal.valueOf(random.nextDouble() * 100.0 + 1.0));
-            oCuota.setFecha(LocalDateTime.now().minusDays(random.nextInt(365)));
+            oCuota.setFecha(fecha);
             oCuota.setEquipo(oEquipoService.getOneRandom());
             oCuotaRepository.save(oCuota);
-
         }
 
         return cantidad;
