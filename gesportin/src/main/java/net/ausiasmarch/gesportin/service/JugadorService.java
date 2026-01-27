@@ -125,7 +125,7 @@ public class JugadorService {
                     posiciones.get(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, posiciones.size() - 1)));
             oJugador.setCapitan(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 1) == 1);
             oJugador.setImagen(null);
-            //
+            // ptes de asignar el usuario y el equipo
             UsuarioEntity oUsuarioEntity = oUsuarioService.getOneRandom();
             while (oEquipoService.getOneRandomFromClub(oUsuarioEntity.getClub().getId()) == null) {
                 oUsuarioEntity = oUsuarioService.getOneRandom();

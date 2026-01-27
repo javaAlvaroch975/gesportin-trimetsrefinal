@@ -79,7 +79,7 @@ public class PagoService {
     public Long fill(Long cantidad) {
         for (int i = 0; i < cantidad; i++) {
             PagoEntity oPagoNuevo = new PagoEntity();
-            // la cuota y el jugador deben ser del mismo club
+            // la cuota y el jugador deben ser del mismo club -> pte
             oPagoNuevo.setCuota(oCuotaService.getOneRandom());
             oPagoNuevo.setJugador(oJugadorService.getOneRandom());
             oPagoNuevo.setAbonado(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 1));
