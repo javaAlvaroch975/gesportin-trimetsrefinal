@@ -71,11 +71,31 @@
             <thead>
               <tr class="text-muted">
                 <th scope="col">Usuario</th>
-                <th scope="col">Tipo</th>
-                <th scope="col">Rol</th>
-                <th scope="col">Club</th>
+                <th scope="col">
+                  <button class="btn btn-link p-0 text-muted" (click)="setOrder('tipousuario.id')">
+                    Tipo
+                    <i class="bi" [ngClass]="sortIcon('tipousuario.id')"></i>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button class="btn btn-link p-0 text-muted" (click)="setOrder('rolusuario.id')">
+                    Rol
+                    <i class="bi" [ngClass]="sortIcon('rolusuario.id')"></i>
+                  </button>
+                </th>
+                <th scope="col">
+                  <button class="btn btn-link p-0 text-muted" (click)="setOrder('club.id')">
+                    Club
+                    <i class="bi" [ngClass]="sortIcon('club.id')"></i>
+                  </button>
+                </th>
                 <th scope="col">Alta</th>
-                <th scope="col">Actividad</th>
+                <th scope="col" class="text-end">Comentarios</th>
+                <th scope="col" class="text-end">Puntuaciones</th>
+                <th scope="col" class="text-end">Coment. Art</th>
+                <th scope="col" class="text-end">Compras</th>
+                <th scope="col" class="text-end">Carritos</th>
+                <th scope="col" class="text-end">Facturas</th>
               </tr>
             </thead>
             <tbody *ngIf="oPage?.content?.length; else emptyState">
@@ -96,25 +116,26 @@
                 </td>
                 <td>
                   <span class="badge bg-info-subtle text-info">
-                    {{ usuario.tipousuario?.descripcion || 'Sin tipo' }}
+                    {{ usuario.tipousuario ? (usuario.tipousuario.id + ' - ' + usuario.tipousuario.descripcion) : 'Sin tipo' }}
                   </span>
                 </td>
                 <td>
                   <span class="badge bg-primary-subtle text-primary">
-                    {{ usuario.rolusuario?.descripcion || 'Sin rol' }}
+                    {{ usuario.rolusuario ? (usuario.rolusuario.id + ' - ' + usuario.rolusuario.descripcion) : 'Sin rol' }}
                   </span>
                 </td>
                 <td>
-                  <span class="text-muted">{{ usuario.club?.nombre || 'Sin club' }}</span>
+                  <span class="text-muted">
+                    {{ usuario.club ? (usuario.club.id + ' - ' + usuario.club.nombre) : 'Sin club' }}
+                  </span>
                 </td>
                 <td class="text-muted">{{ usuario.fechaAlta }}</td>
-                <td>
-                  <div class="d-flex flex-wrap gap-2">
-                    <span class="badge bg-light text-dark">Com: {{ usuario.comentarios }}</span>
-                    <span class="badge bg-light text-dark">Punt: {{ usuario.puntuaciones }}</span>
-                    <span class="badge bg-light text-dark">Fact: {{ usuario.facturas }}</span>
-                  </div>
-                </td>
+                <td class="text-end">{{ usuario.comentarios }}</td>
+                <td class="text-end">{{ usuario.puntuaciones }}</td>
+                <td class="text-end">{{ usuario.comentarioarts ?? 0 }}</td>
+                <td class="text-end">{{ usuario.compras ?? 0 }}</td>
+                <td class="text-end">{{ usuario.carritos }}</td>
+                <td class="text-end">{{ usuario.facturas }}</td>
               </tr>
             </tbody>
           </table>

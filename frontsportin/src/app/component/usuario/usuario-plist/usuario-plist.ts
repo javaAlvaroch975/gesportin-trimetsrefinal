@@ -18,6 +18,8 @@ export class UsuarioPlist implements OnInit {
   numPage: number = 0;
   numRpp: number = 10;
   filtro: string = '';
+  orderField: string = 'id';
+  orderDir: 'asc' | 'desc' = 'asc';
   isLoading: boolean = false;
   isFilling: boolean = false;
   errorMessage: string = '';
@@ -39,7 +41,9 @@ export class UsuarioPlist implements OnInit {
     this.errorMessage = '';
     this.cdr.markForCheck();
 
-    this.oUsuarioService.getPage(this.numPage, this.numRpp, 'id', 'asc', this.filtro.trim()).subscribe({
+    this.oUsuarioService
+      .getPage(this.numPage, this.numRpp, this.orderField, this.orderDir, this.filtro.trim())
+      .subscribe({
       next: (data: IPage<IUsuario>) => {
         this.oPage = data;
         this.totalElementsCount = data.totalElements ?? 0;
@@ -116,6 +120,23 @@ export class UsuarioPlist implements OnInit {
 
   trackById(index: number, usuario: IUsuario) {
     return usuario.id;
+  }
+
+  setOrder(field: string) {
+    if (this.orderField === field) {
+      this.orderDir = this.orderDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.orderField = field;
+      this.orderDir = 'asc';
+    }
+    this.getPage();
+  }
+
+  sortIcon(field: string) {
+    if (this.orderField !== field) {
+      return 'bi bi-arrow-down-up';
+    }
+    return this.orderDir === 'asc' ? 'bi bi-arrow-up-short' : 'bi bi-arrow-down-short';
   }
 
   getGeneroLabel(genero: number) {
