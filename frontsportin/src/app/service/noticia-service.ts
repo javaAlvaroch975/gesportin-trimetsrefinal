@@ -26,7 +26,7 @@ export class NoticiaService {
     return this.http.get<Noticia>(`${this.apiUrl}/${id}`);
   }
 
-  getNoticias(): Observable<Noticia[]> {
-    return this.http.get<Noticia[]>(this.apiUrl);
+  getNoticias(): Observable<any> {
+    return this.http.get<any>(this.apiUrl);
   }
 }
