@@ -16,6 +16,7 @@ export class ArticuloService {
     rpp: number,
     order: string = '',
     direction: string = '',
+    descripcion: string = '',
     tipoarticulo: number = 0,
   ): Observable<IPage<IArticulo>> {
     if (order === '') {
@@ -28,6 +29,12 @@ export class ArticuloService {
       return this.oHttp.get<IPage<IArticulo>>(
         serverURL +
           `/articulo?page=${page}&size=${rpp}&sort=${order},${direction}&tipoarticulo=${tipoarticulo}`,
+      );
+    }
+    if (descripcion && descripcion.length > 0) {
+      return this.oHttp.get<IPage<IArticulo>>(
+        serverURL +
+          `/articulo?page=${page}&size=${rpp}&sort=${order},${direction}&descripcion=${descripcion}`,
       );
     }
     return this.oHttp.get<IPage<IArticulo>>(

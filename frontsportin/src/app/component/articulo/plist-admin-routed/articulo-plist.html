@@ -12,21 +12,36 @@
     </div>
   }
 
+  <!-- Búsqueda por descripción usando debounce -->
+  <div class="d-flex justify-content-center my-2">
+    <input
+      class="form-control me-2"
+      type="search"      
+      placeholder="Buscar por descripción"
+      aria-label="Search"
+      (input)="onSearchDescription($event.target.value)"
+      [value]="descripcion()"
+      name="searchDescription"
+    />
+  </div>
+
   <!-- Total registros -->
   <div class="d-flex justify-content-center my-1">
     <small class="text-muted">Total registros: {{ totalRecords() || 0 }}</small>
     @if (tipoarticulo() > 0) {
       <small class="text-muted ms-3">Filtro: id de tipo de artículo = {{ tipoarticulo() }}</small>
       <!-- quitar el filtro -->
-      <a
-        class="ms-2"
-        [routerLink]="['/articulo']"        
-        role="button"
-        title="Quitar filtro"
-        ><i class="bi bi-x-lg" aria-hidden="true"></i
-      > Quitar filtro</a>
+      <a class="ms-2" [routerLink]="['/articulo']" role="button" title="Quitar filtro"
+        ><i class="bi bi-x-lg" aria-hidden="true"></i> Quitar filtro</a
+      >
+    }
+    @if (descripcion().length > 0) {
+      <small class="text-muted ms-3">Filtro: descripción contiene "{{ descripcion() }}"</small>
+      <!-- quitar el filtro -->
     }
   </div>
+        
+  
 
   <!-- Ocultar paginación y RPP si no hay registros -->
   @if (totalRecords() > 0) {

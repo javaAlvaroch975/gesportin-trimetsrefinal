@@ -7,6 +7,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Paginacion } from '../../shared/paginacion/paginacion';
 import { BotoneraRpp } from '../../shared/botonera-rpp/botonera-rpp';
 import { TrimPipe } from '../../../pipe/trim-pipe';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTimeSearch } from '../../../environment/environment';
 
 @Component({
   selector: 'app-articulo-plist',
@@ -37,22 +40,54 @@ export class ArticuloPlistAdminRouted {
   // Variables de filtro
   tipoarticulo = signal<number>(0);
 
+  // Variables de búsqueda
+  descripcion = signal<string>('');
+  private searchSubject = new Subject<string>();
+  private searchSubscription?: Subscription;
+
   constructor(
     private oArticuloService: ArticuloService,
     private route: ActivatedRoute,
   ) {}
 
-  ngOnInit() {    
-    const id = this.route.snapshot.paramMap.get('tipoarticulo');      
+  ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('tipoarticulo');
     if (id) {
-      this.tipoarticulo.set(+id); 
+      this.tipoarticulo.set(+id);
     }
+
+    // Configurar el debounce para la búsqueda
+    this.searchSubscription = this.searchSubject
+      .pipe(
+        debounceTime(debounceTimeSearch), // Espera 800ms después de que el usuario deje de escribir
+        distinctUntilChanged(), // Solo emite si el valor cambió
+      )
+      .subscribe((searchTerm: string) => {
+        this.descripcion.set(searchTerm);
+        this.numPage.set(0);
+        this.getPage();
+      });
+
     this.getPage();
+  }
+
+  ngOnDestroy() {
+    // Limpiar la suscripción para evitar memory leaks
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
   }
 
   getPage() {
     this.oArticuloService
-      .getPage(this.numPage(), this.numRpp(), this.orderField(), this.orderDirection(), this.tipoarticulo())
+      .getPage(
+        this.numPage(),
+        this.numRpp(),
+        this.orderField(),
+        this.orderDirection(),
+        this.descripcion(),
+        this.tipoarticulo(),
+      )
       .subscribe({
         next: (data: IPage<IArticulo>) => {
           this.oPage.set(data);
@@ -92,4 +127,10 @@ export class ArticuloPlistAdminRouted {
   onCantidadChange(value: string) {
     this.rellenaCantidad.set(+value);
   }
+
+  onSearchDescription(value: string) {
+    // Emitir el valor al Subject para que sea procesado con debounce
+    this.searchSubject.next(value);
+  }
+
 }
