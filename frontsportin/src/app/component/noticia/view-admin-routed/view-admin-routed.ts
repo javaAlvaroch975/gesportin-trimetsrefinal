@@ -5,7 +5,7 @@ import { noticiaModel } from '../../../model/noticia';
 import { NoticiaService } from '../../../service/noticia';
 
 @Component({
-  selector: 'app-unrouted-noticia-view',
+  selector: 'app-view-admin-routed',
   imports: [CommonModule],
   templateUrl: './view-admin-routed.html',
   styleUrl: './view-admin-routed.css',

@@ -1,4 +1,4 @@
-import { Component, signal, computed, effect } from '@angular/core';
+import { Component, signal, computed } from '@angular/core';
 import { IPage } from '../../model/plist';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -9,7 +9,7 @@ import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { debounceTimeSearch } from '../../environment/environment';
 import { ComentarioartService } from '../../service/comentarioart';
-import { articuloModel, usuarioModel } from '../../model/comentarioart';
+import { comentarioartModel } from '../../model/comentarioart';
 
 @Component({
   selector: 'app-comentarioart-plist',
@@ -19,8 +19,7 @@ import { articuloModel, usuarioModel } from '../../model/comentarioart';
   styleUrl: './comentarioart-plist.css',
 })
 export class ComentarioartPlistAdminRouted {
-  /*
-  oPage = signal<IPage<IArticulo> | null>(null);
+  oPage = signal<IPage<comentarioartModel> | null>(null);
   numPage = signal<number>(0);
   numRpp = signal<number>(5);
   rellenaCantidad = signal<number>(10);
@@ -40,23 +39,40 @@ export class ComentarioartPlistAdminRouted {
   orderDirection = signal<'asc' | 'desc'>('asc');
 
   // Variables de filtro
-  tipoarticulo = signal<number>(0);
+  articulo = signal<number>(0);
+  usuario = signal<number>(0);
 
   // Variables de búsqueda
-  descripcion = signal<string>('');
+  contenido = signal<string>('');
   private searchSubject = new Subject<string>();
   private searchSubscription?: Subscription;
 
-  constructor(
-    private oArticuloService: ArticuloService,
-    private route: ActivatedRoute,
-  ) {}
+  constructor(private oComentarioartService: ComentarioartService, private route: ActivatedRoute) {
+
+  }
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('tipoarticulo');
-    if (id) {
-      this.tipoarticulo.set(+id);
-    }
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('articulo') && params.get('usuario');
+
+      if (this.route.snapshot.url.some(u => u.path === 'articulo')) {
+        this.articulo.set(+id!);
+        this.usuario.set(0);
+      }
+
+      if (this.route.snapshot.url.some(u => u.path === 'usuario')) {
+        this.articulo.set(0);
+        this.usuario.set(+id!);
+      }
+
+      if (!id) {
+        this.articulo.set(0);
+        this.usuario.set(0);
+      }
+
+      this.numPage.set(0);
+      this.getPage();
+    })
 
     // Configurar el debounce para la búsqueda
     this.searchSubscription = this.searchSubject
@@ -65,7 +81,7 @@ export class ComentarioartPlistAdminRouted {
         distinctUntilChanged(), // Solo emite si el valor cambió
       )
       .subscribe((searchTerm: string) => {
-        this.descripcion.set(searchTerm);
+        this.contenido.set(searchTerm);
         this.numPage.set(0);
         this.getPage();
       });
@@ -81,17 +97,18 @@ export class ComentarioartPlistAdminRouted {
   }
 
   getPage() {
-    this.oArticuloService
+    this.oComentarioartService
       .getPage(
         this.numPage(),
         this.numRpp(),
         this.orderField(),
         this.orderDirection(),
-        this.descripcion(),
-        this.tipoarticulo(),
+        this.contenido(),
+        this.articulo(),
+        this.usuario(),
       )
       .subscribe({
-        next: (data: IPage<IArticulo>) => {
+        next: (data: IPage<comentarioartModel>) => {
           this.oPage.set(data);
           if (this.numPage() > 0 && this.numPage() >= data.totalPages) {
             this.numPage.set(data.totalPages - 1);
@@ -130,9 +147,8 @@ export class ComentarioartPlistAdminRouted {
     this.rellenaCantidad.set(+value);
   }
 
-  onSearchDescription(value: string) {
+  onSearchContenido(value: string) {
     // Emitir el valor al Subject para que sea procesado con debounce
     this.searchSubject.next(value);
   }
-    */
 }
