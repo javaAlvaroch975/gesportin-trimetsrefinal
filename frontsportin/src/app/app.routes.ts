@@ -27,7 +27,7 @@ import { ComentarioartPlistAdminRouted } from './component/comentarioart/comenta
 
 
 export const routes: Routes = [
-    
+
     { path: '', component: Home },
     { path: 'usuario', component: UsuarioPlist },
     { path: 'usuario/tipousuario/:id_tipousuario', component: UsuarioPlist },
@@ -50,8 +50,8 @@ export const routes: Routes = [
     { path: 'compra', component: CompraPlistAdminRouted },
     { path: 'compra/articulo/:id_articulo', component: CompraPlistAdminRouted },
     { path: 'compra/factura/:id_factura', component: CompraPlistAdminRouted },
-    { path: 'rolusuario', component: RolusuarioPlist },  
-    { path: 'tipoarticulo', component : TipoarticuloPlistAdminRouted}, 
+    { path: 'rolusuario', component: RolusuarioPlist },
+    { path: 'tipoarticulo', component : TipoarticuloPlistAdminRouted},
     { path: 'tipoarticulo/club/:id_club', component : TipoarticuloPlistAdminRouted},
     { path: 'jugador', component: JugadorPlisComponent},
     { path: 'jugador/usuario/:id_usuario', component: JugadorPlisComponent},
