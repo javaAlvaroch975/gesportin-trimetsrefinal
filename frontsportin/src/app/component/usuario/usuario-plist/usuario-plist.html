@@ -145,12 +145,12 @@
             <td style="text-align: center">{{ getGeneroLabel(usuario.genero) }}</td>
 
             <td>
-              <a [routerLink]="['/club', 'view', usuario.club?.id]">
-                {{ usuario.club?.nombre || 'Sin club' }} ({{ usuario.club?.id }})
+              <a [routerLink]="['/club', 'view', usuario.club.id]">
+                {{ usuario.club.nombre || 'Sin club' }} ({{ usuario.club.id }})
               </a>
               <a
                 class="btn btn-warning btn-sm ms-2 float-end"
-                [routerLink]="['/usuario', 'club', usuario.club?.id]"
+                [routerLink]="['/usuario', 'club', usuario.club.id]"
                 role="button"
                 title="Filtrar"
               >
@@ -159,12 +159,12 @@
             </td>
 
             <td>
-              <a [routerLink]="['/tipousuario', 'view', usuario.tipousuario?.id]">
-                {{ usuario.tipousuario?.descripcion || 'Sin tipo' }} ({{ usuario.tipousuario?.id }})
+              <a [routerLink]="['/tipousuario', 'view', usuario.tipousuario.id]">
+                {{ usuario.tipousuario.descripcion || 'Sin tipo' }} ({{ usuario.tipousuario.id }})
               </a>
               <a
                 class="btn btn-warning btn-sm ms-2 float-end"
-                [routerLink]="['/usuario', 'tipousuario', usuario.tipousuario?.id]"
+                [routerLink]="['/usuario', 'tipousuario', usuario.tipousuario.id]"
                 role="button"
                 title="Filtrar"
               >
@@ -173,12 +173,12 @@
             </td>
 
             <td>
-              <a [routerLink]="['/rolusuario', 'view', usuario.rolusuario?.id]">
-                {{ usuario.rolusuario?.descripcion || 'Sin rol' }} ({{ usuario.rolusuario?.id }})
+              <a [routerLink]="['/rolusuario', 'view', usuario.rolusuario.id]">
+                {{ usuario.rolusuario.descripcion || 'Sin rol' }} ({{ usuario.rolusuario.id }})
               </a>
               <a
                 class="btn btn-warning btn-sm ms-2 float-end"
-                [routerLink]="['/usuario', 'rol', usuario.rolusuario?.id]"
+                [routerLink]="['/usuario', 'rol', usuario.rolusuario.id]"
                 role="button"
                 title="Filtrar"
               >
