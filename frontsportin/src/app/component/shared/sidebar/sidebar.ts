@@ -30,6 +30,7 @@ export class SidebarComponent implements OnInit {
       icon: 'building',
       route: '/club',
       children: [
+        { label: 'Clubes', icon: 'building', route: '/club' },
         {
           label: 'Noticias',
           icon: 'newspaper',
@@ -72,6 +73,7 @@ export class SidebarComponent implements OnInit {
       icon: 'people',
       route: '/usuario',
       children: [
+        { label: 'Usuarios', icon: 'people', route: '/usuario' },
         { label: 'Tipos de Usuario', icon: 'tags-fill', route: '/tipousuario' },
         { label: 'Roles de Usuario', icon: 'shield-check', route: '/rolusuario' }
       ]

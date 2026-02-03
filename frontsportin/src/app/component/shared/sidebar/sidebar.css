@@ -77,8 +77,9 @@
 
 .menu-button.expanded,
 .submenu-button.expanded {
-  background: rgba(102, 126, 234, 0.2);
+  /* background: rgba(102, 126, 234, 0.2); */
   color: #2c3e50;
+  font-weight: 600;
 }
 
 .menu-button i:first-child,
