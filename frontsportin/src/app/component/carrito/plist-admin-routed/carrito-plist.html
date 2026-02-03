@@ -91,12 +91,12 @@
             <td class="text-center">{{ carrito.cantidad }}</td>
 
             <td>
-              <a [routerLink]="['/articulo', 'view', carrito.articulo?.id]">
-                {{ carrito.articulo?.descripcion || 'Sin articulo' }} ({{ carrito.articulo?.id }})
+              <a [routerLink]="['/articulo', 'view', carrito.articulo.id]">
+                {{ carrito.articulo.descripcion || 'Sin articulo' }} ({{ carrito.articulo.id }})
               </a>
               <a
                 class="btn btn-warning btn-sm ms-2 float-end"
-                [routerLink]="['/carrito', 'articulo', carrito.articulo?.id]"
+                [routerLink]="['/carrito', 'articulo', carrito.articulo.id]"
                 role="button"
                 title="Filtrar por articulo"
               >
@@ -105,12 +105,12 @@
             </td>
 
             <td>
-              <a [routerLink]="['/usuario', 'view', carrito.usuario?.id]">
-                {{ carrito.usuario?.nombre }} {{ carrito.usuario?.apellido1 }} {{ carrito.usuario?.apellido2 }} ({{ carrito.usuario?.id }})
+              <a [routerLink]="['/usuario', 'view', carrito.usuario.id]">
+                {{ carrito.usuario.nombre }} {{ carrito.usuario.apellido1 }} {{ carrito.usuario.apellido2 }} ({{ carrito.usuario.id }})
               </a>
               <a
                 class="btn btn-warning btn-sm ms-2 float-end"
-                [routerLink]="['/carrito', 'usuario', carrito.usuario?.id]"
+                [routerLink]="['/carrito', 'usuario', carrito.usuario.id]"
                 role="button"
                 title="Filtrar por usuario"
               >
