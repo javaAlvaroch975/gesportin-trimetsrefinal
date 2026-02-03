@@ -24,6 +24,7 @@ import { PagoPlistComponent } from './component/pago/plist-admin-routed/pago-pli
 import { PuntuacionPlistAdminRouted } from './component/puntuacion/plist-admin-routed/puntuacion-plist';
 import { ViewAdminRouted } from './component/noticia/view-admin-routed/view-admin-routed';
 import { ComentarioartPlistAdminRouted } from './component/comentarioart/comentarioart-plist';
+import { ClubViewAdminRouted } from './component/club/view-admin-routed/club-view';
 
 
 export const routes: Routes = [
@@ -61,6 +62,7 @@ export const routes: Routes = [
     { path: 'noticia/view/:id', component: ViewAdminRouted },
     { path: 'club/plist', component: ClubPlistAdminRouted},
     { path: 'club', component: ClubPlistAdminRouted},
+    { path: 'club/view/:id', component: ClubViewAdminRouted},
     { path: 'cuota', component: CuotaPlistAdminRouted},
     { path: 'cuota/equipo/:id_equipo', component: CuotaPlistAdminRouted},
     { path: 'tipousuario', component: TipousuarioPlistAdminRouted},
