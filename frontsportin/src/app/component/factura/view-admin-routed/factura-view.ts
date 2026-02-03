@@ -13,7 +13,7 @@ import { IFactura } from '../../../model/factura';
   templateUrl: './factura-view.html',
   styleUrl: './factura-view.css',
 })
-export class FacturaViewRouted implements OnInit {
+export class FacturaViewAdminRouted implements OnInit {
   private route = inject(ActivatedRoute);
   private oFacturaService = inject(FacturaService);
   //private snackBar = inject(MatSnackBar);
