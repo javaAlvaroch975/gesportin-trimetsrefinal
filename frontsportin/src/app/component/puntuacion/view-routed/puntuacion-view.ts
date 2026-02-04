@@ -1,16 +1,17 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { PuntuacionService } from '../../../service/puntuacion';
 import { IPuntuacion } from '../../../model/puntuacion';
 import { DatetimePipe } from '../../../pipe/datetime-pipe';
 
 @Component({
   selector: 'app-view-routed',
-  imports: [CommonModule, RouterLink, DatetimePipe],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './puntuacion-view.html',
-  styleUrl: './puntuacion-view.css',
+  styleUrls: ['./puntuacion-view.css'],
 })
 export class PuntuacionViewRouted implements OnInit {
   private route = inject(ActivatedRoute);
@@ -28,7 +29,8 @@ error = signal<string | null>(null);
     this.loading.set(false);
     return;
   }
-  this.loading(id);
+  this.loading.set(true);
+  this.load(id);
   }
 
   load(id: number) {
