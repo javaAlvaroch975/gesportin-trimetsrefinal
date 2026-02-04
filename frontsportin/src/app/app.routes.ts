@@ -29,10 +29,11 @@ import { PuntuacionPlistAdminRouted } from './component/puntuacion/plist-admin-r
 import { NoticiaViewAdminRouted } from './component/noticia/view-admin-routed/view-admin-routed';
 import { FacturaViewAdminRouted } from './component/factura/view-admin-routed/factura-view';
 import { ComentarioartPlistAdminRouted } from './component/comentarioart/comentarioart-plist';
+import { ClubViewAdminRouted } from './component/club/view-admin-routed/club-view';
 import { CuotaViewAdminRouted } from './component/cuota/view-admin-routed/cuota-view';
 import { TipousuarioViewAdminRouted } from './component/tipousario/view-admin-routed/tipousuario-view';
-import { ComentarioartViewRouted } from './component/comentarioart/view-routed/comentarioart-view';
 import { CarritoViewAdminRouted } from './component/carrito/view-admin-routed/view-admin-routed';
+import { ComentarioartViewRouted } from './component/comentarioart/view-routed/comentarioart-view';
 
 
 export const routes: Routes = [
@@ -75,6 +76,7 @@ export const routes: Routes = [
     { path: 'noticia/view/:id', component: NoticiaViewAdminRouted },
     { path: 'club/plist', component: ClubPlistAdminRouted},
     { path: 'club', component: ClubPlistAdminRouted},
+    { path: 'club/view/:id', component: ClubViewAdminRouted},
     { path: 'cuota', component: CuotaPlistAdminRouted},
     { path: 'cuota/equipo/:id_equipo', component: CuotaPlistAdminRouted},
     { path: 'cuota/view/:id', component: CuotaViewAdminRouted},
