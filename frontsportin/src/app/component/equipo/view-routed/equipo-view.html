@@ -66,7 +66,9 @@
               <div class="col-5 text-muted small text-uppercase">Categoría</div>
               <div class="col-7 fw-semibold small">
                 @if (oEquipo()?.categoria?.nombre) {
-                  {{ oEquipo()?.categoria?.nombre }} ({{ oEquipo()?.categoria?.id }})
+                  <a [routerLink]="['/categoria/view', oEquipo()?.categoria?.id]">
+                    {{ oEquipo()?.categoria?.nombre }} ({{ oEquipo()?.categoria?.id }})
+                  </a>
                 } @else {
                   Sin categoría
                 }
@@ -91,7 +93,7 @@
           <div class="card-header bg-light small text-uppercase fw-semibold">Actividad</div>
           <div class="card-body p-2">
             <div class="row g-2">
-              <div class="col-6">
+              <div class="col-4">
                 <div class="border rounded p-2 bg-white">
                   <div class="text-muted small text-uppercase">Jugadores</div>
                   <div class="fw-bold">
@@ -102,6 +104,28 @@
                         {{ oEquipo()?.jugadores ?? 0 }}
                       </a>
                     }
+                  </div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="border rounded p-2 bg-white">
+                  <div class="text-muted small text-uppercase">Cuotas</div>
+                  <div class="fw-bold">
+                    @if (oEquipo()?.cuotas === 0) {
+                      0
+                    } @else {
+                      <a [routerLink]="['/cuota/equipo', oEquipo()?.id]">
+                        {{ oEquipo()?.cuotas ?? 0 }}
+                      </a>
+                    }
+                  </div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="border rounded p-2 bg-white">
+                  <div class="text-muted small text-uppercase">Ligas</div>
+                  <div class="fw-bold">
+                    {{ oEquipo()?.ligas ?? 0 }}
                   </div>
                 </div>
               </div>
@@ -116,16 +140,42 @@
           <div class="card-body p-2">
             @if (oEquipo()?.categoria) {
               <div class="row g-2">
-                <div class="col-sm-6 col-lg-4">
+                <div class="col-sm-6 col-lg-3">
                   <div class="border rounded p-2 bg-white">
                     <div class="text-muted small text-uppercase">ID</div>
                     <div class="fw-semibold">{{ oEquipo()?.categoria?.id }}</div>
                   </div>
                 </div>
-                <div class="col-sm-6 col-lg-4">
+                <div class="col-sm-6 col-lg-3">
                   <div class="border rounded p-2 bg-white">
                     <div class="text-muted small text-uppercase">Nombre</div>
                     <div class="fw-semibold">{{ oEquipo()?.categoria?.nombre }}</div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                  <div class="border rounded p-2 bg-white">
+                    <div class="text-muted small text-uppercase">Temporada</div>
+                    <div class="fw-semibold">
+                      @if (oEquipo()?.categoria?.temporada) {
+                        {{ oEquipo()?.categoria?.temporada?.descripcion }} ({{ oEquipo()?.categoria?.temporada?.id }})
+                      } @else {
+                        -
+                      }
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                  <div class="border rounded p-2 bg-white">
+                    <div class="text-muted small text-uppercase">Equipos</div>
+                    <div class="fw-semibold">
+                      @if (oEquipo()?.categoria?.equipos === 0) {
+                        0
+                      } @else {
+                        <a [routerLink]="['/equipo/categoria', oEquipo()?.categoria?.id]">
+                          {{ oEquipo()?.categoria?.equipos ?? 0 }}
+                        </a>
+                      }
+                    </div>
                   </div>
                 </div>
               </div>
@@ -142,22 +192,48 @@
           <div class="card-body p-2">
             @if (oEquipo()?.entrenador) {
               <div class="row g-2">
-                <div class="col-sm-6 col-lg-3">
+                <div class="col-sm-6 col-lg-2">
                   <div class="border rounded p-2 bg-white">
                     <div class="text-muted small text-uppercase">ID</div>
                     <div class="fw-semibold">{{ oEquipo()?.entrenador?.id }}</div>
                   </div>
                 </div>
-                <div class="col-sm-6 col-lg-3">
+                <div class="col-sm-6 col-lg-2">
                   <div class="border rounded p-2 bg-white">
                     <div class="text-muted small text-uppercase">Nombre</div>
                     <div class="fw-semibold">{{ oEquipo()?.entrenador?.nombre }}</div>
                   </div>
                 </div>
-                <div class="col-sm-6 col-lg-3">
+                <div class="col-sm-6 col-lg-2">
                   <div class="border rounded p-2 bg-white">
-                    <div class="text-muted small text-uppercase">Apellido</div>
+                    <div class="text-muted small text-uppercase">Apellido 1</div>
                     <div class="fw-semibold">{{ oEquipo()?.entrenador?.apellido1 }}</div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-lg-2">
+                  <div class="border rounded p-2 bg-white">
+                    <div class="text-muted small text-uppercase">Apellido 2</div>
+                    <div class="fw-semibold">{{ oEquipo()?.entrenador?.apellido2 ?? '-' }}</div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-lg-2">
+                  <div class="border rounded p-2 bg-white">
+                    <div class="text-muted small text-uppercase">Username</div>
+                    <div class="fw-semibold">{{ oEquipo()?.entrenador?.username }}</div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-lg-2">
+                  <div class="border rounded p-2 bg-white">
+                    <div class="text-muted small text-uppercase">Equipos</div>
+                    <div class="fw-semibold">
+                      @if (oEquipo()?.entrenador?.equiposentrenados === 0) {
+                        0
+                      } @else {
+                        <a [routerLink]="['/equipo/usuario', oEquipo()?.entrenador?.id]">
+                          {{ oEquipo()?.entrenador?.equiposentrenados ?? 0 }}
+                        </a>
+                      }
+                    </div>
                   </div>
                 </div>
               </div>
