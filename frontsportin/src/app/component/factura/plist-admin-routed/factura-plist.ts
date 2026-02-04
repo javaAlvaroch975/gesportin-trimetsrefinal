@@ -37,7 +37,7 @@ export class FacturaPlistAdminRouted {
 
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('usuario');
+    const id = this.route.snapshot.paramMap.get('id_usuario');
     if (id) {
       this.usuario.set(+id);
     }

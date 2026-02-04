@@ -1,6 +1,6 @@
 <div class="container my-2">
   <div class="d-flex justify-content-center my-3">
-    <h1>Listado de Cuotas</h1>
+    <h1>Cuotas</h1>
   </div>
 
   @if (message()) {
@@ -123,11 +123,11 @@
         <td>{{ oCuota.fecha | datetime }}</td>
         <td>
           <a [routerLink]="['/equipo', '/view', oCuota.equipo.id]">
-            {{ oCuota.equipo.nombre | trim: 20 }}
+            {{ (oCuota.equipo.nombre || '') | trim: 20 }}
             {{ ' (' + oCuota.equipo.id + ')' }}
           </a>
           <!-- Botón alineado a la derecha para filtrar equipo -->
-          <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/cuota', oCuota.equipo.id]" role="button"
+          <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/cuota/equipo', oCuota.equipo.id]" role="button"
             title="Filtrar por equipo"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
         </td>
         <td style="text-align: center">

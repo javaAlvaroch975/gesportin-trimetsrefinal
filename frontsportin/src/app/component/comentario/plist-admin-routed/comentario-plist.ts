@@ -56,8 +56,8 @@ export class ComentarioPlistAdminRouted {
     // Suscribirse a los cambios de parámetros de ruta (reactivo)
 
     this.routeSub = this.route.params.subscribe((params) => {
-      this.idUsuario.set(params['usuario'] ? Number(params['usuario']) : 0);
-      this.idNoticia.set(params['noticia'] ? Number(params['noticia']) : 0);
+      this.idUsuario.set(params['id_usuario'] ? Number(params['id_usuario']) : 0);
+      this.idNoticia.set(params['id_noticia'] ? Number(params['id_noticia']) : 0);
 
       this.numPage.set(0);
       this.getPage();

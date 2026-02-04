@@ -1,6 +1,6 @@
 <div class="container my-2">
     <div class="d-flex justify-content-center my-3">
-        <h1>Mantenimiento de Liga</h1>
+        <h1>Ligas</h1>
     </div>
 
     <!-- Búsqueda por nombre usando debounce -->
@@ -84,14 +84,14 @@
                         {{ ' (' + oLiga.equipo.id + ')' }}
                     </a>
                     <!-- Botón alineado a la derecha para filtrar equipo -->
-                    <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/liga', oLiga.equipo.id]"
+                    <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/liga/equipo', oLiga.equipo.id]"
                         role="button" title="Editar"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
                 </td>
                 <td style="text-align: center">
                     @if (oLiga.partidos === 0) {
                     <i class="bi bi-ban" aria-hidden="true"></i>
                     } @else {
-                    <a [routerLink]="['/partido', oLiga.id]">
+                    <a [routerLink]="['/partido/liga', oLiga.id]">
                         {{ oLiga.partidos }}
                     </a>
                     }

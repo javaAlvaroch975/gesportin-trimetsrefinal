@@ -26,7 +26,7 @@ export class PlistEquipo {
   filteredEquipos = signal<IEquipo[]>([]);
   // Datos paginados para mostrar en la tabla
   paginatedContent = signal<IEquipo[]>([]);
-  
+
   numPage = signal<number>(0);
   numRpp = signal<number>(5);
 
@@ -59,7 +59,7 @@ export class PlistEquipo {
   ) {}
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('categoria');
+    const id = this.route.snapshot.paramMap.get('id_categoria');
     if (id) {
       this.categoria.set(+id);
     }
@@ -90,8 +90,8 @@ export class PlistEquipo {
   loadAllData() {
     this.oEquipoService
       .getPage(
-        0,
-        10000, // Cargar todos los registros
+        this.numPage(),
+        this.numRpp(),
         this.orderField(),
         this.orderDirection(),
         '',
@@ -113,28 +113,26 @@ export class PlistEquipo {
     const all = this.allEquipos();
     const searchTerm = this.nombre().toLowerCase().trim();
     const idFilter = this.filtroId();
-    
+
     // Filtrar
     let filtered: IEquipo[];
-    
+
     // Si hay filtro por ID, solo mostrar ese equipo
     if (idFilter > 0) {
-      filtered = all.filter(equipo => equipo.id === idFilter);
+      filtered = all.filter((equipo) => equipo.id === idFilter);
     } else if (searchTerm.length === 0) {
       filtered = all;
     } else {
-      filtered = all.filter(equipo => 
-        equipo.nombre?.toLowerCase().includes(searchTerm)
-      );
+      filtered = all.filter((equipo) => equipo.nombre?.toLowerCase().includes(searchTerm));
     }
     this.filteredEquipos.set(filtered);
-    
+
     // Ajustar página si es necesario
     const maxPage = Math.max(0, this.totalPages() - 1);
     if (this.numPage() > maxPage) {
       this.numPage.set(maxPage);
     }
-    
+
     // Paginar
     const start = this.numPage() * this.numRpp();
     const end = start + this.numRpp();
@@ -166,23 +164,6 @@ export class PlistEquipo {
   onSearchNombre(value: string) {
     // Emitir el valor al Subject para que sea procesado con debounce
     this.searchSubject.next(value);
-  }
-
-  onSearchIdChange() {
-    // Si se borra el campo de ID, quitar el filtro
-    if (!this.searchId || this.searchId <= 0) {
-      this.filtroId.set(0);
-      this.numPage.set(0);
-      this.filterAndPaginate();
-    }
-  }
-
-  onSearchById() {
-    if (this.searchId && this.searchId > 0) {
-      this.filtroId.set(this.searchId);
-      this.numPage.set(0);
-      this.filterAndPaginate();
-    }
   }
 
   clearIdFilter() {

@@ -1,6 +1,6 @@
 <div class="container my-2">
   <div class="d-flex justify-content-center my-3">
-    <h1>Lista de Temporadas</h1>
+    <h1>Temporadas</h1>
   </div>
 
   <!-- Aviso (mensaje desde queryParams) -->
@@ -130,7 +130,7 @@
               <!-- Botón alineado a la derecha para filtrar club -->
               <a
                 class="btn btn-warning btn-sm ms-2 float-end"
-                [routerLink]="['/temporada', oTemporada.club.id]"
+                [routerLink]="['/temporada/club', oTemporada.club.id]"
                 role="button"
                 title="Filtrar por club"
                 ><i class="bi bi-funnel-fill" aria-hidden="true"></i
@@ -140,7 +140,7 @@
               @if (oTemporada.categorias === 0) {
                 <i class="bi bi-ban" aria-hidden="true"></i>
               } @else {
-                <a [routerLink]="['/categoria', oTemporada.id]">
+                <a [routerLink]="['/categoria/temporada', oTemporada.id]">
                   {{ oTemporada.categorias }}
                 </a>
               }

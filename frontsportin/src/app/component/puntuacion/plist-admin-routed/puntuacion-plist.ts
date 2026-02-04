@@ -37,12 +37,12 @@ export class PuntuacionPlistAdminRouted {
   ) {}
 
   ngOnInit() {
-    const idUsuario = this.route.snapshot.paramMap.get('usuario');
+    const idUsuario = this.route.snapshot.paramMap.get('id_usuario');
     if (idUsuario) {
       this.usuario.set(+idUsuario);
     }
 
-    const idNoticia = this.route.snapshot.paramMap.get('noticia');
+    const idNoticia = this.route.snapshot.paramMap.get('id_noticia');
     if (idNoticia) {
       this.noticia.set(+idNoticia);
     }
@@ -94,5 +94,9 @@ export class PuntuacionPlistAdminRouted {
     this.numRpp.set(n);
     this.numPage.set(0);
     this.getPage();
+  }
+
+  getStars(rating: number): number[] {
+    return Array(5).fill(0).map((_, i) => i + 1);
   }
 }

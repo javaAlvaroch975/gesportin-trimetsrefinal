@@ -1,7 +1,7 @@
 import { Component, signal, computed } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { noticiaModel } from '../../../model/noticia';
+import { INoticia } from '../../../model/noticia';
 import { IPage } from '../../../model/plist';
 import { NoticiaService } from '../../../service/noticia';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -9,7 +9,6 @@ import { Paginacion } from '../../shared/paginacion/paginacion';
 import { BotoneraRpp } from '../../shared/botonera-rpp/botonera-rpp';
 import { DatetimePipe } from '../../../pipe/datetime-pipe';
 import { TrimPipe } from '../../../pipe/trim-pipe';
-import { DecimalPipe } from '@angular/common';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { debounceTimeSearch } from '../../../environment/environment';
@@ -17,12 +16,12 @@ import { debounceTimeSearch } from '../../../environment/environment';
 @Component({
   selector: 'app-noticia-plist',
   standalone: true,
-  imports: [Paginacion, BotoneraRpp, DatetimePipe, TrimPipe, RouterLink, DecimalPipe],
+  imports: [Paginacion, BotoneraRpp, DatetimePipe, TrimPipe, RouterLink],
   templateUrl: './noticia-plist.html',
   styleUrl: './noticia-plist.css',
 })
 export class NoticiaPlistAdminRouted {
-  oPage = signal<IPage<noticiaModel> | null>(null);
+  oPage = signal<IPage<INoticia> | null>(null);
   numPage = signal<number>(0);
   numRpp = signal<number>(5);
 
@@ -52,7 +51,7 @@ export class NoticiaPlistAdminRouted {
   ngOnInit() {
     // Suscribirse a cambios en los parámetros de ruta
     this.route.paramMap.subscribe(params => {
-      const id = params.get('club');
+      const id = params.get('id_club');
       if (id) {
         this.club.set(+id);
       } else {
@@ -92,7 +91,7 @@ export class NoticiaPlistAdminRouted {
         this.club(),
       )
       .subscribe({
-        next: (data: IPage<noticiaModel>) => {
+        next: (data: IPage<INoticia>) => {
           this.oPage.set(data);
           if (this.numPage() > 0 && this.numPage() >= data.totalPages) {
             this.numPage.set(data.totalPages - 1);

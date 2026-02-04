@@ -60,9 +60,9 @@ export class UsuarioPlist {
   ngOnInit() {
 
     this.routeSub = this.route.params.subscribe((params) => {
-      this.idTipousuario.set(params['tipousuario'] ? Number(params['tipousuario']) : 0);
-      this.idRol.set(params['rol'] ? Number(params['rol']) : 0);
-      this.idClub.set(params['club'] ? Number(params['club']) : 0);
+      this.idTipousuario.set(params['id_tipousuario'] ? Number(params['id_tipousuario']) : 0);
+      this.idRol.set(params['id_rol'] ? Number(params['id_rol']) : 0);
+      this.idClub.set(params['id_club'] ? Number(params['id_club']) : 0);
 
       this.numPage.set(0);
       this.getPage();

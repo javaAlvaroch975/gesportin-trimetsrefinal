@@ -1,6 +1,6 @@
 <div class="container my-2">
   <div class="d-flex justify-content-center my-3">
-    <h1>Mantenimiento de Tipos de Artículo</h1>
+    <h1>Tipos de Artículo</h1>
   </div>
 
   <!-- Búsqueda por descripción -->
@@ -101,7 +101,7 @@
               </a>
               <a
                 class="btn btn-warning btn-sm ms-2 float-end"
-                [routerLink]="['/tipoarticulo', oTipoarticulo.club.id]"
+                [routerLink]="['/tipoarticulo/club', oTipoarticulo.club.id]"
                 role="button"
                 title="filtrar por club"
                 ><i class="bi bi-funnel-fill" aria-hidden="true"></i
@@ -111,7 +111,7 @@
               @if (oTipoarticulo.articulos === 0) {
                 <i class="bi bi-ban" aria-hidden="true"></i>
               } @else {
-                <a [routerLink]="['/articulo', oTipoarticulo.id]">
+                <a [routerLink]="['/articulo/tipoarticulo', oTipoarticulo.id]">
                   {{ oTipoarticulo.articulos }}
                 </a>
               }

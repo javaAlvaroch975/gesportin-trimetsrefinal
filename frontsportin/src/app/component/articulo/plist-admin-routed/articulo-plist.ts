@@ -51,7 +51,7 @@ export class ArticuloPlistAdminRouted {
   ) {}
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('tipoarticulo');
+    const id = this.route.snapshot.paramMap.get('id_tipoarticulo');
     if (id) {
       this.tipoarticulo.set(+id);
     }

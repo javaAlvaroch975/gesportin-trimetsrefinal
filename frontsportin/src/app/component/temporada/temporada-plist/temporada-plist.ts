@@ -51,15 +51,23 @@ export class TemporadaPlist {
   ) {}
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('club');
-    if (id) {
-      this.club.set(+id);
-    }
+    this.route.paramMap.subscribe((params) => {
+      const id = params.get('id_club');
+      if (id) {
+        this.club.set(+id);
+      } else {
+        this.club.set(0);
+      }
+      this.numPage.set(0);
+      this.getPage();
+    });
 
-    const msg = this.route.snapshot.queryParamMap.get('msg');
-    if (msg) {
-      this.showMessage(msg);
-    }
+    this.route.queryParamMap.subscribe((params) => {
+      const msg = params.get('msg');
+      if (msg) {
+        this.showMessage(msg);
+      }
+    });
 
     // Configurar el debounce para la búsqueda
     this.searchSubscription = this.searchSubject
@@ -73,7 +81,6 @@ export class TemporadaPlist {
         this.getPage();
       });
 
-    this.getPage();
   }
 
   ngOnDestroy() {

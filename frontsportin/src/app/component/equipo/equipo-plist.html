@@ -1,6 +1,6 @@
 <div class="container my-2">
   <div class="d-flex justify-content-center my-3">
-    <h1>Lista de Equipos</h1>
+    <h1>Equipos</h1>
   </div>
 
   <!-- Aviso (mensaje desde queryParams) -->
@@ -24,21 +24,6 @@
         [value]="nombre()"
         name="searchNombre"
       />
-      <div class="input-group" style="max-width: 250px;">
-        <input
-          class="form-control"
-          type="number"
-          placeholder="Buscar por ID"
-          aria-label="Search by ID"
-          [(ngModel)]="searchId"
-          (input)="onSearchIdChange()"
-          name="searchId"
-          min="1"
-        />
-        <button class="btn btn-outline-primary" type="button" (click)="onSearchById()" title="Buscar por ID">
-          <i class="bi bi-search" aria-hidden="true"></i>
-        </button>
-      </div>
     </div>
   }
 
@@ -58,7 +43,13 @@
     }
     @if (filtroId() > 0) {
       <small class="text-muted ms-3">Filtro: ID = {{ filtroId() }}</small>
-      <a class="ms-2" (click)="clearIdFilter()" role="button" title="Quitar filtro" style="cursor: pointer;">
+      <a
+        class="ms-2"
+        (click)="clearIdFilter()"
+        role="button"
+        title="Quitar filtro"
+        style="cursor: pointer"
+      >
         <i class="bi bi-x-lg" aria-hidden="true"></i> Quitar filtro
       </a>
     }
@@ -150,13 +141,13 @@
             <td>
               @if (oEquipo.categoria) {
                 <a [routerLink]="['/categoria', '/view', oEquipo.categoria.id]">
-                  {{ (oEquipo.categoria.nombre ?? '') | trim: 20 }}
+                  {{ oEquipo.categoria.nombre | trim: 20 }}
                   {{ ' (' + oEquipo.categoria.id + ')' }}
                 </a>
                 <!-- Botón alineado a la derecha para filtrar categoria -->
                 <a
                   class="btn btn-warning btn-sm ms-2 float-end"
-                  [routerLink]="['/equipo', oEquipo.categoria.id]"
+                  [routerLink]="['/equipo/categoria', oEquipo.categoria.id]"
                   role="button"
                   title="Filtrar por categoría"
                   ><i class="bi bi-funnel-fill" aria-hidden="true"></i
@@ -177,7 +168,7 @@
               @if (oEquipo.jugadores === 0) {
                 <i class="bi bi-ban" aria-hidden="true"></i>
               } @else {
-                <a [routerLink]="['/jugador', oEquipo.id]">
+                <a [routerLink]="['/jugador/equipo', oEquipo.id]">
                   {{ oEquipo.jugadores }}
                 </a>
               }
@@ -215,4 +206,3 @@
     </table>
   </div>
 </div>
-            

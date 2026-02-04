@@ -39,8 +39,8 @@ export class CompraPlistAdminRouted implements OnInit {
   ngOnInit() {
     // CAMBIO CLAVE: Usamos subscribe en lugar de snapshot
     this.route.paramMap.subscribe((params) => {
-      const idArticulo = params.get('articulo');
-      const idFactura = params.get('factura');
+      const idArticulo = params.get('id_articulo');
+      const idFactura = params.get('id_factura');
 
       if (idArticulo) {
         this.articulo.set(+idArticulo);

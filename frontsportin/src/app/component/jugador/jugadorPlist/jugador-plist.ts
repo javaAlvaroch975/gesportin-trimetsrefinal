@@ -57,21 +57,17 @@ export class JugadorPlisComponent {
   ngOnInit() {
     // Suscribirse a los cambios de parámetros de ruta (reactivo)
     this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
+      const idUsuario = params.get('id_usuario');
+      const idEquipo = params.get('id_equipo');
       
-      // Leer la URL actual DENTRO de la suscripción para que sea reactiva
-      const currentUrl = this.route.snapshot.url.map(segment => segment.path).join('/');
-      
-      if (id) {
-        if (currentUrl.includes('usuario')) {
-          this.usuario.set(+id);
-          this.equipo.set(0);
-          this.posicion.set(''); // Limpiar búsqueda por posición
-        } else if (currentUrl.includes('equipo')) {
-          this.equipo.set(+id);
-          this.usuario.set(0);
-          this.posicion.set(''); // Limpiar búsqueda por posición
-        }
+      if (idUsuario) {
+        this.usuario.set(+idUsuario);
+        this.equipo.set(0);
+        this.posicion.set(''); // Limpiar búsqueda por posición
+      } else if (idEquipo) {
+        this.equipo.set(+idEquipo);
+        this.usuario.set(0);
+        this.posicion.set(''); // Limpiar búsqueda por posición
       } else {
         // Limpiar filtros si no hay parámetro
         this.usuario.set(0);

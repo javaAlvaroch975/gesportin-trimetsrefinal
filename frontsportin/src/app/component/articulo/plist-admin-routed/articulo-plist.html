@@ -1,6 +1,6 @@
 <div class="container my-2">
   <div class="d-flex justify-content-center my-3">
-    <h1>Lista de Artículos</h1>
+    <h1>Artículos</h1>
   </div>
 
   <!-- Aviso (mensaje desde queryParams) -->
@@ -162,7 +162,7 @@
               <!-- Botón alineado a la derecha para filtrar tipoarticulo -->
               <a
                 class="btn btn-warning btn-sm ms-2 float-end"
-                [routerLink]="['/articulo', oArticulo.tipoarticulo.id]"
+                [routerLink]="['/articulo/tipoarticulo', oArticulo.tipoarticulo.id]"
                 role="button"
                 title="Editar"
                 ><i class="bi bi-funnel-fill" aria-hidden="true"></i

@@ -40,7 +40,7 @@ export class LigaPlistAdminRouted implements OnInit, OnDestroy {
   constructor(private oLigaService: LigaService, private route: ActivatedRoute) { }
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('equipo');
+    const id = this.route.snapshot.paramMap.get('id_equipo');
     if (id) {
       this.equipo.set(+id);
     }

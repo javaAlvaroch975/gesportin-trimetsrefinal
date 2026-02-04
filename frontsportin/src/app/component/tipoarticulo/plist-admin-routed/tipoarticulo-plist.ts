@@ -52,7 +52,7 @@ export class TipoarticuloPlistAdminRouted {
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('club');
+    const id = this.route.snapshot.paramMap.get('id_club');
     if (id) {
       this.club.set(+id);
     }

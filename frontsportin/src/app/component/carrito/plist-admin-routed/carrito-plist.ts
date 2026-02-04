@@ -49,8 +49,8 @@ export class CarritoPlistAdminRouted {
 
   ngOnInit() {
     this.routeSub = this.route.params.subscribe((params) => {
-      this.idArticulo.set(params['articulo'] ? Number(params['articulo']) : 0);
-      this.idUsuario.set(params['usuario'] ? Number(params['usuario']) : 0);
+      this.idArticulo.set(params['id_articulo'] ? Number(params['id_articulo']) : 0);
+      this.idUsuario.set(params['id_usuario'] ? Number(params['id_usuario']) : 0);
       this.numPage.set(0);
       this.getPage();
     });

@@ -1,6 +1,6 @@
 <div class="container my-2">
   <div class="d-flex justify-content-center my-3">
-    <h1>Lista de Clubes</h1>
+    <h1>Clubes</h1>
   </div>
 
   <!-- Aviso (mensaje desde queryParams) -->
@@ -129,7 +129,7 @@
               @if (oClub.temporadas === 0) {
                 <i class="bi bi-ban" aria-hidden="true"></i> 
               } @else {
-                <a [routerLink]="['/temporada', oClub.id]">
+                <a [routerLink]="['/temporada/club', oClub.id]">
                   {{ oClub.temporadas }}
                 </a>
               }
@@ -138,7 +138,7 @@
               @if (oClub.noticias === 0) {
                 <i class="bi bi-ban" aria-hidden="true"></i> 
               } @else {
-                <a [routerLink]="['/noticia', oClub.id]">
+                <a [routerLink]="['/noticia/club', oClub.id]">
                   {{ oClub.noticias }}
                 </a>
               }
@@ -147,7 +147,7 @@
               @if (oClub.tipoarticulos === 0) {
                 <i class="bi bi-ban" aria-hidden="true"></i> 
               } @else {
-                <a [routerLink]="['/tipoarticulo', oClub.id]">
+                <a [routerLink]="['/tipoarticulo/club', oClub.id]">
                   {{ oClub.tipoarticulos }}
                 </a>
               }

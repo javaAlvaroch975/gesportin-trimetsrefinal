@@ -50,7 +50,7 @@ export class CuotaPlistAdminRouted {
   ) {}
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('equipo');
+    const id = this.route.snapshot.paramMap.get('id_equipo');
     if (id) {
       this.equipo.set(+id);
     }

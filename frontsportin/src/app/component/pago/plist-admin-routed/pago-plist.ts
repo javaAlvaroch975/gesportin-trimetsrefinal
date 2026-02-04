@@ -51,19 +51,18 @@ export class PagoPlistComponent {
   ngOnInit() {
     // Suscribirse a los cambios de parámetros de ruta (reactivo)
     this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
+      const idCuota = params.get('id_cuota');
+      const idJugador = params.get('id_jugador');
       
       // Leer la URL actual DENTRO de la suscripción para que sea reactiva
       const currentUrl = this.route.snapshot.url.map(segment => segment.path).join('/');
       
-      if (id) {
-        if (currentUrl.includes('cuota')) {
-          this.cuota.set(+id);
-          this.jugador.set(0);
-        } else if (currentUrl.includes('jugador')) {
-          this.jugador.set(+id);
-          this.cuota.set(0);
-        }
+      if (idCuota) {
+        this.cuota.set(+idCuota);
+        this.jugador.set(0);
+      } else if (idJugador) {
+        this.jugador.set(+idJugador);
+        this.cuota.set(0);
       } else {
         // Limpiar filtros si no hay parámetro
         this.cuota.set(0);

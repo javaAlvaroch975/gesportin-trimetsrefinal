@@ -1,6 +1,6 @@
 <div class="container my-2">
   <div class="d-flex justify-content-center my-3">
-    <h1>Lista de Partidos</h1>
+    <h1>Partidos</h1>
   </div>
 
   @if (strResult()) {
@@ -100,7 +100,7 @@
             <a [routerLink]="['/liga', 'view', oPartido.liga.id]">
               {{ oPartido.liga.nombre | trim:25 }} ({{ oPartido.liga.id }})
             </a>
-            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/partido', oPartido.liga.id]"
+            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/partido/liga', oPartido.liga.id]"
               role="button" title="Filtrar por esta Liga">
               <i class="bi bi-funnel-fill" aria-hidden="true"></i>
             </a>
