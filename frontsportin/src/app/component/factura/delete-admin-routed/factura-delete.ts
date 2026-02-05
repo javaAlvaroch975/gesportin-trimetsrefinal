@@ -11,7 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   templateUrl: './factura-delete.html',
   styleUrl: './factura-delete.css',
 })
-export class DeleteAdminRouted {
+export class FacturaDeleteAdminRouted {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private oFacturaService = inject(FacturaService)
