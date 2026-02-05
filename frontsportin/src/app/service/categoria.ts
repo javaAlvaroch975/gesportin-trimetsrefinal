@@ -55,4 +55,9 @@ export class CategoriaService {
   count(): Observable<number> {
     return this.oHttp.get<number>(`${serverURL}/categoria/count`);
   }
+
+  //Borrar categoría por id
+  delete(id: number): Observable<number> {
+    return this.oHttp.delete<number>(serverURL + '/categoria/' + id);
+  }
 }
