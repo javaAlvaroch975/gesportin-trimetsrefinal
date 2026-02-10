@@ -138,38 +138,31 @@
               }
             </div>
 
-            <!-- Tipo de Artículo de rafa -->
-            <!-- Abrir ventana emergente con plist de Tipo de Artículo -->
-            <!-- para poder continuar necesito un plist de Tipo de Artículo no enrutado ¿? -->
 
-            <!-- inicialmente voy a aponer un boton que muestre un modal de angular material con un hola mundo o similar-->
-
-            <button type="button" class="btn btn-info mb-4" (click)="openTipoarticuloFinderModal()">
-              <i class="bi bi-search me-2"></i>Buscar tipo de artículo
-            </button>
-
-            <div class="d-flex align-items-center gap-3">
+            <!-- Buscador, ID y Descripción en una línea -->
+            <div class="mb-4 d-flex gap-3 align-items-end">
+              <button type="button" class="btn btn-info" (click)="openTipoarticuloFinderModal()">
+                <i class="bi bi-search me-2"></i>Buscar
+              </button>
               <div>
-                <label for="id_tipoarticulo" class="form-label">ID Tipo</label>
+                <label for="display_id_tipoarticulo" class="form-label">ID Tipo</label>
                 <input
                   type="text"
                   class="form-control"
-                  id="id_tipoarticulo"
-                  formControlName="id_tipoarticulo"
+                  id="display_id_tipoarticulo"
+                  [value]="displayIdTipo() || ''"
                   readonly
                 />
               </div>
               @if (selectedTipoarticulo()) {
                 <div class="flex-grow-1">
                   <label class="form-label">Descripción</label>
-                  <p class="form-control-plaintext fw-semibold">
+                  <p class="form-control-plaintext fw-semibold mb-0">
                     {{ selectedTipoarticulo()?.descripcion }}
                   </p>
                 </div>
               }
             </div>
-
-            <!---- final rafa -->
 
             <!-- Botones -->
             <div class="d-flex justify-content-between align-items-center mt-4">
