@@ -113,55 +113,57 @@
               }
             </div>
 
-            <!-- Tipo de Artículo -->
-            <div class="mb-4">
-              <label for="tipoarticulo" class="form-label"
-                >Tipo de artículo <span class="text-danger">*</span></label
-              >
-              <select
-                id="tipoarticulo"
-                style="cursor: pointer"
-                class="form-select"
-                [class.is-invalid]="id_tipoarticulo?.invalid && id_tipoarticulo?.touched"
-                [class.is-valid]="id_tipoarticulo?.valid && id_tipoarticulo?.touched"
-                formControlName="id_tipoarticulo"
-              >
-                <option [value]="null" disabled>Selecciona un tipo de artículo</option>
-                @for (tipo of tiposarticulo(); track tipo.id) {
-                  <option [value]="tipo.id">{{ tipo.descripcion }} ({{ tipo.club.nombre }})</option>
+            <!-- Sección: Tipo de Artículo -->
+            <div class="p-4 rounded mb-4" style="background-color: #e4e4e4; border-left: 4px solid #0d6efd;">
+              <!-- Tipo de Artículo Dropdown -->
+              <div class="mb-4">
+                <label for="tipoarticulo" class="form-label"
+                  >Tipo de artículo <span class="text-danger">*</span></label
+                >
+                <select
+                  id="tipoarticulo"
+                  style="cursor: pointer"
+                  class="form-select"
+                  [class.is-invalid]="id_tipoarticulo?.invalid && id_tipoarticulo?.touched"
+                  [class.is-valid]="id_tipoarticulo?.valid && id_tipoarticulo?.touched"
+                  formControlName="id_tipoarticulo"
+                >
+                  <option [value]="null" disabled>Selecciona un tipo de artículo</option>
+                  @for (tipo of tiposarticulo(); track tipo.id) {
+                    <option [value]="tipo.id">{{ tipo.descripcion }} ({{ tipo.club.nombre }})</option>
+                  }
+                </select>
+                @if (id_tipoarticulo?.invalid && id_tipoarticulo?.touched) {
+                  <div class="invalid-feedback">
+                    <span>Debe seleccionar un tipo de artículo.</span>
+                  </div>
                 }
-              </select>
-              @if (id_tipoarticulo?.invalid && id_tipoarticulo?.touched) {
-                <div class="invalid-feedback">
-                  <span>Debe seleccionar un tipo de artículo.</span>
-                </div>
-              }
-            </div>
-
-
-            <!-- Buscador, ID y Descripción en una línea -->
-            <div class="mb-4 d-flex gap-3 align-items-end">
-              <button type="button" class="btn btn-info" (click)="openTipoarticuloFinderModal()">
-                <i class="bi bi-search me-2"></i>Buscar
-              </button>
-              <div>
-                <label for="display_id_tipoarticulo" class="form-label">ID Tipo</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="display_id_tipoarticulo"
-                  [value]="displayIdTipo() || ''"
-                  readonly
-                />
               </div>
-              @if (selectedTipoarticulo()) {
-                <div class="flex-grow-1">
-                  <label class="form-label">Descripción</label>
-                  <p class="form-control-plaintext fw-semibold mb-0">
-                    {{ selectedTipoarticulo()?.descripcion }}
-                  </p>
+
+              <!-- Buscador, ID y Descripción en una línea -->
+              <div class="d-flex gap-3 align-items-end">
+                <button type="button" class="btn btn-info" (click)="openTipoarticuloFinderModal()">
+                  <i class="bi bi-search me-2"></i>Buscar
+                </button>
+                <div>
+                  <label for="display_id_tipoarticulo" class="form-label">ID Tipo</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="display_id_tipoarticulo"
+                    [value]="displayIdTipo() || ''"
+                    readonly
+                  />
                 </div>
-              }
+                @if (selectedTipoarticulo()) {
+                  <div class="flex-grow-1">
+                    <label class="form-label">Descripción</label>
+                    <p class="form-control-plaintext fw-semibold mb-0">
+                      {{ selectedTipoarticulo()?.descripcion }}
+                    </p>
+                  </div>
+                }
+              </div>
             </div>
 
             <!-- Botones -->
