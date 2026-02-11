@@ -47,7 +47,9 @@ import { RolusuarioViewAdminRouted } from './component/rolusuario/view-admin-rou
 import { CategoriaViewAdminRouted } from './component/categoria/view-admin-routed/categoria-view';
 import { CategoriaEditAdminRouted } from './component/categoria/edit-admin-routed/categoria-edit';
 import { LigaViewRouted } from './component/liga/view-routed/liga-view';
+import { LigaDeleteAdminRouted } from './component/liga/delete-admin-routed/liga-delete';
 import { ComentarioartViewRouted } from './component/comentarioart/view-routed/comentarioart-view';
+import { ComentarioartEditAdminRouted } from './component/comentarioart/edit-admin-routed/comentarioart-edit';
 import { PagoDeleteAdminRouted } from './component/pago/delete-admin-routed/pago-delete';
 import { RolusuarioDeleteAdminRouted } from './component/rolusuario/delete-admin-routed/rolusuario-delete';
 import { LigaEditAdminRouted } from './component/liga/edit-admin-routed/liga-edit';
@@ -82,6 +84,7 @@ export const routes: Routes = [
     { path: 'temporada/delete/:id', component: TemporadaDeleteAdminRouted },
     { path: 'liga', component: LigaPlistAdminRouted },
     { path: 'liga/view/:id', component: LigaViewRouted },
+    { path: 'liga/delete/:id', component: LigaDeleteAdminRouted },
     { path: 'liga/edit/:id', component: LigaEditAdminRouted },
     { path: 'liga/equipo/:id_equipo', component: LigaPlistAdminRouted },
     { path: 'articulo', component: ArticuloPlistAdminRouted},
@@ -165,6 +168,7 @@ export const routes: Routes = [
     { path: 'comentarioart/articulo/:id_articulo', component: ComentarioartPlistAdminRouted},
     { path: 'comentarioart/usuario/:id_usuario', component: ComentarioartPlistAdminRouted},
     { path: 'comentarioart/view/:id', component: ComentarioartViewRouted},
+    { path: 'comentarioart/edit/:id', component: ComentarioartEditAdminRouted},
     { path: 'carrito/delete/:id', component: CarritoDeleteAdminRouted},
     { path: 'comentarioart/delete/:id', component: ComentarioartDeleteAdminRouted },
 
