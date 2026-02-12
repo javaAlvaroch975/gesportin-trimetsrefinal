@@ -13,11 +13,12 @@ import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { debounceTimeSearch } from '../../../environment/environment';
 import { MatDialogRef } from '@angular/material/dialog';
+import { BotoneraActionsPlist } from '../../shared/botonera-actions-plist/botonera-actions-plist';
 
 @Component({
   selector: 'app-noticia-plist-admin-unrouted',
   standalone: true,
-  imports: [Paginacion, BotoneraRpp, DatetimePipe, TrimPipe, RouterLink],
+  imports: [Paginacion, BotoneraRpp, DatetimePipe, TrimPipe, RouterLink, BotoneraActionsPlist],
   templateUrl: './noticia-plist-admin-unrouted.html',
   styleUrl: './noticia-plist-admin-unrouted.css',
 })
@@ -98,7 +99,7 @@ export class NoticiaPlistAdminUnrouted {
         this.orderField(),
         this.orderDirection(),
         this.titulo(),
-        this.club()
+        this.club(),
       )
       .subscribe({
         next: (data: IPage<INoticia>) => {
