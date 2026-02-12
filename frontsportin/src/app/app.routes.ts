@@ -77,6 +77,7 @@ import { CuotaDeleteAdminRouted } from './component/cuota/delete-admin-routed/cu
 import { UsuarioEditAdminRouted } from './component/usuario/edit-admin-routed/usuario-edit';
 import { JugadorEditAdminRouted } from './component/jugador/edit-admin-routed/jugador-edit';
 import { CompraEditAdminRouted } from './component/compra/edit-admin-routed/compra-edit';
+import { PartidoEditAdminRouted } from './component/partido/edit-admin-routed/partido-edit';
 
 
 export const routes: Routes = [
@@ -112,6 +113,7 @@ export const routes: Routes = [
     { path: 'partido', component: PartidoPlistAdminRouted},
     { path: 'partido/liga/:id_liga', component: PartidoPlistAdminRouted},
     { path: 'partido/view/:id', component: PartidoViewAdminRouted},
+    { path: 'partido/edit/:id', component: PartidoEditAdminRouted },
     { path: 'partido/delete/:id', component: PartidoDeleteAdminRouted },
     { path: 'factura', component: FacturaPlistAdminRouted },
     { path: 'factura/:usuario', component: FacturaPlistAdminRouted },

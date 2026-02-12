@@ -58,6 +58,10 @@ export class PartidoService {
     return this.oHttp.get<number>(serverURL + '/partido/count');
   }
 
+  update(partido: Partial<IPartido>): Observable<number> {
+    return this.oHttp.put<number>(serverURL + '/partido', partido);
+  }
+
   delete(id: number): Observable<number> {
     return this.oHttp.delete<number>(serverURL + '/partido/' + id);
   }
