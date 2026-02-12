@@ -15,8 +15,9 @@ import { UsuarioPlistAdminUnrouted } from '../../usuario/plist-admin-unrouted/us
 import { EquipoPlistAdminUnrouted } from '../../equipo/plist-admin-unrouted/equipo-plist-admin-unrouted';
 
 @Component({
-  selector: 'app-edit-admin-routed',
-  imports: [ReactiveFormsModule, RouterLink, CommonModule],
+  selector: 'app-jugador-edit-routed',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './jugador-edit.html',
   styleUrl: './jugador-edit.css',
 })
@@ -41,12 +42,12 @@ export class JugadorEditAdminRouted implements OnInit {
   selectedEquipo = signal<IEquipo | null>(null);
 
   ngOnInit(): void {
-    this.inicializarFormulario();
+  this.initForm();
 
     const idParam = this.route.snapshot.paramMap.get('id');
 
     if (!idParam || idParam === '0') {
-      this.error.set('ID de artículo no válido');
+  this.error.set('ID de jugador no válido');
       this.loading.set(false);
       return;
     }
@@ -59,10 +60,10 @@ export class JugadorEditAdminRouted implements OnInit {
       return;
     }
 
-    this.cargarJugador();
+    this.loadJugador();
   }
 
-  inicializarFormulario(): void {
+  private initForm(): void {
     this.jugadorForm = this.fb.group({
       id: [{ value: 0, disabled: true }],
       posicion: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(255)]],
@@ -73,7 +74,7 @@ export class JugadorEditAdminRouted implements OnInit {
     });
   }
 
-  cargarJugador(): void {
+  private loadJugador(): void {
     this.oJugadorService.getById(this.id_jugador()).subscribe({
       next: (jugador: IJugador) => {
         this.jugadorActual.set(jugador);
@@ -96,11 +97,12 @@ export class JugadorEditAdminRouted implements OnInit {
           this.syncEquipo(idEquipo);
         }
 
-        this.loading.set (false);
+  this.loading.set(false);
       },
       error: (err: HttpErrorResponse) => {
-        this.error.set ('Error al cargar el jugador');
-        this.loading.set (false);
+  this.error.set('Error cargando el jugador');
+  this.snackBar.open('Error cargando el jugador', 'Cerrar', { duration: 4000 });
+  this.loading.set(false);
         console.error(err);
       }
     });
@@ -199,17 +201,19 @@ export class JugadorEditAdminRouted implements OnInit {
   }
 
   enviarFormulario(): void {
-    if (!this.jugadorForm.valid || !this.id_jugador) {
+    // Patrón tipoarticulo: si el form es inválido, marcar y avisar.
+    if (this.jugadorForm.invalid) {
       this.jugadorForm.markAllAsTouched();
+      this.snackBar.open('Por favor, complete todos los campos correctamente', 'Cerrar', { duration: 4000 });
       return;
     }
 
-    this.submitting.set (true);
+    this.submitting.set(true);
 
     const jugadorActualData = this.jugadorActual();
     
     if (!jugadorActualData) {
-      this.submitting.set (false);
+  this.submitting.set(false);
       this.snackBar.open('No se pudo cargar los datos del jugador', 'Cerrar', { duration: 4000 });
       return;
     }
@@ -231,20 +235,22 @@ export class JugadorEditAdminRouted implements OnInit {
 
     this.oJugadorService.update(payload).subscribe({
       next: () => {
-        this.submitting.set (false);
+        this.submitting.set(false);
         this.snackBar.open('Jugador actualizado correctamente', 'Cerrar', { duration: 4000 });
         this.router.navigate(['/jugador']);
       },
       error: (err: HttpErrorResponse) => {
-        this.submitting.set (false);
-        this.error.set ('Error al actualizar el jugador');
+        this.submitting.set(false);
+        this.error.set('Error actualizando el jugador');
         this.snackBar.open('Error al actualizar el jugador', 'Cerrar', { duration: 4000 });
         console.error(err);
       }
     });
   }
 
-  
+  doCancel(): void {
+    this.router.navigate(['/jugador']);
   }
+}
 
 
