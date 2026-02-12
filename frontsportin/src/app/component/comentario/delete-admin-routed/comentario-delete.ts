@@ -1,8 +1,7 @@
 import { Component, signal, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { DatetimePipe } from '../../../pipe/datetime-pipe';
 import { ComentarioService } from '../../../service/comentario';
 import { IComentario } from '../../../model/comentario';
 import { ComentarioDetailAdminUnrouted } from "../detail-admin-unrouted/comentario-detail";
@@ -10,7 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
-  selector: 'app-comentario-view',
+  selector: 'app-comentario-delete',
   imports: [CommonModule, ComentarioDetailAdminUnrouted],
   templateUrl: './comentario-delete.html',
   styleUrl: './comentario-delete.css',
@@ -55,8 +54,5 @@ export class ComentarioDeleteAdminRouted implements OnInit {
   doCancel() {    
     window.history.back();
   }
-
-
-
 
 }

@@ -1,8 +1,7 @@
 import { Component, signal, OnInit, inject, Input, Signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { DatetimePipe } from '../../../pipe/datetime-pipe';
 import { ComentarioService } from '../../../service/comentario';
 import { IComentario } from '../../../model/comentario';
 
@@ -35,9 +34,9 @@ export class ComentarioDetailAdminUnrouted implements OnInit {
         this.loading.set(false);
       },
       error: (err: HttpErrorResponse) => {
-        this.error.set('Error cargando el usuario');
+        this.error.set('Error cargando el comentario');
         this.loading.set(false);
-        //this.snackBar.open('Error cargando el usuario', 'Cerrar', { duration: 4000 });
+        //this.snackBar.open('Error cargando el comentario', 'Cerrar', { duration: 4000 });
         console.error(err);
       },
     });
