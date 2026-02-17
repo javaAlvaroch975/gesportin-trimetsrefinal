@@ -1,0 +1,10 @@
+/* Dialog de selección de club */
+.club-dialog .mat-mdc-dialog-container {
+	padding: 16px;
+	box-sizing: border-box;
+}
+
+.club-dialog .mat-mdc-dialog-content {
+	padding: 0;
+    margin: 50px;
+}
