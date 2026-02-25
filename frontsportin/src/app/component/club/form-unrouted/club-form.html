@@ -80,8 +80,8 @@
 						<button type="button" class="btn btn-outline-secondary" (click)="onCancel()">
 							<i class="bi bi-arrow-left me-2"></i>Cancelar
 						</button>
-						<button type="submit" class="btn btn-primary" [disabled]="loading() || clubForm.invalid">
-							@if (loading()) {
+						<button type="submit" class="btn btn-primary" [disabled]="submitting() || clubForm.invalid">
+							@if (submitting()) {
 							<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
 							} @else {
 							<i class="bi bi-check-circle me-2"></i>

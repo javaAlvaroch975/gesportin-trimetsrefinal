@@ -22,7 +22,6 @@ export class ClubEditAdminRouted implements OnInit {
   id_club = signal<number>(0);
   loading = signal(true);
   error = signal<string | null>(null);
-  submitting = signal(false);
   club = signal<IClub | null>(null);
 
   ngOnInit(): void {
@@ -60,23 +59,8 @@ export class ClubEditAdminRouted implements OnInit {
     });
   }
 
-  onFormSubmit(clubData: any): void {
-    this.submitting.set(true);
-    this.error.set(null);
-
-    this.clubService.update(clubData).subscribe({
-      next: (id: number) => {
-        this.snackBar.open('Club actualizado exitosamente', 'Cerrar', { duration: 4000 });
-        this.submitting.set(false);
-        this.router.navigate(['/club']);
-      },
-      error: (err: HttpErrorResponse) => {
-        this.error.set('Error actualizando el club');
-        this.snackBar.open('Error actualizando el club', 'Cerrar', { duration: 4000 });
-        console.error(err);
-        this.submitting.set(false);
-      },
-    });
+  onFormSuccess(): void {
+    this.router.navigate(['/club']);
   }
 
   onFormCancel(): void {

@@ -20,11 +20,11 @@
           </div>
         }
 
-        @if (!loading() && !error()) {
+        @if (!loading() && !error() && club()) {
           <app-club-form-unrouted
             [club]="club()"
             [isEditMode]="true"
-            (formSubmit)="onFormSubmit($event)"
+            (formSuccess)="onFormSuccess()"
             (formCancel)="onFormCancel()"
           ></app-club-form-unrouted>
         }

@@ -1,7 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ClubService } from '../../../service/club';
 import { IClub } from '../../../model/club';
 
 @Component({
@@ -13,15 +15,17 @@ import { IClub } from '../../../model/club';
 export class ClubFormUnrouted implements OnInit {
   @Input() club: IClub | null = null;
   @Input() isEditMode: boolean = false;
-  @Output() formSubmit = new EventEmitter<any>();
+  @Output() formSuccess = new EventEmitter<void>();
   @Output() formCancel = new EventEmitter<void>();
 
   private fb = inject(FormBuilder);
   private snackBar = inject(MatSnackBar);
+  private clubService = inject(ClubService);
 
   clubForm!: FormGroup;
   loading = signal(false);
   error = signal<string | null>(null);
+  submitting = signal(false);
 
   ngOnInit(): void {
     this.initForm();
@@ -73,6 +77,8 @@ export class ClubFormUnrouted implements OnInit {
       return;
     }
 
+    this.submitting.set(true);
+
     const fechaValue = this.clubForm.value.fechaAlta;
     const fechaConHora = this.toLocalDateTime(fechaValue);
 
@@ -93,7 +99,43 @@ export class ClubFormUnrouted implements OnInit {
           }),
     };
 
-    this.formSubmit.emit(formData);
+    if (this.isEditMode) {
+      this.saveUpdate(formData);
+    } else {
+      this.saveCreate(formData);
+    }
+  }
+
+  private saveCreate(clubData: any): void {
+    this.clubService.create(clubData).subscribe({
+      next: (id: number) => {
+        this.snackBar.open('Club creado exitosamente', 'Cerrar', { duration: 4000 });
+        this.submitting.set(false);
+        this.formSuccess.emit();
+      },
+      error: (err: HttpErrorResponse) => {
+        this.error.set('Error creando el club');
+        this.snackBar.open('Error creando el club', 'Cerrar', { duration: 4000 });
+        console.error(err);
+        this.submitting.set(false);
+      },
+    });
+  }
+
+  private saveUpdate(clubData: any): void {
+    this.clubService.update(clubData).subscribe({
+      next: (id: number) => {
+        this.snackBar.open('Club actualizado exitosamente', 'Cerrar', { duration: 4000 });
+        this.submitting.set(false);
+        this.formSuccess.emit();
+      },
+      error: (err: HttpErrorResponse) => {
+        this.error.set('Error actualizando el club');
+        this.snackBar.open('Error actualizando el club', 'Cerrar', { duration: 4000 });
+        console.error(err);
+        this.submitting.set(false);
+      },
+    });
   }
 
   private toLocalDateTime(value: string): string {
