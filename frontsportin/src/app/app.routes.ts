@@ -35,6 +35,7 @@ import { CarritoNewAdminRouted } from './component/carrito/new-admin-routed/carr
 import { CarritoPlistAdminRouted } from './component/carrito/plist-admin-routed/carrito-plist';
 import { ComentarioPlistAdminRouted } from './component/comentario/plist-admin-routed/comentario-plist';
 import { ComentarioViewRouted } from './component/comentario/view-routed/comentario-view';
+import { ComentarioNewAdminRouted } from './component/comentario/new-admin-routed/comentario-new';
 import { PagoPlistComponent } from './component/pago/plist-admin-routed/pago-plist';
 import { PuntuacionPlistAdminRouted } from './component/puntuacion/plist-admin-routed/puntuacion-plist';
 import { PuntuacionViewRouted } from './component/puntuacion/view-routed/puntuacion-view';
@@ -190,6 +191,7 @@ export const routes: Routes = [
     { path: 'carrito/delete/:id', component: CarritoDeleteAdminRouted },
     { path: 'carrito/edit/:id', component: CarritoEditAdminRouted },
     { path: 'comentario', component: ComentarioPlistAdminRouted },
+    { path: 'comentario/new', component: ComentarioNewAdminRouted },
     { path: 'comentario/usuario/:id_usuario', component: ComentarioPlistAdminRouted},
     { path: 'comentario/noticia/:id_noticia', component: ComentarioPlistAdminRouted},
     { path: 'comentario/view/:id', component: ComentarioViewRouted},

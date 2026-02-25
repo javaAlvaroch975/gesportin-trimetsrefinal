@@ -52,11 +52,14 @@ export class ComentarioService {
     }
 
     get(id: number): Observable<IComentario> {
-        return this.oHttp.get<IComentario>(`${this.URL}/${id}`);
+        return this.oHttp.get<IComentario>(`${this.URL}/${id}`, { withCredentials: true });
     }
 
     update(comentario: Partial<IComentario>): Observable<number> {
         return this.oHttp.put<number>(serverURL + '/comentario', comentario);
+    }
+    create(comentario: Partial<IComentario>): Observable<number> {
+        return this.oHttp.post<number>(this.URL, comentario);
     }
     delete(id: number): Observable<number> {
         return this.oHttp.delete<number>(`${this.URL}/${id}`);

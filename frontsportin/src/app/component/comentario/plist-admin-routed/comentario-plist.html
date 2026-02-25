@@ -1,6 +1,9 @@
 <div class="container my-2">
-  <div class="d-flex justify-content-center my-3">
-    <h1>Comentarios</h1>
+  <div class="d-flex justify-content-between align-items-center my-3">
+    <h1 class="m-0">Comentarios</h1>
+    <div>
+      <a [routerLink]="['/comentario/new']" class="btn btn-outline-primary btn-sm">Crear Comentario</a>
+    </div>
   </div>
 
   <!-- Aviso (mensaje desde queryParams) -->
