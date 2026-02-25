@@ -61,6 +61,10 @@ export class UsuarioService {
     return this.oHttp.get<IUsuario>(`${serverURL}/usuario/${id}`);
   }
 
+  create(usuario: Partial<IUsuario>): Observable<number> {
+    return this.oHttp.post<number>(`${serverURL}/usuario`, usuario);
+  }
+
   update(usuario: Partial<IUsuario>): Observable<IUsuario> {
     return this.oHttp.put<IUsuario>(`${serverURL}/usuario`, usuario);
   }
