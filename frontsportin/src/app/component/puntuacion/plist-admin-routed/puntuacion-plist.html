@@ -1,6 +1,9 @@
 <div class="container my-2">
-  <div class="d-flex justify-content-center my-3">
-    <h1>Puntuaciones</h1>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0">Puntuaciones</h1>
+    <a [routerLink]="['/puntuacion/new']" class="btn btn-primary">
+      <i class="bi bi-plus-circle me-2"></i>Crear Puntuación
+    </a>
   </div>
 
   <!-- Aviso (mensaje desde queryParams) -->
@@ -126,7 +129,7 @@
             <td>
               @if (oPuntuacion.noticia) {
                 <a [routerLink]="['/noticia', 'view', oPuntuacion.noticia.id]">
-                  {{ (oPuntuacion.noticia.titulo || 'Noticia ' + oPuntuacion.noticia.id) | trim: 50 }}
+                  {{ oPuntuacion.noticia.titulo || 'Noticia ' + oPuntuacion.noticia.id | trim: 50 }}
                   {{ ' (' + oPuntuacion.noticia.id + ')' }}
                 </a>
                 <a
@@ -144,11 +147,11 @@
               @if (oPuntuacion.usuario) {
                 <a [routerLink]="['/usuario', 'view', oPuntuacion.usuario.id]">
                   {{
-                    (oPuntuacion.usuario.nombre +
+                    oPuntuacion.usuario.nombre +
                       ' ' +
                       oPuntuacion.usuario.apellido1 +
                       ' ' +
-                      oPuntuacion.usuario.apellido2) | trim: 50
+                      oPuntuacion.usuario.apellido2 | trim: 50
                   }}
                   {{ ' (' + oPuntuacion.usuario.id + ')' }}
                 </a>
@@ -165,7 +168,10 @@
             </td>
             <td>
               <div class="d-flex justify-content-center">
-                <app-botonera-actions-plist [id]="oPuntuacion.id" strEntity="puntuacion"></app-botonera-actions-plist>
+                <app-botonera-actions-plist
+                  [id]="oPuntuacion.id"
+                  strEntity="puntuacion"
+                ></app-botonera-actions-plist>
               </div>
             </td>
           </tr>
