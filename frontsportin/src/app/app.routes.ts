@@ -92,6 +92,7 @@ import { UsuarioEditAdminRouted } from './component/usuario/edit-admin-routed/us
 import { UsuarioNewAdminRouted } from './component/usuario/new-admin-routed/usuario-new';
 import { JugadorEditAdminRouted } from './component/jugador/edit-admin-routed/jugador-edit';
 import { CompraEditAdminRouted } from './component/compra/edit-admin-routed/compra-edit';
+import { CompraNewAdminRouted } from './component/compra/new-admin-routed/compra-new';
 import { PartidoEditAdminRouted } from './component/partido/edit-admin-routed/partido-edit';
 import { TemporadaNewAdminRouted } from './component/temporada/new-admin-routed/temporada-new';
 
@@ -145,6 +146,7 @@ export const routes: Routes = [
   { path: 'compra/view/:id', component: CompraViewRouted },
   { path: 'compra/delete/:id', component: CompraDeleteAdminRouted },
   { path: 'compra/edit/:id', component: CompraEditAdminRouted },
+  { path: 'compra/new', component: CompraNewAdminRouted },
   { path: 'rolusuario', component: RolusuarioPlist },
   { path: 'rolusuario/new', component: RolusuarioNewAdminRouted },
   { path: 'rolusuario/view/:id', component: RolusuarioViewAdminRouted },

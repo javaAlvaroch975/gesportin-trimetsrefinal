@@ -39,6 +39,9 @@ export class CompraService {
   count(): Observable<number> {
     return this.oHttp.get<number>(serverURL + '/compra/count');
   }
+  create(compra: Partial<ICompra>): Observable<number> {
+      return this.oHttp.post<number>(serverURL + '/compra', compra);
+    }
 
   delete(id: number): Observable<number> {
     return this.oHttp.delete<number>(serverURL + '/compra/' + id);
