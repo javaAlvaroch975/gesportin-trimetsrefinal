@@ -52,12 +52,18 @@ export class EquipoService {
   }
 
   create(equipo: Partial<IEquipo>): Observable<number> {
-    const body = this.sanitizer.sanitize(equipo, { nestedIdFields: ['categoria', 'entrenador'] });
+    const body = this.sanitizer.sanitize(equipo, {
+      nestedIdFields: ['categoria', 'entrenador'],
+      removeFields: ['jugadores', 'cuotas', 'ligas'],
+    });
     return this.oHttp.post<number>(serverURL + '/equipo', body);
   }
 
   update(equipo: Partial<IEquipo>): Observable<number> {
-    const body = this.sanitizer.sanitize(equipo, { nestedIdFields: ['categoria', 'entrenador'] });
+    const body = this.sanitizer.sanitize(equipo, {
+      nestedIdFields: ['categoria', 'entrenador'],
+      removeFields: ['jugadores', 'cuotas', 'ligas'],
+    });
     return this.oHttp.put<number>(`${serverURL}/equipo`, body);
   }
 

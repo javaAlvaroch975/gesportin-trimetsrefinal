@@ -4,12 +4,13 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class PayloadSanitizerService {
-  sanitize(
+    sanitize(
     payload: any,
     config?: {
       booleanFields?: string[];
       nestedIdFields?: string[];
       idFieldMap?: { [nestedField: string]: string };
+      removeFields?: string[]; // fields to remove from payload; supports dot paths like 'equipo.jugadores'
     },
   ): any {
     const copy: any = { ...payload };
@@ -46,6 +47,30 @@ export class PayloadSanitizerService {
         } else if (copy[idKey] !== undefined) {
           copy[nestedField] = { id: Number(copy[idKey]) };
           delete copy[idKey];
+        }
+      });
+    }
+
+    // remove specified derived fields; supports nested paths using dot notation
+    if (config?.removeFields) {
+      config.removeFields.forEach((fieldPath) => {
+        if (!fieldPath) return;
+        const parts = fieldPath.split('.');
+        if (parts.length === 1) {
+          delete copy[parts[0]];
+        } else {
+          let target: any = copy;
+          for (let i = 0; i < parts.length - 1; i++) {
+            if (target && typeof target === 'object' && parts[i] in target) {
+              target = target[parts[i]];
+            } else {
+              target = null;
+              break;
+            }
+          }
+          if (target && typeof target === 'object') {
+            delete target[parts[parts.length - 1]];
+          }
         }
       });
     }
