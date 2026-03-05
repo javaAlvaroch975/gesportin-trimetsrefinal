@@ -6,13 +6,12 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Paginacion } from '../../shared/paginacion/paginacion';
 import { BotoneraRpp } from '../../shared/botonera-rpp/botonera-rpp';
-import { DatetimePipe } from '../../../pipe/datetime-pipe';
 import { MatDialogRef } from '@angular/material/dialog';
 import { BotoneraActionsPlist } from '../../shared/botonera-actions-plist/botonera-actions-plist';
 
 @Component({
   selector: 'app-club-plist-admin-unrouted',
-  imports: [Paginacion, BotoneraRpp, DatetimePipe, RouterLink, BotoneraActionsPlist],
+  imports: [Paginacion, BotoneraRpp, RouterLink, BotoneraActionsPlist],
   templateUrl: './club-plist-admin-unrouted.html',
   styleUrl: './club-plist-admin-unrouted.css',
 })
