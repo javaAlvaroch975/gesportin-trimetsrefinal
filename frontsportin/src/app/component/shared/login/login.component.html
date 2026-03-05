@@ -8,8 +8,8 @@
       <small class="text-muted">Accede a tu panel de usuario</small>
     </div>
 
-    @if (error) {
-    <div class="alert alert-danger" role="alert">{{ error }}</div>
+    @if (error()) {
+    <div class="alert alert-danger" role="alert">{{ error() }}</div>
     }
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
@@ -60,17 +60,17 @@
       </div>
 
       <div class="d-grid">
-        <button type="submit" class="btn btn-primary btn-lg" [disabled]="submitting">
-          @if (submitting) {
+        <button type="submit" class="btn btn-primary btn-lg" [disabled]="submitting()">
+          @if (submitting()) {
           <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
           }
-          Acceder
+          {{ submitting() ? 'Accediendo...' : 'Acceder' }}
         </button>
       </div>
     </form>
 
     <!-- incluir 3 botones de acceso rápido para debug visibles sólo si environment es de desarrollo -->
-      @if (debug === true) {
+      @if (debug() === true) {
         <div class="mt-4">
           <p class="text-center small text-muted mb-2">Acceso rápido (solo desarrollo)</p>
           <div class="d-flex justify-content-center gap-2">

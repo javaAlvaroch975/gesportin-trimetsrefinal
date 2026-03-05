@@ -1,4 +1,4 @@
-import { Component, Inject, inject, OnInit } from '@angular/core';
+import { Component, Inject, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LoginService } from '../../../service/login';
 import { LoginType } from '../../../model/login';
@@ -8,6 +8,7 @@ import { Router, RouterLink } from '@angular/router';
 import { debug as ENV_DEBUG } from '../../../environment/environment';
 import { SessionService } from '../../../service/session';
 import { IToken } from '../../../model/token';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login.component',
@@ -17,19 +18,20 @@ import { IToken } from '../../../model/token';
   standalone: true,
 })
 export class LoginComponent implements OnInit {
-  // obtener si el modo debug esta activo de environment
+  // obtener si el modo debug esta activo de environment (signal - zoneless)
 
-  readonly debug = ENV_DEBUG; // accesible desde la plantilla
+  readonly debug: WritableSignal<boolean> = signal(ENV_DEBUG);
   private fb = inject(FormBuilder);
   private loginService = inject(LoginService);
   private router = inject(Router);
 
   loginForm!: FormGroup;
-  error: string | null = null;
-  submitting: boolean = false;
+  readonly error: WritableSignal<string | null> = signal(null);
+  readonly submitting: WritableSignal<boolean> = signal(false);
 
   @Inject(SessionService)
   private oSessionService = inject(SessionService);
+  private snackBar = inject(MatSnackBar);
 
   ngOnInit(): void {
     this.initForm();
@@ -48,30 +50,50 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    this.submitting = true;
+    this.submitting.set(true);
 
-    this.loginService.sha256(this.loginForm.value.password).then((hash) => {
-      this.debug && console.log('SHA256:', hash);
-      const payload: Partial<LoginType> = {
-        username: this.loginForm.value.username,
-        password: hash,
-      };
+    this.loginService
+      .sha256(this.loginForm.value.password)
+      .then((hash) => {
+        // debug es signal; .value si queremos usarlo en TS
+        if (this.debug()) {
+          console.log('SHA256:', hash);
+        }
 
-      this.loginService.create(payload).subscribe({
-        next: (data: IToken) => {
-          // aqui hay que guardarse el token
-          this.oSessionService.setToken(data.token);
-          this.submitting = true;
-          this.debug && console.log('Login successful, token: ', data);
-          this.router.navigate(['']);
-        },
-        error: (err: HttpErrorResponse) => {
-          this.submitting = false;
-          this.error = 'Error al login';
-          this.debug && console.error(err);
-        },
+        const payload: Partial<LoginType> = {
+          username: this.loginForm.value.username,
+          password: hash,
+        };
+
+        this.loginService.create(payload).subscribe({
+          next: (data: IToken) => {
+            // guardar el token
+            this.oSessionService.setToken(data.token);
+            // detener spinner antes de navegar (zoneless via signals)
+            this.submitting.set(false);
+            if (this.debug()) {
+              console.log('Login successful, token: ', data);
+            }
+            this.snackBar.open('Login successful', 'Close', { duration: 3000 });
+            this.router.navigate(['']);
+          },
+          error: (err: HttpErrorResponse) => {
+            // actualizar estado mediante signals
+            this.submitting.set(false);
+            this.error.set(err.error?.message || err.statusText || 'Login failed');
+            this.snackBar.open('Login failed: ' + (err.error?.message || err.statusText), 'Close', { duration: 5000 });
+          },
+        });
+      })
+      .catch((err) => {
+        // si el hash falla, asegurarse de detener el spinner
+        this.submitting.set(false);
+        this.error.set('Error preparando credenciales');
+        if (this.debug()) {
+          console.error('Hashing failed:', err);
+        }
+        this.snackBar.open('Error preparando credenciales', 'Close', { duration: 5000 });
       });
-    });
   }
 
   get username() {
