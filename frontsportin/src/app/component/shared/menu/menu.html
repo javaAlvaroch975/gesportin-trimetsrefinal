@@ -1,6 +1,27 @@
 <div class="ms-auto d-flex align-items-center pe-3 top-actions">
-  <a class="nav-link text-white-50" [routerLink]="['/usuario']" routerLinkActive="active-link" title="Usuarios">
-    <i class="bi bi-person-circle me-1"></i>
-    <span class="d-none d-sm-inline">Usuarios</span>
-  </a>
+  <div class="d-flex align-items-center ms-3">
+    @if (!isSessionActive) {
+      <a
+        [routerLink]="['/login']"
+        class="btn btn-sm btn-outline-primary d-inline-flex align-items-center nav-login-btn"
+        [class.active]="activeRoute.startsWith('/login')"
+        title="Acceder"
+      >
+        <i class="bi bi-person-circle me-2"></i>
+        <span class="d-none d-lg-inline">Iniciar sesión</span>
+      </a>
+    } @else {
+      <a>
+        <i class="bi bi-person-circle me-2"></i>
+        <span class="d-none d-lg-inline">{{ oTokenJWT?.username }}</span>
+      </a>
+      <a
+        [routerLink]="['/logout']"
+        class="btn btn-sm btn-outline-primary d-inline-flex align-items-center nav-login-btn mx-3"
+        [class.active]="activeRoute.startsWith('/logout')"
+        title="Salir"
+        >Salir</a
+      >
+    }
+  </div>
 </div>

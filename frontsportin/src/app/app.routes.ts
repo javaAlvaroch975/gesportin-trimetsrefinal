@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 import { Home } from './component/shared/home/home';
+import { Logout } from './component/shared/logout/logout';
+import { LoginComponent } from './component/shared/login/login.component';
 import { UsuarioPlist } from './component/usuario/usuario-plist/usuario-plist';
 import { ArticuloPlistAdminRouted } from './component/articulo/plist-admin-routed/articulo-plist';
 import { ArticuloViewAdminRouted } from './component/articulo/view-admin-routed/articulo-view';
@@ -102,6 +104,8 @@ import { TemporadaNewAdminRouted } from './component/temporada/new-admin-routed/
 
 export const routes: Routes = [
   { path: '', component: Home },
+  { path: 'login', component: LoginComponent },
+  { path: 'logout', component: Logout },
   { path: 'usuario', component: UsuarioPlist },
   { path: 'usuario/tipousuario/:id_tipousuario', component: UsuarioPlist },
   { path: 'usuario/rol/:id_rol', component: UsuarioPlist },
@@ -134,10 +138,10 @@ export const routes: Routes = [
   { path: 'categoria/view/:id', component: CategoriaViewAdminRouted },
   { path: 'categoria/edit/:id', component: CategoriaEditAdminRouted },
   { path: 'categoria/new', component: CategoriaNewAdminRouted },
-  { path: 'partido', component: PartidoPlistAdminRouted},
-  { path: 'partido/liga/:id_liga', component: PartidoPlistAdminRouted},
+  { path: 'partido', component: PartidoPlistAdminRouted },
+  { path: 'partido/liga/:id_liga', component: PartidoPlistAdminRouted },
   { path: 'partido/new', component: PartidoNewAdminRouted },
-  { path: 'partido/view/:id', component: PartidoViewAdminRouted},
+  { path: 'partido/view/:id', component: PartidoViewAdminRouted },
   { path: 'partido/edit/:id', component: PartidoEditAdminRouted },
   { path: 'partido/delete/:id', component: PartidoDeleteAdminRouted },
   { path: 'factura', component: FacturaPlistAdminRouted },

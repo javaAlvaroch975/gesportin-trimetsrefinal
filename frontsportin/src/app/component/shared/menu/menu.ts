@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { IJWT } from '../../../model/token';
+import { SessionService } from '../../../service/session';
 
 @Component({
   selector: 'app-menu',
@@ -9,9 +10,33 @@ import { IJWT } from '../../../model/token';
   styleUrl: './menu.css',
 })
 export class Menu {
+  activeRoute: string = '';
   isSessionActive: boolean = false;
   oTokenJWT: IJWT | null = null;
 
+  constructor(
+    private oRouter: Router,
+    private oSessionService: SessionService,
+  ) {
+    this.oRouter.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.activeRoute = event.url;
+      }
+    });
+    this.isSessionActive = this.oSessionService.isSessionActive();
+    if (this.isSessionActive) {
+      this.oTokenJWT = this.oSessionService.parseJWT(this.oSessionService.getToken()!);
+    }
+  }
+
   ngOnInit(): void {
+    this.oSessionService.subjectLogin.subscribe(() => {
+      this.isSessionActive = true;
+      this.oTokenJWT = this.oSessionService.parseJWT(this.oSessionService.getToken()!);
+    });
+
+    this.oSessionService.subjectLogout.subscribe(() => {
+      this.isSessionActive = false;
+    });
   }
 }
