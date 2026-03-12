@@ -9,5 +9,8 @@ import net.ausiasmarch.gesportin.entity.PartidoEntity;
 public interface PartidoRepository extends JpaRepository<PartidoEntity, Long> {
 
     Page<PartidoEntity> findByLigaId(Long id_liga, Pageable pageable);
+
+    // restrict matches to club of the liga's equipo (descends through liga->equipo->categoria->temporada->club)
+    Page<PartidoEntity> findByLigaEquipoCategoriaTemporadaClubId(Long clubId, Pageable pageable);
     
 }

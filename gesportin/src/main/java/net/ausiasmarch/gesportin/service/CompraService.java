@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import net.ausiasmarch.gesportin.entity.CompraEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
+import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.ArticuloRepository;
 import net.ausiasmarch.gesportin.repository.CompraRepository;
 import net.ausiasmarch.gesportin.repository.FacturaRepository;
@@ -32,12 +33,40 @@ public class CompraService {
     @Autowired
     private AleatorioService oAleatorioService;
 
+    @Autowired
+    private SessionService oSessionService;
+
     public CompraEntity get(Long id) {
-        return oCompraRepository.findById(id)
+        CompraEntity e = oCompraRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Compra no encontrada con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubArt = e.getArticulo().getTipoarticulo().getClub().getId();
+            Long clubFac = e.getFactura().getUsuario().getClub().getId();
+            oSessionService.checkSameClub(clubArt);
+            oSessionService.checkSameClub(clubFac);
+        }
+        return e;
     }
 
     public Page<CompraEntity> getPage(Pageable pageable, Long id_articulo, Long id_factura) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            if (id_articulo != null) {
+                Long clubArt = oArticuloService.get(id_articulo).getTipoarticulo().getClub().getId();
+                if (!myClub.equals(clubArt)) {
+                    throw new UnauthorizedException("Acceso denegado: solo compras de su club");
+                }
+            }
+            if (id_factura != null) {
+                Long clubFac = oFacturaService.get(id_factura).getUsuario().getClub().getId();
+                if (!myClub.equals(clubFac)) {
+                    throw new UnauthorizedException("Acceso denegado: solo compras de su club");
+                }
+            }
+            if (id_articulo == null && id_factura == null) {
+                return oCompraRepository.findByArticuloTipoarticuloClubId(myClub, pageable);
+            }
+        }
         if (id_articulo != null) {
             return oCompraRepository.findByArticuloId(id_articulo, pageable);
         } else if (id_factura != null) {
@@ -49,6 +78,9 @@ public class CompraService {
     }
 
     public CompraEntity create(CompraEntity oCompraEntity) {
+        if (oSessionService.isEquipoAdmin()) {
+            throw new UnauthorizedException("Acceso denegado: equipo‑admin no puede crear compras");
+        }
         oCompraEntity.setId(null);
         oCompraEntity.setArticulo(oArticuloService.get(oCompraEntity.getArticulo().getId()));
         oCompraEntity.setFactura(oFacturaService.get(oCompraEntity.getFactura().getId()));
@@ -56,6 +88,9 @@ public class CompraService {
     }
 
     public CompraEntity update(CompraEntity oCompraEntity) {
+        if (oSessionService.isEquipoAdmin()) {
+            throw new UnauthorizedException("Acceso denegado: equipo‑admin no puede modificar compras");
+        }
         CompraEntity oCompraExistente = oCompraRepository.findById(oCompraEntity.getId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Compra no encontrada con id: " + oCompraEntity.getId()));
@@ -67,6 +102,9 @@ public class CompraService {
     }
 
     public Long delete(Long id) {
+        if (oSessionService.isEquipoAdmin()) {
+            throw new UnauthorizedException("Acceso denegado: equipo‑admin no puede borrar compras");
+        }
         CompraEntity oCompra = oCompraRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Compra no encontrada con id: " + id));
         oCompraRepository.delete(oCompra);

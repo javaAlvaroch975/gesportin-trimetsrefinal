@@ -12,4 +12,7 @@ public interface ComentarioartRepository extends JpaRepository<ComentarioartEnti
     Page<ComentarioartEntity> findByUsuarioId(Long id_usuario, org.springframework.data.domain.Pageable oPageable);
 
     Page<ComentarioartEntity> findByContenidoContainingIgnoreCase(String contenido, org.springframework.data.domain.Pageable oPageable);
+
+    // used by equipo-admin: only comments on articles of his club
+    Page<ComentarioartEntity> findByArticuloTipoarticuloClubId(Long clubId, org.springframework.data.domain.Pageable oPageable);
 }

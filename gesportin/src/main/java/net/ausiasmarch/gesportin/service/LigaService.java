@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import net.ausiasmarch.gesportin.entity.LigaEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
+import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.LigaRepository;
 
 @Service
@@ -17,6 +18,9 @@ public class LigaService {
 
     @Autowired
     private EquipoService oEquipoService;
+
+    @Autowired
+    private SessionService oSessionService;
 
     private final String[] nombres = {
             "Liga", "Copa", "Supercopa", "Liga de Campeones", "Liga Europa", "Torneo",
@@ -32,11 +36,29 @@ public class LigaService {
     };
 
     public LigaEntity get(Long id) {
-        return oLigaRepository.findById(id)
+        LigaEntity e = oLigaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Liga no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = e.getEquipo().getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
+        return e;
     }
 
     public Page<LigaEntity> getPage(Pageable pageable, String nombre, Long id_equipo) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            if (id_equipo != null) {
+                Long clubEquipo = oEquipoService.get(id_equipo).getCategoria().getTemporada().getClub().getId();
+                if (!myClub.equals(clubEquipo)) {
+                    throw new UnauthorizedException("Acceso denegado: solo ligas de su club");
+                }
+            }
+            if ((nombre == null || nombre.isEmpty()) && id_equipo == null) {
+                // restrict everything to club by using repository method
+                return oLigaRepository.findByEquipoCategoriaTemporadaClubId(myClub, pageable);
+            }
+        }
         if (nombre != null && !nombre.isEmpty()) {
             return oLigaRepository.findByNombreContainingIgnoreCase(nombre, pageable);
         } else if (id_equipo != null) {
@@ -47,6 +69,10 @@ public class LigaService {
     }
 
     public LigaEntity create(LigaEntity oLigaEntity) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = oEquipoService.get(oLigaEntity.getEquipo().getId()).getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
         oLigaEntity.setId(null);
         return oLigaRepository.save(oLigaEntity);
     }
@@ -55,7 +81,12 @@ public class LigaService {
         LigaEntity oLigaExistente = oLigaRepository.findById(oLigaEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Liga no encontrado con id: " + oLigaEntity.getId()));
-
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubOld = oLigaExistente.getEquipo().getCategoria().getTemporada().getClub().getId();
+            Long clubNew = oEquipoService.get(oLigaEntity.getEquipo().getId()).getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubOld);
+            oSessionService.checkSameClub(clubNew);
+        }
         oLigaExistente.setNombre(oLigaEntity.getNombre());
         // oLigaExistente.setIdEquipo(oLigaEntity.getIdEquipo());
 
@@ -65,6 +96,10 @@ public class LigaService {
     public Long delete(Long id) {
         LigaEntity oLiga = oLigaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Liga no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = oLiga.getEquipo().getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
         oLigaRepository.delete(oLiga);
         return id;
     }

@@ -97,6 +97,8 @@ Endpoints:
 ## 5. Clubes
 Modelo: `id`, `nombre`, `direccion`, `telefono`, `fechaAlta`, `imagen` (blob), contadores `temporadas`, `noticias`, `tipoarticulos`, `usuarios`.
 
+**Notas de seguridad**: los administradores de equipo (`tipousuario` id 2) sólo pueden consultar la información de su propio club; cualquier intento de acceder a otros identificadores devuelve `401 Unauthorized`. Además, los mismos administradores de equipo no pueden crear, modificar ni borrar registros de club (tampoco rellenos o vaciados masivos). El resto de roles no están sujetos a estas restricciones.
+
 Endpoints:
 - GET /club/{id}
 - GET /club?page&size&sort
@@ -126,6 +128,8 @@ Endpoints:
 
 ## 7. Jugadores
 Modelo: `id`, `dorsal`, `posicion`, `capitan`, `imagen`, `usuario` (objeto), `equipo` (objeto), contador `pagos`.
+
+**Notas de seguridad**: los administradores de equipo (`tipousuario` id 2) pueden realizar operaciones CRUD completas, pero únicamente sobre jugadores pertenecientes a su club. Cualquier intento de acceder o modificar jugadores de otro club dará lugar a un error `401 Unauthorized`.
 
 Endpoints:
 - GET /jugador/{id}
@@ -336,6 +340,8 @@ Endpoints:
 ---
 
 ## 21. Cuotas
+**Notas de seguridad**: mediante la actualización anterior (la misma que para noticias y demás), los administradores de equipo sólo pueden gestionar cuotas de equipos de su club.
+
 Modelo: `id`, `descripcion`, `cantidad`, `fecha`, `equipo` (objeto), contador `pagos`.
 
 Endpoints:
@@ -351,6 +357,8 @@ Endpoints:
 ---
 
 ## 22. Pagos
+**Notas de seguridad**: los administradores de equipo están restringidos a manejar pagos asociados únicamente a cuotas o jugadores de su club.
+
 Modelo: `id`, `cuota` (objeto), `jugador` (objeto), `abonado`, `fecha`.
 
 Endpoints:

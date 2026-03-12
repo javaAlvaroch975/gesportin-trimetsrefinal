@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import net.ausiasmarch.gesportin.entity.EquipoEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
+import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.EquipoRepository;
 
 @Service
@@ -26,12 +27,41 @@ public class EquipoService {
     @Autowired
     private AleatorioService oAleatorioService;
 
+    @Autowired
+    private SessionService oSessionService;
+
     public EquipoEntity get(Long id) {
-        return oEquipoRepository.findById(id)
+        EquipoEntity e = oEquipoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = e.getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
+        return e;
     }
 
     public Page<EquipoEntity> getPage(Pageable pageable, String descripcion, Long id_categoria, Long id_usuario) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            // if filters specify something outside club, reject
+            if (id_categoria != null) {
+                Long clubCat = oCategoriaService.get(id_categoria).getTemporada().getClub().getId();
+                if (!myClub.equals(clubCat)) {
+                    throw new UnauthorizedException("Acceso denegado: solo equipos de su club");
+                }
+            }
+            if (id_usuario != null) {
+                Long clubUsr = oUsuarioService.get(id_usuario).getClub().getId();
+                if (!myClub.equals(clubUsr)) {
+                    throw new UnauthorizedException("Acceso denegado: solo equipos de su club");
+                }
+            }
+            if (descripcion == null || descripcion.isEmpty()) {
+                // force club filter when no other filter provided
+                return oEquipoRepository.findByCategoriaTemporadaClubId(myClub, pageable);
+            }
+            // otherwise fall through to normal queries but will match extra results maybe
+        }
         if (descripcion != null && !descripcion.isEmpty()) {
             return oEquipoRepository.findByNombreContainingIgnoreCase(descripcion, pageable);
         } else if (id_categoria != null) {
@@ -44,6 +74,10 @@ public class EquipoService {
     }
 
     public EquipoEntity create(EquipoEntity oEquipoEntity) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = oCategoriaService.get(oEquipoEntity.getCategoria().getId()).getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
         oEquipoEntity.setId(null);
         oEquipoEntity.setEntrenador(oUsuarioService.get(oEquipoEntity.getEntrenador().getId()));
         oEquipoEntity.setCategoria(oCategoriaService.get(oEquipoEntity.getCategoria().getId()));
@@ -54,6 +88,12 @@ public class EquipoService {
         EquipoEntity oEquipoExistente = oEquipoRepository.findById(oEquipoEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Equipo no encontrado con id: " + oEquipoEntity.getId()));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubOld = oEquipoExistente.getCategoria().getTemporada().getClub().getId();
+            Long clubNew = oCategoriaService.get(oEquipoEntity.getCategoria().getId()).getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubOld);
+            oSessionService.checkSameClub(clubNew);
+        }
         oEquipoExistente.setNombre(oEquipoEntity.getNombre());
         oEquipoExistente.setEntrenador(oUsuarioService.get(oEquipoEntity.getEntrenador().getId()));
         oEquipoExistente.setCategoria(oCategoriaService.get(oEquipoEntity.getCategoria().getId()));
@@ -63,6 +103,10 @@ public class EquipoService {
     public Long delete(Long id) {
         EquipoEntity oEquipo = oEquipoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = oEquipo.getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
         oEquipoRepository.delete(oEquipo);
         return id;
     }

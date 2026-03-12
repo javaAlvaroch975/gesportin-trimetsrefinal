@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import net.ausiasmarch.gesportin.entity.TemporadaEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
+import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.TemporadaRepository;
 
 @Service
@@ -17,6 +18,9 @@ public class TemporadaService {
 
     @Autowired
     private ClubService oClubService;
+
+    @Autowired
+    private SessionService oSessionService;
 
     private final String[] años = {
             "2019/2020",
@@ -48,11 +52,23 @@ public class TemporadaService {
     };
 
     public TemporadaEntity get(Long id) {
-        return oTemporadaRepository.findById(id)
+        TemporadaEntity e = oTemporadaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Temporada no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            oSessionService.checkSameClub(e.getClub().getId());
+        }
+        return e;
     }
 
     public Page<TemporadaEntity> getPage(Pageable pageable, String descripcion, Long id_club) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            if (id_club != null && !id_club.equals(myClub)) {
+                throw new UnauthorizedException("Acceso denegado: solo puede ver temporadas de su club");
+            }
+            // force filter by own club
+            id_club = myClub;
+        }
         if (descripcion != null && !descripcion.isEmpty()) {
             return oTemporadaRepository.findByDescripcionContainingIgnoreCase(descripcion, pageable);
         } else if (id_club != null) {
@@ -63,6 +79,9 @@ public class TemporadaService {
     }
 
     public TemporadaEntity create(TemporadaEntity oTemporadaEntity) {
+        if (oSessionService.isEquipoAdmin()) {
+            oSessionService.checkSameClub(oTemporadaEntity.getClub().getId());
+        }
         oTemporadaEntity.setId(null);
         oTemporadaEntity.setClub(oClubService.get(oTemporadaEntity.getClub().getId()));
         return oTemporadaRepository.save(oTemporadaEntity);
@@ -72,7 +91,11 @@ public class TemporadaService {
         TemporadaEntity oTemporadaExistente = oTemporadaRepository.findById(oTemporadaEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Temporada no encontrado con id: " + oTemporadaEntity.getId()));
-
+        if (oSessionService.isEquipoAdmin()) {
+            // ensure existing and target club are both ours
+            oSessionService.checkSameClub(oTemporadaExistente.getClub().getId());
+            oSessionService.checkSameClub(oTemporadaEntity.getClub().getId());
+        }
         oTemporadaExistente.setDescripcion(oTemporadaEntity.getDescripcion());
         oTemporadaExistente.setClub(oClubService.get(oTemporadaEntity.getClub().getId()));
         return oTemporadaRepository.save(oTemporadaExistente);
@@ -81,6 +104,9 @@ public class TemporadaService {
     public Long delete(Long id) {
         TemporadaEntity oTemporada = oTemporadaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Temporada no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            oSessionService.checkSameClub(oTemporada.getClub().getId());
+        }
         oTemporadaRepository.delete(oTemporada);
         return id;
     }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import net.ausiasmarch.gesportin.entity.CategoriaEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
+import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.CategoriaRepository;
 
 @Service
@@ -23,15 +24,34 @@ public class CategoriaService {
     @Autowired
     private TemporadaService oTemporadaService;
 
+    @Autowired
+    private SessionService oSessionService;
+
     private static final String[] CATEGORIAS = {"Querubín", "Pre-benjamín", "Benjamín", "Alevín", "Infantil", "Cadete", "Juvenil", "Amateur"};
 
     public CategoriaEntity get(Long id) {
-        return oCategoriaRepository.findById(id)
+        CategoriaEntity e = oCategoriaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = e.getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
+        return e;
     }
 
     public Page<CategoriaEntity> getPage(Pageable pageable, Optional<String> nombre, Optional<Long> id_temporada) {
-
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            if (id_temporada.isPresent()) {
+                Long clubTemporada = oTemporadaService.get(id_temporada.get()).getClub().getId();
+                if (!myClub.equals(clubTemporada)) {
+                    throw new UnauthorizedException("Acceso denegado: solo categorias de su club");
+                }
+            } else {
+                // when no temporada filter provided, return only those belonging to the team‑admin's club
+                return oCategoriaRepository.findByTemporadaClubId(myClub, pageable);
+            }
+        }
         if(nombre.isPresent() && !nombre.get().isEmpty()) {
             return oCategoriaRepository.findByNombreContainingIgnoreCase(nombre.get(), pageable);
         } else if( id_temporada.isPresent()) {

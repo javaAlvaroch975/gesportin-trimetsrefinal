@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import net.ausiasmarch.gesportin.entity.PartidoEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
+import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.PartidoRepository;
 
 @Service
@@ -21,12 +22,31 @@ public class PartidoService {
     @Autowired
     private LigaService oLigaService;
 
+    @Autowired
+    private SessionService oSessionService;
+
     public PartidoEntity get(Long id) {
-        return oPartidoRepository.findById(id)
+        PartidoEntity e = oPartidoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Partido no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = e.getLiga().getEquipo().getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
+        return e;
     }
 
     public Page<PartidoEntity> getPage(Pageable pageable, Long id_liga) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            if (id_liga != null) {
+                Long clubLiga = oLigaService.get(id_liga).getEquipo().getCategoria().getTemporada().getClub().getId();
+                if (!myClub.equals(clubLiga)) {
+                    throw new UnauthorizedException("Acceso denegado: solo partidos de su club");
+                }
+            } else {
+                return oPartidoRepository.findByLigaEquipoCategoriaTemporadaClubId(myClub, pageable);
+            }
+        }
         if (id_liga != null) {
             return oPartidoRepository.findByLigaId(id_liga, pageable);
         } else {
@@ -35,6 +55,11 @@ public class PartidoService {
     }
 
     public PartidoEntity create(PartidoEntity oPartidoEntity) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = oLigaService.get(oPartidoEntity.getLiga().getId())
+                    .getEquipo().getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
         oPartidoEntity.setId(null);
         oPartidoEntity.setLiga(oLigaService.get(oPartidoEntity.getLiga().getId()));
         return oPartidoRepository.save(oPartidoEntity);
@@ -44,6 +69,13 @@ public class PartidoService {
         PartidoEntity oPartidoExistente = oPartidoRepository.findById(oPartidoEntity.getId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Partido no encontrado con id: " + oPartidoEntity.getId()));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubOld = oPartidoExistente.getLiga().getEquipo().getCategoria().getTemporada().getClub().getId();
+            Long clubNew = oLigaService.get(oPartidoEntity.getLiga().getId())
+                    .getEquipo().getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubOld);
+            oSessionService.checkSameClub(clubNew);
+        }
         oPartidoExistente.setRival(oPartidoEntity.getRival());
         oPartidoExistente.setLiga(oLigaService.get(oPartidoEntity.getLiga().getId()));
         oPartidoExistente.setLocal(oPartidoEntity.getLocal());
@@ -54,6 +86,10 @@ public class PartidoService {
     public Long delete(Long id) {
         PartidoEntity oPartido = oPartidoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Partido no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = oPartido.getLiga().getEquipo().getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
         oPartidoRepository.delete(oPartido);
         return id;
     }

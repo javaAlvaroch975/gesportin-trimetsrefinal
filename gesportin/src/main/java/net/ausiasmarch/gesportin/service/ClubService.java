@@ -18,6 +18,9 @@ public class ClubService {
     @Autowired
     private ClubRepository oClubRepository;
 
+    @Autowired
+    private SessionService oSessionService;
+
     private final Random random = new Random();
 
     private final String[] descripciones1 = {
@@ -49,21 +52,41 @@ public class ClubService {
             "Vázquez", "Castro" };
 
     public ClubEntity get(Long id) {
+        // equipo administrators may only view their own club
+        oSessionService.checkSameClub(id);
         return oClubRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Club no encontrado con id: " + id));
     }
 
     public Page<ClubEntity> getPage(Pageable pageable) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            if (myClub == null) {
+                // should not happen, but just in case
+                return org.springframework.data.domain.Page.empty(pageable);
+            }
+            // return a single-item page containing only the admin's club
+            ClubEntity club = oClubRepository.findById(myClub).orElse(null);
+            if (club == null) {
+                return org.springframework.data.domain.Page.empty(pageable);
+            }
+            java.util.List<ClubEntity> list = java.util.Collections.singletonList(club);
+            return new org.springframework.data.domain.PageImpl<>(list, pageable, 1);
+        }
         return oClubRepository.findAll(pageable);
     }
 
     public ClubEntity create(ClubEntity oClubEntity) {
+        // equipo admins are not allowed to create clubs
+        oSessionService.denyEquipoAdmin();
         oClubEntity.setId(null);
         oClubEntity.setFechaAlta(LocalDateTime.now());
         return oClubRepository.save(oClubEntity);
     }
 
     public ClubEntity update(ClubEntity oClubEntity) {
+        // equipo admins are not allowed to modify club data
+        oSessionService.denyEquipoAdmin();
         ClubEntity oClubExistente = oClubRepository.findById(oClubEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Club no encontrado con id: " + oClubEntity.getId()));
 
@@ -75,6 +98,8 @@ public class ClubService {
     }
 
     public Long delete(Long id) {
+        // equipo admins are not allowed to delete clubs
+        oSessionService.denyEquipoAdmin();
         ClubEntity oClub = oClubRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Club no encontrado con id: " + id));
         oClubRepository.delete(oClub);
@@ -82,16 +107,24 @@ public class ClubService {
     }
 
     public Long count() {
+        // equipo admins should only be aware of their own club count
+        if (oSessionService.isEquipoAdmin()) {
+            return (oSessionService.getIdClub() != null) ? 1L : 0L;
+        }
         return oClubRepository.count();
     }
 
     public Long empty() {
+        // equipo admins cannot clear the club table
+        oSessionService.denyEquipoAdmin();
         oClubRepository.deleteAll();
         oClubRepository.flush();
         return 0L;
     }
 
     public Long fill(Long cantidad) {
+        // equipo admins cannot populate clubs
+        oSessionService.denyEquipoAdmin();
         for (int i = 0; i < cantidad; i++) {
             ClubEntity oClub = new ClubEntity();
             String nombre = descripciones1[random.nextInt(descripciones1.length)] + " de " +

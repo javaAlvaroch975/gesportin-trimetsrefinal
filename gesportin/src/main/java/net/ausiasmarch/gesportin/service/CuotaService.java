@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import net.ausiasmarch.gesportin.entity.CuotaEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
+import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.CuotaRepository;
 
 @Service
@@ -22,12 +23,32 @@ public class CuotaService {
     @Autowired
     private EquipoService oEquipoService;
 
+    @Autowired
+    private SessionService oSessionService;
+
     public CuotaEntity get(Long id) {
-        return oCuotaRepository.findById(id)
+        CuotaEntity e = oCuotaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cuota no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = e.getEquipo().getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
+        return e;
     }
 
     public Page<CuotaEntity> getPage(Pageable pageable, String descripcion, Long id_equipo) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            if (id_equipo != null) {
+                Long clubEq = oEquipoService.get(id_equipo).getCategoria().getTemporada().getClub().getId();
+                if (!myClub.equals(clubEq)) {
+                    throw new UnauthorizedException("Acceso denegado: solo cuotas de su club");
+                }
+            }
+            if ((descripcion == null || descripcion.isEmpty()) && id_equipo == null) {
+                return oCuotaRepository.findByEquipoCategoriaTemporadaClubId(myClub, pageable);
+            }
+        }
         if (descripcion != null && !descripcion.isEmpty()) {
             return oCuotaRepository.findByDescripcionContainingIgnoreCase(descripcion, pageable);
         } else if (id_equipo != null) {
@@ -38,6 +59,11 @@ public class CuotaService {
     }
 
     public CuotaEntity create(CuotaEntity oCuotaEntity) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = oEquipoService.get(oCuotaEntity.getEquipo().getId())
+                    .getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
         oCuotaEntity.setId(null);
         oCuotaEntity.setFecha(LocalDateTime.now());
         oCuotaEntity.setEquipo(oEquipoService.get(oCuotaEntity.getEquipo().getId()));
@@ -47,6 +73,13 @@ public class CuotaService {
     public CuotaEntity update(CuotaEntity oCuotaEntity) {
         CuotaEntity oCuotaExistente = oCuotaRepository.findById(oCuotaEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cuota no encontrado con id: " + oCuotaEntity.getId()));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubOld = oCuotaExistente.getEquipo().getCategoria().getTemporada().getClub().getId();
+            Long clubNew = oEquipoService.get(oCuotaEntity.getEquipo().getId())
+                    .getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubOld);
+            oSessionService.checkSameClub(clubNew);
+        }
         oCuotaExistente.setDescripcion(oCuotaEntity.getDescripcion());
         oCuotaExistente.setCantidad(oCuotaEntity.getCantidad());
         oCuotaExistente.setFecha(oCuotaEntity.getFecha());
@@ -57,11 +90,20 @@ public class CuotaService {
     public Long delete(Long id) {
         CuotaEntity oCuota = oCuotaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cuota no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = oCuota.getEquipo().getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
         oCuotaRepository.delete(oCuota);
         return id;
     }
 
     public Long count() {
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            if (myClub == null) return 0L;
+            return oCuotaRepository.findByEquipoCategoriaTemporadaClubId(myClub, Pageable.ofSize(1)).getTotalElements();
+        }
         return oCuotaRepository.count();
     }
 

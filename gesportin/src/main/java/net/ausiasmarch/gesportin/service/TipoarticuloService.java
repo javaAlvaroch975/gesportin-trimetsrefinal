@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import net.ausiasmarch.gesportin.entity.TipoarticuloEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
+import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.TipoarticuloRepository;
 
 @Service
@@ -18,6 +19,9 @@ public class TipoarticuloService {
 
     @Autowired
     private ClubService oClubService;
+
+    @Autowired
+    private SessionService oSessionService;
 
     //private final Random random = new Random();
     private final String[] descripciones = {
@@ -34,11 +38,22 @@ public class TipoarticuloService {
     };
 
     public TipoarticuloEntity get(Long id) {
-        return oTipoarticuloRepository.findById(id)
+        TipoarticuloEntity e = oTipoarticuloRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tipoarticulo no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            oSessionService.checkSameClub(e.getClub().getId());
+        }
+        return e;
     }
 
     public Page<TipoarticuloEntity> getPage(Pageable oPageable, String descripcion, Long idClub) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            if (idClub != null && !idClub.equals(myClub)) {
+                throw new UnauthorizedException("Acceso denegado: solo tipos de artículo de su club");
+            }
+            idClub = myClub;
+        }
         if (descripcion != null && !descripcion.isEmpty()) {
             return oTipoarticuloRepository.findByDescripcionContainingIgnoreCase(descripcion, oPageable);
         } else if (idClub != null) {
@@ -49,6 +64,9 @@ public class TipoarticuloService {
     }
 
     public TipoarticuloEntity create(TipoarticuloEntity oTipoarticuloEntity) {
+        if (oSessionService.isEquipoAdmin()) {
+            oSessionService.checkSameClub(oTipoarticuloEntity.getClub().getId());
+        }
         oTipoarticuloEntity.setId(null);
         oTipoarticuloEntity.setClub(oClubService.get(oTipoarticuloEntity.getClub().getId()));
         return oTipoarticuloRepository.save(oTipoarticuloEntity);
@@ -57,7 +75,10 @@ public class TipoarticuloService {
     public TipoarticuloEntity update(TipoarticuloEntity oTipoarticuloEntity) {
         TipoarticuloEntity oTipoarticuloExistente = oTipoarticuloRepository.findById(oTipoarticuloEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Tipoarticulo no encontrado con id: " + oTipoarticuloEntity.getId()));
-
+        if (oSessionService.isEquipoAdmin()) {
+            oSessionService.checkSameClub(oTipoarticuloExistente.getClub().getId());
+            oSessionService.checkSameClub(oTipoarticuloEntity.getClub().getId());
+        }
         oTipoarticuloExistente.setDescripcion(oTipoarticuloEntity.getDescripcion());
         oTipoarticuloExistente.setClub(oClubService.get(oTipoarticuloEntity.getClub().getId()));
         return oTipoarticuloRepository.save(oTipoarticuloExistente);
@@ -66,6 +87,9 @@ public class TipoarticuloService {
     public Long delete(Long id) {
         TipoarticuloEntity oTipoarticulo = oTipoarticuloRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tipoarticulo no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            oSessionService.checkSameClub(oTipoarticulo.getClub().getId());
+        }
         oTipoarticuloRepository.delete(oTipoarticulo);
         return id;
     }

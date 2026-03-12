@@ -11,6 +11,7 @@ import net.ausiasmarch.gesportin.entity.EquipoEntity;
 import net.ausiasmarch.gesportin.entity.JugadorEntity;
 import net.ausiasmarch.gesportin.entity.UsuarioEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
+import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.JugadorRepository;
 
 @Service
@@ -27,6 +28,9 @@ public class JugadorService {
 
     @Autowired
     private EquipoService oEquipoService;
+
+    @Autowired
+    private SessionService oSessionService;
 
     ArrayList<String> posiciones = new ArrayList<>();
 
@@ -58,8 +62,15 @@ public class JugadorService {
     }
 
     public JugadorEntity get(Long id) {
-        return oJugadorRepository.findById(id)
+        JugadorEntity e = oJugadorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubUsuario = e.getUsuario().getClub().getId();
+            Long clubEquipo = e.getEquipo().getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubUsuario);
+            oSessionService.checkSameClub(clubEquipo);
+        }
+        return e;
     }
 
     public Page<JugadorEntity> getPage(
@@ -67,6 +78,28 @@ public class JugadorService {
             String posicion,
             Long idUsuario,
             Long idEquipo) {
+
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            if (idUsuario != null) {
+                Long clubUsr = oUsuarioService.get(idUsuario).getClub().getId();
+                if (!myClub.equals(clubUsr)) {
+                    throw new UnauthorizedException("Acceso denegado: solo jugadores de su club");
+                }
+            }
+            if (idEquipo != null) {
+                Long clubEq = oEquipoService.get(idEquipo).getCategoria().getTemporada().getClub().getId();
+                if (!myClub.equals(clubEq)) {
+                    throw new UnauthorizedException("Acceso denegado: solo jugadores de su club");
+                }
+            }
+            if ((posicion == null || posicion.isEmpty()) && idUsuario == null && idEquipo == null) {
+                // no filter: restrict to club
+                // combine both user-club and equipo-club results by using one query then filter? easiest is to use equipo query and/or user query or run union
+                // for simplicity, only use equipo-based query since every jugador is assigned a equipo
+                return oJugadorRepository.findByEquipoCategoriaTemporadaClubId(myClub, pageable);
+            }
+        }
 
         if (posicion != null && !posicion.isEmpty()) {
             return oJugadorRepository.findByPosicionContainingIgnoreCase(posicion, pageable);
@@ -80,6 +113,13 @@ public class JugadorService {
     }
 
     public JugadorEntity create(JugadorEntity oJugadorEntity) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubUsr = oUsuarioService.get(oJugadorEntity.getUsuario().getId()).getClub().getId();
+            Long clubEq = oEquipoService.get(oJugadorEntity.getEquipo().getId())
+                    .getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubUsr);
+            oSessionService.checkSameClub(clubEq);
+        }
         oJugadorEntity.setId(null);
         oJugadorEntity.setEquipo(oEquipoService.get(oJugadorEntity.getEquipo().getId()));
         oJugadorEntity.setUsuario(oUsuarioService.get(oJugadorEntity.getUsuario().getId()));
@@ -91,6 +131,17 @@ public class JugadorService {
         JugadorEntity oJugadorExistente = oJugadorRepository.findById(oJugadorEntity.getId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Jugador no encontrado con id: " + oJugadorEntity.getId()));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubOldUsr = oJugadorExistente.getUsuario().getClub().getId();
+            Long clubOldEq = oJugadorExistente.getEquipo().getCategoria().getTemporada().getClub().getId();
+            Long clubNewUsr = oUsuarioService.get(oJugadorEntity.getUsuario().getId()).getClub().getId();
+            Long clubNewEq = oEquipoService.get(oJugadorEntity.getEquipo().getId())
+                    .getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubOldUsr);
+            oSessionService.checkSameClub(clubOldEq);
+            oSessionService.checkSameClub(clubNewUsr);
+            oSessionService.checkSameClub(clubNewEq);
+        }
         oJugadorExistente.setDorsal(oJugadorEntity.getDorsal());
         oJugadorExistente.setPosicion(oJugadorEntity.getPosicion());
         oJugadorExistente.setCapitan(oJugadorEntity.getCapitan());
@@ -103,11 +154,23 @@ public class JugadorService {
     public Long delete(Long id) {
         JugadorEntity oJugador = oJugadorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Jugador no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubUsr = oJugador.getUsuario().getClub().getId();
+            Long clubEq = oJugador.getEquipo().getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubUsr);
+            oSessionService.checkSameClub(clubEq);
+        }
         oJugadorRepository.delete(oJugador);
         return id;
     }
 
     public Long count() {
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            if (myClub == null) return 0L;
+            // approximate by counting equipos or users? simplest: count players whose equipo.club == myClub
+            return oJugadorRepository.findByEquipoCategoriaTemporadaClubId(myClub, Pageable.ofSize(1)).getTotalElements();
+        }
         return oJugadorRepository.count();
     }
 

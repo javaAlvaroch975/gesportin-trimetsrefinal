@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import net.ausiasmarch.gesportin.entity.PagoEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
+import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.PagoRepository;
 
 @Service
@@ -26,12 +27,41 @@ public class PagoService {
     @Autowired
     AleatorioService oAleatorioService;
 
+    @Autowired
+    SessionService oSessionService;
+
     public PagoEntity get(Long id) {
-        return oPagoRepository.findById(id)
+        PagoEntity e = oPagoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pago no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubCuota = e.getCuota().getEquipo().getCategoria().getTemporada().getClub().getId();
+            Long clubJugador = e.getJugador().getUsuario().getClub().getId();
+            // both should match and equal user's club
+            oSessionService.checkSameClub(clubCuota);
+            oSessionService.checkSameClub(clubJugador);
+        }
+        return e;
     }
 
     public Page<PagoEntity> getPage(Pageable oPageable, Long idCuota, Long idJugador) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            if (idCuota != null) {
+                Long clubC = oCuotaService.get(idCuota).getEquipo().getCategoria().getTemporada().getClub().getId();
+                if (!myClub.equals(clubC)) {
+                    throw new UnauthorizedException("Acceso denegado: solo pagos de su club");
+                }
+            }
+            if (idJugador != null) {
+                Long clubJ = oJugadorService.get(idJugador).getUsuario().getClub().getId();
+                if (!myClub.equals(clubJ)) {
+                    throw new UnauthorizedException("Acceso denegado: solo pagos de su club");
+                }
+            }
+            if (idCuota == null && idJugador == null) {
+                return oPagoRepository.findByCuotaEquipoCategoriaTemporadaClubId(myClub, oPageable);
+            }
+        }
         if (idCuota != null) {
             return oPagoRepository.findByCuotaId(idCuota, oPageable);
         } else if (idJugador != null) {
@@ -42,6 +72,14 @@ public class PagoService {
     }
 
     public PagoEntity create(PagoEntity oPagoEntity) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubC = oCuotaService.get(oPagoEntity.getCuota().getId())
+                    .getEquipo().getCategoria().getTemporada().getClub().getId();
+            Long clubJ = oJugadorService.get(oPagoEntity.getJugador().getId())
+                    .getUsuario().getClub().getId();
+            oSessionService.checkSameClub(clubC);
+            oSessionService.checkSameClub(clubJ);
+        }
         oPagoEntity.setId(null);
         oPagoEntity.setFecha(LocalDateTime.now());
         oPagoEntity.setCuota(oCuotaService.get(oPagoEntity.getCuota().getId()));
@@ -52,6 +90,18 @@ public class PagoService {
     public PagoEntity update(PagoEntity oPagoEntity) {
         PagoEntity oPagoExistente = oPagoRepository.findById(oPagoEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Pago no encontrado con id: " + oPagoEntity.getId()));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubOldC = oPagoExistente.getCuota().getEquipo().getCategoria().getTemporada().getClub().getId();
+            Long clubOldJ = oPagoExistente.getJugador().getUsuario().getClub().getId();
+            Long clubNewC = oCuotaService.get(oPagoEntity.getCuota().getId())
+                    .getEquipo().getCategoria().getTemporada().getClub().getId();
+            Long clubNewJ = oJugadorService.get(oPagoEntity.getJugador().getId())
+                    .getUsuario().getClub().getId();
+            oSessionService.checkSameClub(clubOldC);
+            oSessionService.checkSameClub(clubOldJ);
+            oSessionService.checkSameClub(clubNewC);
+            oSessionService.checkSameClub(clubNewJ);
+        }
         oPagoExistente.setCuota(oCuotaService.get(oPagoEntity.getCuota().getId()));
         oPagoExistente.setJugador(oJugadorService.get(oPagoEntity.getJugador().getId()));
         oPagoExistente.setAbonado(oPagoEntity.getAbonado());
@@ -62,11 +112,20 @@ public class PagoService {
     public Long delete(Long id) {
         PagoEntity oPago = oPagoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pago no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = oPago.getCuota().getEquipo().getCategoria().getTemporada().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
         oPagoRepository.delete(oPago);
         return id;
     }
 
     public Long count() {
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            if (myClub == null) return 0L;
+            return oPagoRepository.findByCuotaEquipoCategoriaTemporadaClubId(myClub, Pageable.ofSize(1)).getTotalElements();
+        }
         return oPagoRepository.count();
     }
 

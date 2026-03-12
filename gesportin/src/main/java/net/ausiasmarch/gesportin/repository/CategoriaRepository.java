@@ -11,4 +11,7 @@ public interface CategoriaRepository extends JpaRepository<CategoriaEntity, Long
     Page<CategoriaEntity> findByNombreContainingIgnoreCase(String nombre, Pageable pageable);
 
     Page<CategoriaEntity> findByTemporadaId(Long id_temporada, Pageable pageable);
+
+    // helper for team-admins: only categories whose temporada belongs to given club
+    Page<CategoriaEntity> findByTemporadaClubId(Long clubId, Pageable pageable);
 }

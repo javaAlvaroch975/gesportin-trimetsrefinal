@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import net.ausiasmarch.gesportin.entity.NoticiaEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
+import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.NoticiaRepository;
 
 @Service
@@ -23,6 +24,9 @@ public class NoticiaService {
 
     @Autowired
     private ClubService oClubService;
+
+    @Autowired
+    private SessionService oSessionService;
 
     ArrayList<String> alFrases = new ArrayList<>();
 
@@ -46,11 +50,23 @@ public class NoticiaService {
     }
 
     public NoticiaEntity get(Long id) {
-        return oNoticiaRepository.findById(id)
+        NoticiaEntity e = oNoticiaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Noticia no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            oSessionService.checkSameClub(e.getClub().getId());
+        }
+        return e;
     }
 
     public Page<NoticiaEntity> getPage(Pageable oPageable, String contenido, Long idClub) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            if (idClub != null && !idClub.equals(myClub)) {
+                throw new UnauthorizedException("Acceso denegado: solo noticias de su club");
+            }
+            // force filter
+            idClub = myClub;
+        }
         if (contenido != null && !contenido.isEmpty()) {
             return oNoticiaRepository.findByTituloContainingIgnoreCaseOrContenidoContainingIgnoreCase(contenido, contenido, oPageable);
         } else if (idClub != null) {
@@ -61,6 +77,9 @@ public class NoticiaService {
     }
 
     public NoticiaEntity create(NoticiaEntity oNoticiaEntity) {
+        if (oSessionService.isEquipoAdmin()) {
+            oSessionService.checkSameClub(oNoticiaEntity.getClub().getId());
+        }
         oNoticiaEntity.setId(null);
         oNoticiaEntity.setFecha(LocalDateTime.now());
         oNoticiaEntity.setClub(oClubService.get(oNoticiaEntity.getClub().getId()));
@@ -72,6 +91,10 @@ public class NoticiaService {
         NoticiaEntity oNoticiaExistente = oNoticiaRepository.findById(oNoticiaEntity.getId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Noticia no encontrado con id: " + oNoticiaEntity.getId()));
+        if (oSessionService.isEquipoAdmin()) {
+            oSessionService.checkSameClub(oNoticiaExistente.getClub().getId());
+            oSessionService.checkSameClub(oNoticiaEntity.getClub().getId());
+        }
         oNoticiaExistente.setTitulo(oNoticiaEntity.getTitulo());
         oNoticiaExistente.setContenido(oNoticiaEntity.getContenido());
         oNoticiaExistente.setFecha(oNoticiaEntity.getFecha());
@@ -83,6 +106,9 @@ public class NoticiaService {
     public Long delete(Long id) {
         NoticiaEntity oNoticia = oNoticiaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Noticia no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            oSessionService.checkSameClub(oNoticia.getClub().getId());
+        }
         oNoticiaRepository.delete(oNoticia);
         return id;
     }

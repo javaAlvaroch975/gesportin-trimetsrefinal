@@ -8,8 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 import net.ausiasmarch.gesportin.entity.ArticuloEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
+import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.ArticuloRepository;
 
 @Service
@@ -20,6 +22,9 @@ public class ArticuloService {
 
     @Autowired
     private TipoarticuloService oTipoarticuloService;
+
+    @Autowired
+    private SessionService oSessionService;
 
     private final Random random = new Random();
 
@@ -46,11 +51,28 @@ public class ArticuloService {
             "de diseño moderno", "de edición limitada", "con tecnología avanzada" };
 
     public ArticuloEntity get(Long id) {
-        return oArticuloRepository.findById(id)
+        ArticuloEntity e = oArticuloRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Articulo no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = e.getTipoarticulo().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
+        return e;
     }
 
     public Page<ArticuloEntity> getPage(Pageable pageable, String descripcion, Long id_tipoarticulo) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            if (id_tipoarticulo != null) {
+                Long clubTipo = oTipoarticuloService.get(id_tipoarticulo).getClub().getId();
+                if (!myClub.equals(clubTipo)) {
+                    throw new UnauthorizedException("Acceso denegado: solo articulos de su club");
+                }
+            }
+            if ((descripcion == null || descripcion.isEmpty()) && id_tipoarticulo == null) {
+                return oArticuloRepository.findByTipoarticuloClubId(myClub, pageable);
+            }
+        }
         if (descripcion != null && !descripcion.isEmpty()) {
             return oArticuloRepository.findByDescripcionContainingIgnoreCase(descripcion, pageable);
         } else if (id_tipoarticulo != null) {
@@ -61,6 +83,11 @@ public class ArticuloService {
     }
 
     public ArticuloEntity create(ArticuloEntity oArticuloEntity) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = oTipoarticuloService.get(oArticuloEntity.getTipoarticulo().getId())
+                    .getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
         oArticuloEntity.setId(null);
         oArticuloEntity.setTipoarticulo(oTipoarticuloService.get(oArticuloEntity.getTipoarticulo().getId()));
         return oArticuloRepository.save(oArticuloEntity);
@@ -70,6 +97,13 @@ public class ArticuloService {
         ArticuloEntity oArticuloExistente = oArticuloRepository.findById(oArticuloEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Articulo no encontrado con id: " + oArticuloEntity.getId()));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubOld = oArticuloExistente.getTipoarticulo().getClub().getId();
+            Long clubNew = oTipoarticuloService.get(oArticuloEntity.getTipoarticulo().getId())
+                    .getClub().getId();
+            oSessionService.checkSameClub(clubOld);
+            oSessionService.checkSameClub(clubNew);
+        }
         oArticuloExistente.setDescripcion(oArticuloEntity.getDescripcion());
         oArticuloExistente.setPrecio(oArticuloEntity.getPrecio());
         oArticuloExistente.setDescuento(oArticuloEntity.getDescuento());
@@ -81,6 +115,10 @@ public class ArticuloService {
     public Long delete(Long id) {
         ArticuloEntity oArticulo = oArticuloRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Articulo no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = oArticulo.getTipoarticulo().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
         oArticuloRepository.delete(oArticulo);
         return id;
     }

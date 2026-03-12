@@ -26,7 +26,9 @@ public class AdminCrudGuardAspect {
             "execution(public * net.ausiasmarch.gesportin.service..*.empty(..))" +
             ") && !within(net.ausiasmarch.gesportin.service.SessionService)")
     public void requireAdminForCrud() {
-        if (!oSessionService.isAdmin()) {
+        // both super‑admins and team‑admins are allowed to invoke service CRUD methods;
+        // individual services will further restrict what team‑admins can do/see
+        if (!oSessionService.isAdmin() && !oSessionService.isEquipoAdmin()) {
             throw new UnauthorizedException("Acceso denegado: solo los administradores pueden realizar operaciones CRUD");
         }
     }

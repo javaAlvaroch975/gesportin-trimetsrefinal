@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import net.ausiasmarch.gesportin.entity.ComentarioartEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
+import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.ComentarioartRepository;
 
 @Service
@@ -25,6 +26,9 @@ public class ComentarioartService {
 
     @Autowired
     ArticuloService oArticuloService;
+
+    @Autowired
+    SessionService oSessionService;
 
     ArrayList<String> alComentarios = new ArrayList<>();
 
@@ -47,11 +51,34 @@ public class ComentarioartService {
     }
 
     public ComentarioartEntity get(Long id) {
-        return oComentarioartRepository.findById(id)
+        ComentarioartEntity e = oComentarioartRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Comentarioart no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = e.getArticulo().getTipoarticulo().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
+        return e;
     }
 
     public Page<ComentarioartEntity> getPage(Pageable oPageable, String contenido, Long id_articulo, Long id_usuario) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            if (id_articulo != null) {
+                Long clubArt = oArticuloService.get(id_articulo).getTipoarticulo().getClub().getId();
+                if (!myClub.equals(clubArt)) {
+                    throw new UnauthorizedException("Acceso denegado: solo comentarios de su club");
+                }
+            }
+            if (id_usuario != null) {
+                Long clubUsr = oUsuarioService.get(id_usuario).getClub().getId();
+                if (!myClub.equals(clubUsr)) {
+                    throw new UnauthorizedException("Acceso denegado: solo comentarios de su club");
+                }
+            }
+            if ((contenido == null || contenido.isEmpty()) && id_articulo == null && id_usuario == null) {
+                return oComentarioartRepository.findByArticuloTipoarticuloClubId(myClub, oPageable);
+            }
+        }
 
         if (contenido != null && !contenido.isEmpty()) {
             return oComentarioartRepository.findByContenidoContainingIgnoreCase(contenido, oPageable);
@@ -65,6 +92,9 @@ public class ComentarioartService {
     }
 
     public ComentarioartEntity create(ComentarioartEntity oComentarioartEntity) {
+        if (oSessionService.isEquipoAdmin()) {
+            throw new UnauthorizedException("Acceso denegado: no puede gestionar comentarios");
+        }
         oComentarioartEntity.setId(null);
         oComentarioartEntity.setArticulo(oArticuloService.get(oComentarioartEntity.getArticulo().getId()));
         oComentarioartEntity.setUsuario(oUsuarioService.get(oComentarioartEntity.getUsuario().getId()));
@@ -72,6 +102,9 @@ public class ComentarioartService {
     }
 
     public ComentarioartEntity update(ComentarioartEntity oComentarioartEntity) {
+        if (oSessionService.isEquipoAdmin()) {
+            throw new UnauthorizedException("Acceso denegado: no puede gestionar comentarios");
+        }
         ComentarioartEntity oComentarioartExistente = oComentarioartRepository.findById(oComentarioartEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                 "Comentarioart no encontrado con id: " + oComentarioartEntity.getId()));
@@ -82,6 +115,9 @@ public class ComentarioartService {
     }
 
     public Long delete(Long id) {
+        if (oSessionService.isEquipoAdmin()) {
+            throw new UnauthorizedException("Acceso denegado: no puede gestionar comentarios");
+        }
         ComentarioartEntity oComentarioart = oComentarioartRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Comentarioart no encontrado con id: " + id));
         oComentarioartRepository.delete(oComentarioart);

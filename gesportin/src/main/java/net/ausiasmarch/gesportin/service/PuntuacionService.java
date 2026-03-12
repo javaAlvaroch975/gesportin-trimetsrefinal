@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import net.ausiasmarch.gesportin.entity.PuntuacionEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
+import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.PuntuacionRepository;
 
 @Service
@@ -24,12 +25,38 @@ public class PuntuacionService {
     @Autowired
     private UsuarioService oUsuarioService;
 
+    @Autowired
+    private SessionService oSessionService;
+
     public PuntuacionEntity get(Long id) {
-        return oPuntuacionRepository.findById(id)
+        PuntuacionEntity e = oPuntuacionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Puntuación no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = e.getNoticia().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
+        return e;
     }
 
     public Page<PuntuacionEntity> getPage(Pageable pageable, Long id_noticia, Long id_usuario) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            if (id_noticia != null) {
+                Long clubNot = oNoticiaService.get(id_noticia).getClub().getId();
+                if (!myClub.equals(clubNot)) {
+                    throw new UnauthorizedException("Acceso denegado: solo puntuaciones de su club");
+                }
+            }
+            if (id_usuario != null) {
+                Long clubUsr = oUsuarioService.get(id_usuario).getClub().getId();
+                if (!myClub.equals(clubUsr)) {
+                    throw new UnauthorizedException("Acceso denegado: solo puntuaciones de su club");
+                }
+            }
+            if (id_noticia == null && id_usuario == null) {
+                return oPuntuacionRepository.findByNoticiaClubId(myClub, pageable);
+            }
+        }
         if (id_noticia != null) {
             return oPuntuacionRepository.findByNoticiaId(id_noticia, pageable);
         } else if (id_usuario != null) {
@@ -40,6 +67,9 @@ public class PuntuacionService {
     }
 
     public PuntuacionEntity create(PuntuacionEntity oPuntuacionEntity) {
+        if (oSessionService.isEquipoAdmin()) {
+            throw new UnauthorizedException("Acceso denegado: no puede gestionar puntuaciones");
+        }
         oPuntuacionEntity.setId(null); 
         oPuntuacionEntity.setNoticia(oNoticiaService.get(oPuntuacionEntity.getNoticia().getId()));
         oPuntuacionEntity.setUsuario(oUsuarioService.get(oPuntuacionEntity.getUsuario().getId()));
@@ -47,6 +77,9 @@ public class PuntuacionService {
     }
 
     public PuntuacionEntity update(PuntuacionEntity oPuntuacionEntity) {
+        if (oSessionService.isEquipoAdmin()) {
+            throw new UnauthorizedException("Acceso denegado: no puede gestionar puntuaciones");
+        }
         PuntuacionEntity oPuntuacionExistente = oPuntuacionRepository.findById(oPuntuacionEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Puntuación no encontrado con id: " + oPuntuacionEntity.getId()));
 
@@ -57,6 +90,9 @@ public class PuntuacionService {
     }
 
     public Long delete(Long id) {
+        if (oSessionService.isEquipoAdmin()) {
+            throw new UnauthorizedException("Acceso denegado: no puede gestionar puntuaciones");
+        }
         PuntuacionEntity oPuntuacion = oPuntuacionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Puntuación no encontrado con id: " + id));
         oPuntuacionRepository.delete(oPuntuacion);

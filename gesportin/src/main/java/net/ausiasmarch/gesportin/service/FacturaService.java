@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import net.ausiasmarch.gesportin.entity.FacturaEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
+import net.ausiasmarch.gesportin.exception.UnauthorizedException;
 import net.ausiasmarch.gesportin.repository.FacturaRepository;
 
 @Service
@@ -23,12 +24,32 @@ public class FacturaService {
     @Autowired
     private AleatorioService oAleatorioService;
 
+    @Autowired
+    private SessionService oSessionService;
+
     public FacturaEntity get(Long id) {
-        return oFacturaRepository.findById(id)
+        FacturaEntity e = oFacturaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Factura no encontrado con id: " + id));
+        if (oSessionService.isEquipoAdmin()) {
+            Long clubId = e.getUsuario().getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
+        return e;
     }
 
     public Page<FacturaEntity> getPage(Pageable pageable, Long id_usuario) {
+        if (oSessionService.isEquipoAdmin()) {
+            Long myClub = oSessionService.getIdClub();
+            if (id_usuario != null) {
+                Long clubUsr = oUsuarioService.get(id_usuario).getClub().getId();
+                if (!myClub.equals(clubUsr)) {
+                    throw new UnauthorizedException("Acceso denegado: solo facturas de su club");
+                }
+            }
+            if (id_usuario == null) {
+                return oFacturaRepository.findByUsuarioClubId(myClub, pageable);
+            }
+        }
         if (id_usuario != null) {
             return oFacturaRepository.findByUsuarioId(id_usuario, pageable);
         } else {
@@ -37,6 +58,9 @@ public class FacturaService {
     }
 
     public FacturaEntity create(FacturaEntity oFacturaEntity) {
+        if (oSessionService.isEquipoAdmin()) {
+            throw new UnauthorizedException("Acceso denegado: equipo‑admin no puede crear facturas");
+        }
         oFacturaEntity.setId(null);
         oFacturaEntity.setFecha(LocalDateTime.now());
         oFacturaEntity.setUsuario(oUsuarioService.get(oFacturaEntity.getUsuario().getId()));
@@ -44,6 +68,9 @@ public class FacturaService {
     }
 
     public FacturaEntity update(FacturaEntity oFacturaEntity) {
+        if (oSessionService.isEquipoAdmin()) {
+            throw new UnauthorizedException("Acceso denegado: equipo‑admin no puede modificar facturas");
+        }
         FacturaEntity oFacturaExistente = oFacturaRepository.findById(oFacturaEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Factura no encontrado con id: " + oFacturaEntity.getId()));
@@ -53,6 +80,9 @@ public class FacturaService {
     }
 
     public Long delete(Long id) {
+        if (oSessionService.isEquipoAdmin()) {
+            throw new UnauthorizedException("Acceso denegado: equipo‑admin no puede borrar facturas");
+        }
         FacturaEntity oFactura = oFacturaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Factura no encontrado con id: " + id));
         oFacturaRepository.delete(oFactura);

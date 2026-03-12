@@ -18,4 +18,8 @@ public interface PagoRepository extends JpaRepository<PagoEntity, Long> {
     Page<PagoEntity> findByCuotaId(Long idCuota, Pageable oPageable);
 
     Page<PagoEntity> findByJugadorId(Long idJugador, Pageable oPageable);
+
+    // support equipo-admin restrictions
+    Page<PagoEntity> findByCuotaEquipoCategoriaTemporadaClubId(Long clubId, Pageable pageable);
+    Page<PagoEntity> findByJugadorUsuarioClubId(Long clubId, Pageable pageable);
 }

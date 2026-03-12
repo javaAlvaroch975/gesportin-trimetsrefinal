@@ -11,4 +11,7 @@ public interface PuntuacionRepository extends JpaRepository<PuntuacionEntity, Lo
     Page<PuntuacionEntity> findByNoticiaId(Long id_noticia, Pageable pageable);
 
     Page<PuntuacionEntity> findByUsuarioId(Long id_usuario, Pageable pageable);
+
+    // helper for equipo-admin to only see ratings for news of their club
+    Page<PuntuacionEntity> findByNoticiaClubId(Long clubId, Pageable pageable);
 }

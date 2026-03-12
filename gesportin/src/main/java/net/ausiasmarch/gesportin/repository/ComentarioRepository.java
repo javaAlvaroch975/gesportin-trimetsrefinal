@@ -11,4 +11,7 @@ public interface ComentarioRepository extends JpaRepository<ComentarioEntity, Lo
     Page<ComentarioEntity> findByUsuarioId(Long id_usuario, Pageable pageable);
     Page<ComentarioEntity> findByNoticiaId(Long id_noticia, Pageable pageable);
 
+    // used by equipo admins to view only comments belonging to their club
+    Page<ComentarioEntity> findByNoticiaClubId(Long clubId, Pageable pageable);
+
 }
