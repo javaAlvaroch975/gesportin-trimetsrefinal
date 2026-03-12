@@ -9,7 +9,7 @@ import { ICategoria } from '../../../model/categoria';
 
 
 @Component({
-  selector: 'app-pago-view',
+  selector: 'app-categoria-delete-admin-routed',
   imports: [CommonModule, CategoriaDetailAdminUnrouted],
   templateUrl: './categoria-delete.html',
   styleUrl: './categoria-delete.css',

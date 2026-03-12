@@ -8,7 +8,7 @@ import { ComentarioartDetailAdminUnrouted } from '../detail-admin-unrouted/detai
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-delete-admin-routed',
+  selector: 'app-delete-commentarioart-admin-routed',
   standalone: true,
   imports: [CommonModule, ComentarioartDetailAdminUnrouted],
   templateUrl: './delete-admin-routed.html',

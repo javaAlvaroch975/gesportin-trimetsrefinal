@@ -6,7 +6,7 @@ import { FacturaService } from '../../../service/factura-service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-delete-admin-routed',
+  selector: 'app-delete-factura-admin-routed',
   imports: [FacturaDetailAdminUnrouted],
   templateUrl: './factura-delete.html',
   styleUrl: './factura-delete.css',

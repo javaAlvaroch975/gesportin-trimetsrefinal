@@ -10,7 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
-  selector: 'app-pago-view',
+  selector: 'app-pago-delete-admin-routed',
   imports: [CommonModule, PagoDetailAdminUnrouted],
   templateUrl: './pago-delete.html',
   styleUrl: './pago-delete.css',
