@@ -61,7 +61,7 @@ public class TemporadaService {
     }
 
     public Page<TemporadaEntity> getPage(Pageable pageable, String descripcion, Long id_club) {
-        if (oSessionService.isEquipoAdmin()) {
+        if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
             Long myClub = oSessionService.getIdClub();
             if (id_club != null && !id_club.equals(myClub)) {
                 throw new UnauthorizedException("Acceso denegado: solo puede ver temporadas de su club");
@@ -79,6 +79,8 @@ public class TemporadaService {
     }
 
     public TemporadaEntity create(TemporadaEntity oTemporadaEntity) {
+        // regular usuarios cannot create temporadas
+        oSessionService.denyUsuario();
         if (oSessionService.isEquipoAdmin()) {
             oSessionService.checkSameClub(oTemporadaEntity.getClub().getId());
         }
@@ -88,6 +90,8 @@ public class TemporadaService {
     }
 
     public TemporadaEntity update(TemporadaEntity oTemporadaEntity) {
+        // regular usuarios cannot modify temporadas
+        oSessionService.denyUsuario();
         TemporadaEntity oTemporadaExistente = oTemporadaRepository.findById(oTemporadaEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Temporada no encontrado con id: " + oTemporadaEntity.getId()));
@@ -102,6 +106,8 @@ public class TemporadaService {
     }
 
     public Long delete(Long id) {
+        // regular usuarios cannot delete temporadas
+        oSessionService.denyUsuario();
         TemporadaEntity oTemporada = oTemporadaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Temporada no encontrado con id: " + id));
         if (oSessionService.isEquipoAdmin()) {

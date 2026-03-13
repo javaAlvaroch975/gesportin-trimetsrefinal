@@ -67,6 +67,21 @@ public class SessionService {
     }
 
     /**
+     * Return the user id of the currently logged user (null if no session).
+     */
+    public Long getIdUsuario() {
+        String username = getUsername();
+        if (username == null) {
+            return null;
+        }
+        UsuarioEntity oUsuarioEntity = oUsuarioRepository.findByUsername(username).orElse(null);
+        if (oUsuarioEntity == null) {
+            return null;
+        }
+        return oUsuarioEntity.getId();
+    }
+
+    /**
      * Return the club id of the currently logged user (null if no session or no club).
      */
     public Long getIdClub() {
@@ -82,15 +97,34 @@ public class SessionService {
     }
 
     /**
-     * Helper that throws an exception if the current user is an equipo admin and the
-     * provided club id does not match his club.
+     * Helper that throws an exception if the current user is an equipo admin or a regular user and the
+     * provided club id does not match their club.
      */
     public void checkSameClub(Long clubId) {
-        if (isEquipoAdmin()) {
+        if (isEquipoAdmin() || isUsuario()) {
             Long myClub = getIdClub();
             if (myClub == null || clubId == null || !myClub.equals(clubId)) {
                 throw new UnauthorizedException("Acceso denegado: solo puede operar sobre su propio club");
             }
+        }
+    }
+
+    /**
+     * Throws UnauthorizedException when the requester is an equipo admin. Use for
+     * operations that this role is not allowed to perform at all (invoices, cart, etc.)
+     */
+    public void denyEquipoAdmin() {
+        if (isEquipoAdmin()) {
+            throw new UnauthorizedException("Acceso denegado: no tiene permisos en esta operación");
+        }
+    }
+
+    /**
+     * Throws UnauthorizedException when the requester is a regular usuario.
+     */
+    public void denyUsuario() {
+        if (isUsuario()) {
+            throw new UnauthorizedException("Acceso denegado: no tiene permisos en esta operación");
         }
     }
 

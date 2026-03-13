@@ -58,7 +58,7 @@ public class ComentarioService {
     public ComentarioEntity get(Long id) {
         ComentarioEntity e = oComentariosRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Comentario no encontrado con id: " + id));
-        if (oSessionService.isEquipoAdmin()) {
+        if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
             Long clubId = e.getNoticia().getClub().getId();
             oSessionService.checkSameClub(clubId);
         }
@@ -66,9 +66,13 @@ public class ComentarioService {
     }
 
     public Page<ComentarioEntity> getPage(Pageable oPageable, String contenido, Long id_usuario, Long id_noticia) {
-        if (oSessionService.isEquipoAdmin()) {
+        if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
             Long myClub = oSessionService.getIdClub();
             if (id_usuario != null) {
+                // regular users can only query their own comments
+                if (oSessionService.isUsuario() && !id_usuario.equals(oSessionService.getIdUsuario())) {
+                    throw new UnauthorizedException("Acceso denegado: solo puede ver sus propios comentarios");
+                }
                 Long clubUsr = oUsuarioService.get(id_usuario).getClub().getId();
                 if (!myClub.equals(clubUsr)) {
                     throw new UnauthorizedException("Acceso denegado: solo comentarios de su club");
@@ -98,9 +102,19 @@ public class ComentarioService {
         if (oSessionService.isEquipoAdmin()) {
             throw new UnauthorizedException("Acceso denegado: no puede gestionar comentarios");
         }
+        // Ensure the noticia exists and belongs to the allowed club (if any)
+        var noticia = oNoticaService.get(oComentarioEntity.getNoticia().getId());
+        if (oSessionService.isUsuario()) {
+            // force comment to be attributed to the current user and in their club
+            Long currentUserId = oSessionService.getIdUsuario();
+            oComentarioEntity.setUsuario(oUsuarioService.get(currentUserId));
+            oSessionService.checkSameClub(noticia.getClub().getId());
+        } else {
+            // allow admins or other roles to act without restriction
+            oComentarioEntity.setUsuario(oUsuarioService.get(oComentarioEntity.getUsuario().getId()));
+        }
         oComentarioEntity.setId(null);
-        oComentarioEntity.setNoticia(oNoticaService.get(oComentarioEntity.getNoticia().getId()));
-        oComentarioEntity.setUsuario(oUsuarioService.get(oComentarioEntity.getUsuario().getId()));
+        oComentarioEntity.setNoticia(noticia);
         return oComentariosRepository.save(oComentarioEntity);
     }
 
@@ -111,9 +125,19 @@ public class ComentarioService {
         ComentarioEntity oComentarioExistente = oComentariosRepository.findById(oComentarioEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Comentario no encontrado con id: " + oComentarioEntity.getId()));
+        if (oSessionService.isUsuario()) {
+            Long currentUserId = oSessionService.getIdUsuario();
+            if (!currentUserId.equals(oComentarioExistente.getUsuario().getId())) {
+                throw new UnauthorizedException("Acceso denegado: solo puede modificar sus propios comentarios");
+            }
+            // ensure comment belongs to the user's club
+            oSessionService.checkSameClub(oComentarioExistente.getNoticia().getClub().getId());
+            oComentarioExistente.setUsuario(oUsuarioService.get(currentUserId));
+        } else {
+            oComentarioExistente.setUsuario(oUsuarioService.get(oComentarioEntity.getUsuario().getId()));
+        }
         oComentarioExistente.setContenido(oComentarioEntity.getContenido());
         oComentarioExistente.setNoticia(oNoticaService.get(oComentarioEntity.getNoticia().getId()));
-        oComentarioExistente.setUsuario(oUsuarioService.get(oComentarioEntity.getUsuario().getId()));
         return oComentariosRepository.save(oComentarioExistente);
     }
 
@@ -123,6 +147,13 @@ public class ComentarioService {
         }
         ComentarioEntity oComentario = oComentariosRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Comentario no encontrado con id: " + id));
+        if (oSessionService.isUsuario()) {
+            Long currentUserId = oSessionService.getIdUsuario();
+            if (!currentUserId.equals(oComentario.getUsuario().getId())) {
+                throw new UnauthorizedException("Acceso denegado: solo puede borrar sus propios comentarios");
+            }
+            oSessionService.checkSameClub(oComentario.getNoticia().getClub().getId());
+        }
         oComentariosRepository.delete(oComentario);
         return id;
     }

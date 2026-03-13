@@ -41,7 +41,7 @@ public class EquipoService {
     }
 
     public Page<EquipoEntity> getPage(Pageable pageable, String descripcion, Long id_categoria, Long id_usuario) {
-        if (oSessionService.isEquipoAdmin()) {
+        if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
             Long myClub = oSessionService.getIdClub();
             // if filters specify something outside club, reject
             if (id_categoria != null) {
@@ -74,6 +74,8 @@ public class EquipoService {
     }
 
     public EquipoEntity create(EquipoEntity oEquipoEntity) {
+        // regular usuarios cannot create equipos
+        oSessionService.denyUsuario();
         if (oSessionService.isEquipoAdmin()) {
             Long clubId = oCategoriaService.get(oEquipoEntity.getCategoria().getId()).getTemporada().getClub().getId();
             oSessionService.checkSameClub(clubId);
@@ -85,6 +87,8 @@ public class EquipoService {
     }
 
     public EquipoEntity update(EquipoEntity oEquipoEntity) {
+        // regular usuarios cannot modify equipos
+        oSessionService.denyUsuario();
         EquipoEntity oEquipoExistente = oEquipoRepository.findById(oEquipoEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Equipo no encontrado con id: " + oEquipoEntity.getId()));
@@ -101,6 +105,8 @@ public class EquipoService {
     }
 
     public Long delete(Long id) {
+        // regular usuarios cannot delete equipos
+        oSessionService.denyUsuario();
         EquipoEntity oEquipo = oEquipoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Equipo no encontrado con id: " + id));
         if (oSessionService.isEquipoAdmin()) {

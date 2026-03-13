@@ -45,6 +45,13 @@ public class CompraService {
             oSessionService.checkSameClub(clubArt);
             oSessionService.checkSameClub(clubFac);
         }
+        if (oSessionService.isUsuario()) {
+            Long currentUserId = oSessionService.getIdUsuario();
+            if (!currentUserId.equals(e.getFactura().getUsuario().getId())) {
+                throw new UnauthorizedException("Acceso denegado: solo puede ver sus propias compras");
+            }
+            oSessionService.checkSameClub(e.getArticulo().getTipoarticulo().getClub().getId());
+        }
         return e;
     }
 
@@ -67,6 +74,24 @@ public class CompraService {
                 return oCompraRepository.findByArticuloTipoarticuloClubId(myClub, pageable);
             }
         }
+        if (oSessionService.isUsuario()) {
+            Long currentUserId = oSessionService.getIdUsuario();
+            if (id_factura != null) {
+                if (!currentUserId.equals(oFacturaService.get(id_factura).getUsuario().getId())) {
+                    throw new UnauthorizedException("Acceso denegado: solo puede ver sus propias compras");
+                }
+            } else if (id_articulo == null) {
+                return oCompraRepository.findByFacturaUsuarioId(currentUserId, pageable);
+            }
+            // when filtering by articulo, ensure it belongs to the user's club
+            if (id_articulo != null) {
+                Long userClub = oSessionService.getIdClub();
+                Long articuloClub = oArticuloService.get(id_articulo).getTipoarticulo().getClub().getId();
+                if (!userClub.equals(articuloClub)) {
+                    throw new UnauthorizedException("Acceso denegado: solo compras de su club");
+                }
+            }
+        }
         if (id_articulo != null) {
             return oCompraRepository.findByArticuloId(id_articulo, pageable);
         } else if (id_factura != null) {
@@ -81,9 +106,25 @@ public class CompraService {
         if (oSessionService.isEquipoAdmin()) {
             throw new UnauthorizedException("Acceso denegado: equipo‑admin no puede crear compras");
         }
+        // regular usuarios can only create compras for their own factura and club
+        if (oSessionService.isUsuario()) {
+            Long currentUserId = oSessionService.getIdUsuario();
+            var factura = oFacturaService.get(oCompraEntity.getFactura().getId());
+            if (!currentUserId.equals(factura.getUsuario().getId())) {
+                throw new UnauthorizedException("Acceso denegado: solo puede crear compras para su propia factura");
+            }
+            Long userClub = oSessionService.getIdClub();
+            Long articuloClub = oArticuloService.get(oCompraEntity.getArticulo().getId()).getTipoarticulo().getClub().getId();
+            if (!userClub.equals(articuloClub)) {
+                throw new UnauthorizedException("Acceso denegado: solo puede comprar artículos de su club");
+            }
+            oCompraEntity.setFactura(factura);
+            oCompraEntity.setArticulo(oArticuloService.get(oCompraEntity.getArticulo().getId()));
+        } else {
+            oCompraEntity.setArticulo(oArticuloService.get(oCompraEntity.getArticulo().getId()));
+            oCompraEntity.setFactura(oFacturaService.get(oCompraEntity.getFactura().getId()));
+        }
         oCompraEntity.setId(null);
-        oCompraEntity.setArticulo(oArticuloService.get(oCompraEntity.getArticulo().getId()));
-        oCompraEntity.setFactura(oFacturaService.get(oCompraEntity.getFactura().getId()));
         return oCompraRepository.save(oCompraEntity);
     }
 
@@ -94,6 +135,17 @@ public class CompraService {
         CompraEntity oCompraExistente = oCompraRepository.findById(oCompraEntity.getId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Compra no encontrada con id: " + oCompraEntity.getId()));
+        if (oSessionService.isUsuario()) {
+            Long currentUserId = oSessionService.getIdUsuario();
+            if (!currentUserId.equals(oCompraExistente.getFactura().getUsuario().getId())) {
+                throw new UnauthorizedException("Acceso denegado: solo puede modificar sus propias compras");
+            }
+            Long userClub = oSessionService.getIdClub();
+            Long articuloClub = oArticuloService.get(oCompraEntity.getArticulo().getId()).getTipoarticulo().getClub().getId();
+            if (!userClub.equals(articuloClub)) {
+                throw new UnauthorizedException("Acceso denegado: solo puede usar artículos de su club");
+            }
+        }
         oCompraExistente.setCantidad(oCompraEntity.getCantidad());
         oCompraExistente.setPrecio(oCompraEntity.getPrecio());
         oCompraExistente.setArticulo(oArticuloService.get(oCompraEntity.getArticulo().getId()));
@@ -107,6 +159,17 @@ public class CompraService {
         }
         CompraEntity oCompra = oCompraRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Compra no encontrada con id: " + id));
+        if (oSessionService.isUsuario()) {
+            Long currentUserId = oSessionService.getIdUsuario();
+            if (!currentUserId.equals(oCompra.getFactura().getUsuario().getId())) {
+                throw new UnauthorizedException("Acceso denegado: solo puede borrar sus propias compras");
+            }
+            Long userClub = oSessionService.getIdClub();
+            Long articuloClub = oCompra.getArticulo().getTipoarticulo().getClub().getId();
+            if (!userClub.equals(articuloClub)) {
+                throw new UnauthorizedException("Acceso denegado: solo puede borrar compras de su club");
+            }
+        }
         oCompraRepository.delete(oCompra);
         return id;
     }

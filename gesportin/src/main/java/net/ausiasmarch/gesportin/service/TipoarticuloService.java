@@ -40,14 +40,14 @@ public class TipoarticuloService {
     public TipoarticuloEntity get(Long id) {
         TipoarticuloEntity e = oTipoarticuloRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tipoarticulo no encontrado con id: " + id));
-        if (oSessionService.isEquipoAdmin()) {
+        if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
             oSessionService.checkSameClub(e.getClub().getId());
         }
         return e;
     }
 
     public Page<TipoarticuloEntity> getPage(Pageable oPageable, String descripcion, Long idClub) {
-        if (oSessionService.isEquipoAdmin()) {
+        if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
             Long myClub = oSessionService.getIdClub();
             if (idClub != null && !idClub.equals(myClub)) {
                 throw new UnauthorizedException("Acceso denegado: solo tipos de artículo de su club");
@@ -64,6 +64,8 @@ public class TipoarticuloService {
     }
 
     public TipoarticuloEntity create(TipoarticuloEntity oTipoarticuloEntity) {
+        // regular usuarios cannot create tipos de artículo
+        oSessionService.denyUsuario();
         if (oSessionService.isEquipoAdmin()) {
             oSessionService.checkSameClub(oTipoarticuloEntity.getClub().getId());
         }
@@ -73,6 +75,8 @@ public class TipoarticuloService {
     }
 
     public TipoarticuloEntity update(TipoarticuloEntity oTipoarticuloEntity) {
+        // regular usuarios cannot modify tipos de artículo
+        oSessionService.denyUsuario();
         TipoarticuloEntity oTipoarticuloExistente = oTipoarticuloRepository.findById(oTipoarticuloEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Tipoarticulo no encontrado con id: " + oTipoarticuloEntity.getId()));
         if (oSessionService.isEquipoAdmin()) {
@@ -85,6 +89,8 @@ public class TipoarticuloService {
     }
 
     public Long delete(Long id) {
+        // regular usuarios cannot delete tipos de artículo
+        oSessionService.denyUsuario();
         TipoarticuloEntity oTipoarticulo = oTipoarticuloRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Tipoarticulo no encontrado con id: " + id));
         if (oSessionService.isEquipoAdmin()) {

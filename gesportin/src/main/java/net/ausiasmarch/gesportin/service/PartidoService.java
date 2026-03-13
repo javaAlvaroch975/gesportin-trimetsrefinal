@@ -36,7 +36,7 @@ public class PartidoService {
     }
 
     public Page<PartidoEntity> getPage(Pageable pageable, Long id_liga) {
-        if (oSessionService.isEquipoAdmin()) {
+        if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
             Long myClub = oSessionService.getIdClub();
             if (id_liga != null) {
                 Long clubLiga = oLigaService.get(id_liga).getEquipo().getCategoria().getTemporada().getClub().getId();
@@ -55,6 +55,8 @@ public class PartidoService {
     }
 
     public PartidoEntity create(PartidoEntity oPartidoEntity) {
+        // regular usuarios cannot create partidos
+        oSessionService.denyUsuario();
         if (oSessionService.isEquipoAdmin()) {
             Long clubId = oLigaService.get(oPartidoEntity.getLiga().getId())
                     .getEquipo().getCategoria().getTemporada().getClub().getId();
@@ -66,6 +68,8 @@ public class PartidoService {
     }
 
     public PartidoEntity update(PartidoEntity oPartidoEntity) {
+        // regular usuarios cannot modify partidos
+        oSessionService.denyUsuario();
         PartidoEntity oPartidoExistente = oPartidoRepository.findById(oPartidoEntity.getId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Partido no encontrado con id: " + oPartidoEntity.getId()));
@@ -84,6 +88,8 @@ public class PartidoService {
     }
 
     public Long delete(Long id) {
+        // regular usuarios cannot delete partidos
+        oSessionService.denyUsuario();
         PartidoEntity oPartido = oPartidoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Partido no encontrado con id: " + id));
         if (oSessionService.isEquipoAdmin()) {

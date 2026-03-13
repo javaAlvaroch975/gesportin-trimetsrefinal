@@ -29,7 +29,7 @@ public class CuotaService {
     public CuotaEntity get(Long id) {
         CuotaEntity e = oCuotaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cuota no encontrado con id: " + id));
-        if (oSessionService.isEquipoAdmin()) {
+        if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
             Long clubId = e.getEquipo().getCategoria().getTemporada().getClub().getId();
             oSessionService.checkSameClub(clubId);
         }
@@ -37,7 +37,7 @@ public class CuotaService {
     }
 
     public Page<CuotaEntity> getPage(Pageable pageable, String descripcion, Long id_equipo) {
-        if (oSessionService.isEquipoAdmin()) {
+        if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
             Long myClub = oSessionService.getIdClub();
             if (id_equipo != null) {
                 Long clubEq = oEquipoService.get(id_equipo).getCategoria().getTemporada().getClub().getId();
@@ -59,6 +59,8 @@ public class CuotaService {
     }
 
     public CuotaEntity create(CuotaEntity oCuotaEntity) {
+        // regular usuarios cannot create cuotas
+        oSessionService.denyUsuario();
         if (oSessionService.isEquipoAdmin()) {
             Long clubId = oEquipoService.get(oCuotaEntity.getEquipo().getId())
                     .getCategoria().getTemporada().getClub().getId();
@@ -71,6 +73,8 @@ public class CuotaService {
     }
 
     public CuotaEntity update(CuotaEntity oCuotaEntity) {
+        // regular usuarios cannot modify cuotas
+        oSessionService.denyUsuario();
         CuotaEntity oCuotaExistente = oCuotaRepository.findById(oCuotaEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cuota no encontrado con id: " + oCuotaEntity.getId()));
         if (oSessionService.isEquipoAdmin()) {
@@ -88,6 +92,8 @@ public class CuotaService {
     }
 
     public Long delete(Long id) {
+        // regular usuarios cannot delete cuotas
+        oSessionService.denyUsuario();
         CuotaEntity oCuota = oCuotaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cuota no encontrado con id: " + id));
         if (oSessionService.isEquipoAdmin()) {

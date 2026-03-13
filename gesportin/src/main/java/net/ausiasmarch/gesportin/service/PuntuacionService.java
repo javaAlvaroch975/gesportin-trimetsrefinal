@@ -31,7 +31,7 @@ public class PuntuacionService {
     public PuntuacionEntity get(Long id) {
         PuntuacionEntity e = oPuntuacionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Puntuación no encontrado con id: " + id));
-        if (oSessionService.isEquipoAdmin()) {
+        if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
             Long clubId = e.getNoticia().getClub().getId();
             oSessionService.checkSameClub(clubId);
         }
@@ -39,7 +39,7 @@ public class PuntuacionService {
     }
 
     public Page<PuntuacionEntity> getPage(Pageable pageable, Long id_noticia, Long id_usuario) {
-        if (oSessionService.isEquipoAdmin()) {
+        if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
             Long myClub = oSessionService.getIdClub();
             if (id_noticia != null) {
                 Long clubNot = oNoticiaService.get(id_noticia).getClub().getId();
@@ -48,6 +48,10 @@ public class PuntuacionService {
                 }
             }
             if (id_usuario != null) {
+                // regular users can only query their own puntuaciones
+                if (oSessionService.isUsuario() && !id_usuario.equals(oSessionService.getIdUsuario())) {
+                    throw new UnauthorizedException("Acceso denegado: solo puede ver sus propias puntuaciones");
+                }
                 Long clubUsr = oUsuarioService.get(id_usuario).getClub().getId();
                 if (!myClub.equals(clubUsr)) {
                     throw new UnauthorizedException("Acceso denegado: solo puntuaciones de su club");
@@ -70,9 +74,17 @@ public class PuntuacionService {
         if (oSessionService.isEquipoAdmin()) {
             throw new UnauthorizedException("Acceso denegado: no puede gestionar puntuaciones");
         }
+        // Ensure the noticia exists and belongs to the user's club
+        var noticia = oNoticiaService.get(oPuntuacionEntity.getNoticia().getId());
+        if (oSessionService.isUsuario()) {
+            Long currentUserId = oSessionService.getIdUsuario();
+            oPuntuacionEntity.setUsuario(oUsuarioService.get(currentUserId));
+            oSessionService.checkSameClub(noticia.getClub().getId());
+        } else {
+            oPuntuacionEntity.setUsuario(oUsuarioService.get(oPuntuacionEntity.getUsuario().getId()));
+        }
         oPuntuacionEntity.setId(null); 
-        oPuntuacionEntity.setNoticia(oNoticiaService.get(oPuntuacionEntity.getNoticia().getId()));
-        oPuntuacionEntity.setUsuario(oUsuarioService.get(oPuntuacionEntity.getUsuario().getId()));
+        oPuntuacionEntity.setNoticia(noticia);
         return oPuntuacionRepository.save(oPuntuacionEntity);
     }
 
@@ -82,10 +94,19 @@ public class PuntuacionService {
         }
         PuntuacionEntity oPuntuacionExistente = oPuntuacionRepository.findById(oPuntuacionEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Puntuación no encontrado con id: " + oPuntuacionEntity.getId()));
+        if (oSessionService.isUsuario()) {
+            Long currentUserId = oSessionService.getIdUsuario();
+            if (!currentUserId.equals(oPuntuacionExistente.getUsuario().getId())) {
+                throw new UnauthorizedException("Acceso denegado: solo puede modificar sus propias puntuaciones");
+            }
+            oSessionService.checkSameClub(oPuntuacionExistente.getNoticia().getClub().getId());
+            oPuntuacionExistente.setUsuario(oUsuarioService.get(currentUserId));
+        } else {
+            oPuntuacionExistente.setUsuario(oUsuarioService.get(oPuntuacionEntity.getUsuario().getId()));
+        }
 
         oPuntuacionExistente.setPuntuacion(oPuntuacionEntity.getPuntuacion());
         oPuntuacionExistente.setNoticia(oNoticiaService.get(oPuntuacionEntity.getNoticia().getId()));
-        oPuntuacionExistente.setUsuario(oUsuarioService.get(oPuntuacionEntity.getUsuario().getId()));
         return oPuntuacionRepository.save(oPuntuacionExistente);
     }
 
@@ -95,6 +116,13 @@ public class PuntuacionService {
         }
         PuntuacionEntity oPuntuacion = oPuntuacionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Puntuación no encontrado con id: " + id));
+        if (oSessionService.isUsuario()) {
+            Long currentUserId = oSessionService.getIdUsuario();
+            if (!currentUserId.equals(oPuntuacion.getUsuario().getId())) {
+                throw new UnauthorizedException("Acceso denegado: solo puede borrar sus propias puntuaciones");
+            }
+            oSessionService.checkSameClub(oPuntuacion.getNoticia().getClub().getId());
+        }
         oPuntuacionRepository.delete(oPuntuacion);
         return id;
     }

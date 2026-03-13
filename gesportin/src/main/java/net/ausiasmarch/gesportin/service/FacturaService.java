@@ -34,6 +34,12 @@ public class FacturaService {
             Long clubId = e.getUsuario().getClub().getId();
             oSessionService.checkSameClub(clubId);
         }
+        if (oSessionService.isUsuario()) {
+            Long currentUserId = oSessionService.getIdUsuario();
+            if (!currentUserId.equals(e.getUsuario().getId())) {
+                throw new UnauthorizedException("Acceso denegado: solo puede ver sus propias facturas");
+            }
+        }
         return e;
     }
 
@@ -50,6 +56,13 @@ public class FacturaService {
                 return oFacturaRepository.findByUsuarioClubId(myClub, pageable);
             }
         }
+        if (oSessionService.isUsuario()) {
+            Long currentUserId = oSessionService.getIdUsuario();
+            if (id_usuario != null && !id_usuario.equals(currentUserId)) {
+                throw new UnauthorizedException("Acceso denegado: solo puede ver sus propias facturas");
+            }
+            return oFacturaRepository.findByUsuarioId(currentUserId, pageable);
+        }
         if (id_usuario != null) {
             return oFacturaRepository.findByUsuarioId(id_usuario, pageable);
         } else {
@@ -61,9 +74,18 @@ public class FacturaService {
         if (oSessionService.isEquipoAdmin()) {
             throw new UnauthorizedException("Acceso denegado: equipo‑admin no puede crear facturas");
         }
+        if (oSessionService.isUsuario()) {
+            Long currentUserId = oSessionService.getIdUsuario();
+            if (oFacturaEntity.getUsuario() != null && oFacturaEntity.getUsuario().getId() != null
+                    && !oFacturaEntity.getUsuario().getId().equals(currentUserId)) {
+                throw new UnauthorizedException("Acceso denegado: solo puede crear facturas para su usuario");
+            }
+            oFacturaEntity.setUsuario(oUsuarioService.get(currentUserId));
+        } else {
+            oFacturaEntity.setUsuario(oUsuarioService.get(oFacturaEntity.getUsuario().getId()));
+        }
         oFacturaEntity.setId(null);
         oFacturaEntity.setFecha(LocalDateTime.now());
-        oFacturaEntity.setUsuario(oUsuarioService.get(oFacturaEntity.getUsuario().getId()));
         return oFacturaRepository.save(oFacturaEntity);
     }
 
@@ -74,7 +96,15 @@ public class FacturaService {
         FacturaEntity oFacturaExistente = oFacturaRepository.findById(oFacturaEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Factura no encontrado con id: " + oFacturaEntity.getId()));
-        oFacturaExistente.setUsuario(oUsuarioService.get(oFacturaEntity.getUsuario().getId()));
+        if (oSessionService.isUsuario()) {
+            Long currentUserId = oSessionService.getIdUsuario();
+            if (!currentUserId.equals(oFacturaExistente.getUsuario().getId())) {
+                throw new UnauthorizedException("Acceso denegado: solo puede modificar sus propias facturas");
+            }
+            oFacturaExistente.setUsuario(oUsuarioService.get(currentUserId));
+        } else {
+            oFacturaExistente.setUsuario(oUsuarioService.get(oFacturaEntity.getUsuario().getId()));
+        }
         oFacturaExistente.setFecha(oFacturaEntity.getFecha());
         return oFacturaRepository.save(oFacturaExistente);
     }
@@ -85,6 +115,12 @@ public class FacturaService {
         }
         FacturaEntity oFactura = oFacturaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Factura no encontrado con id: " + id));
+        if (oSessionService.isUsuario()) {
+            Long currentUserId = oSessionService.getIdUsuario();
+            if (!currentUserId.equals(oFactura.getUsuario().getId())) {
+                throw new UnauthorizedException("Acceso denegado: solo puede borrar sus propias facturas");
+            }
+        }
         oFacturaRepository.delete(oFactura);
         return id;
     }

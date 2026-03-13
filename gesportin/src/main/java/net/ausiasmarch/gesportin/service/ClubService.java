@@ -59,13 +59,13 @@ public class ClubService {
     }
 
     public Page<ClubEntity> getPage(Pageable pageable) {
-        if (oSessionService.isEquipoAdmin()) {
+        if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
             Long myClub = oSessionService.getIdClub();
             if (myClub == null) {
                 // should not happen, but just in case
                 return org.springframework.data.domain.Page.empty(pageable);
             }
-            // return a single-item page containing only the admin's club
+            // return a single-item page containing only the user's club
             ClubEntity club = oClubRepository.findById(myClub).orElse(null);
             if (club == null) {
                 return org.springframework.data.domain.Page.empty(pageable);
@@ -77,16 +77,18 @@ public class ClubService {
     }
 
     public ClubEntity create(ClubEntity oClubEntity) {
-        // equipo admins are not allowed to create clubs
+        // equipo admins and regular usuarios are not allowed to create clubs
         oSessionService.denyEquipoAdmin();
+        oSessionService.denyUsuario();
         oClubEntity.setId(null);
         oClubEntity.setFechaAlta(LocalDateTime.now());
         return oClubRepository.save(oClubEntity);
     }
 
     public ClubEntity update(ClubEntity oClubEntity) {
-        // equipo admins are not allowed to modify club data
+        // equipo admins and regular usuarios are not allowed to modify club data
         oSessionService.denyEquipoAdmin();
+        oSessionService.denyUsuario();
         ClubEntity oClubExistente = oClubRepository.findById(oClubEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Club no encontrado con id: " + oClubEntity.getId()));
 
@@ -98,8 +100,9 @@ public class ClubService {
     }
 
     public Long delete(Long id) {
-        // equipo admins are not allowed to delete clubs
+        // equipo admins and regular usuarios are not allowed to delete clubs
         oSessionService.denyEquipoAdmin();
+        oSessionService.denyUsuario();
         ClubEntity oClub = oClubRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Club no encontrado con id: " + id));
         oClubRepository.delete(oClub);
@@ -107,8 +110,8 @@ public class ClubService {
     }
 
     public Long count() {
-        // equipo admins should only be aware of their own club count
-        if (oSessionService.isEquipoAdmin()) {
+        // equipo admins and regular usuarios should only be aware of their own club count
+        if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
             return (oSessionService.getIdClub() != null) ? 1L : 0L;
         }
         return oClubRepository.count();

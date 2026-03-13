@@ -46,7 +46,7 @@ public class LigaService {
     }
 
     public Page<LigaEntity> getPage(Pageable pageable, String nombre, Long id_equipo) {
-        if (oSessionService.isEquipoAdmin()) {
+        if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
             Long myClub = oSessionService.getIdClub();
             if (id_equipo != null) {
                 Long clubEquipo = oEquipoService.get(id_equipo).getCategoria().getTemporada().getClub().getId();
@@ -69,6 +69,8 @@ public class LigaService {
     }
 
     public LigaEntity create(LigaEntity oLigaEntity) {
+        // regular usuarios cannot create ligas
+        oSessionService.denyUsuario();
         if (oSessionService.isEquipoAdmin()) {
             Long clubId = oEquipoService.get(oLigaEntity.getEquipo().getId()).getCategoria().getTemporada().getClub().getId();
             oSessionService.checkSameClub(clubId);
@@ -78,6 +80,8 @@ public class LigaService {
     }
 
     public LigaEntity update(LigaEntity oLigaEntity) {
+        // regular usuarios cannot modify ligas
+        oSessionService.denyUsuario();
         LigaEntity oLigaExistente = oLigaRepository.findById(oLigaEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Liga no encontrado con id: " + oLigaEntity.getId()));
@@ -94,6 +98,8 @@ public class LigaService {
     }
 
     public Long delete(Long id) {
+        // regular usuarios cannot delete ligas
+        oSessionService.denyUsuario();
         LigaEntity oLiga = oLigaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Liga no encontrado con id: " + id));
         if (oSessionService.isEquipoAdmin()) {

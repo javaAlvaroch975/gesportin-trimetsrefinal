@@ -40,7 +40,7 @@ public class CategoriaService {
     }
 
     public Page<CategoriaEntity> getPage(Pageable pageable, Optional<String> nombre, Optional<Long> id_temporada) {
-        if (oSessionService.isEquipoAdmin()) {
+        if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
             Long myClub = oSessionService.getIdClub();
             if (id_temporada.isPresent()) {
                 Long clubTemporada = oTemporadaService.get(id_temporada.get()).getClub().getId();
@@ -48,7 +48,7 @@ public class CategoriaService {
                     throw new UnauthorizedException("Acceso denegado: solo categorias de su club");
                 }
             } else {
-                // when no temporada filter provided, return only those belonging to the team‑admin's club
+                // when no temporada filter provided, return only those belonging to the user's club
                 return oCategoriaRepository.findByTemporadaClubId(myClub, pageable);
             }
         }
@@ -62,12 +62,16 @@ public class CategoriaService {
     }
 
     public CategoriaEntity create(CategoriaEntity oCategoriaEntity) {
+        // regular usuarios cannot create categorias
+        oSessionService.denyUsuario();
         oCategoriaEntity.setId(null);
         oCategoriaEntity.setTemporada(oTemporadaService.get(oCategoriaEntity.getTemporada().getId()));
         return oCategoriaRepository.save(oCategoriaEntity);
     }
 
     public CategoriaEntity update(CategoriaEntity oCategoriaEntity) {
+        // regular usuarios cannot modify categorias
+        oSessionService.denyUsuario();
         CategoriaEntity oCategoriaExistente = oCategoriaRepository.findById(oCategoriaEntity.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Categoria no encontrado con id: " + oCategoriaEntity.getId()));
@@ -77,6 +81,8 @@ public class CategoriaService {
     }
 
     public Long delete(Long id) {
+        // regular usuarios cannot delete categorias
+        oSessionService.denyUsuario();
         CategoriaEntity oCategoria = oCategoriaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Categoria no encontrado con id: " + id));
         oCategoriaRepository.delete(oCategoria);

@@ -52,14 +52,14 @@ public class NoticiaService {
     public NoticiaEntity get(Long id) {
         NoticiaEntity e = oNoticiaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Noticia no encontrado con id: " + id));
-        if (oSessionService.isEquipoAdmin()) {
+        if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
             oSessionService.checkSameClub(e.getClub().getId());
         }
         return e;
     }
 
     public Page<NoticiaEntity> getPage(Pageable oPageable, String contenido, Long idClub) {
-        if (oSessionService.isEquipoAdmin()) {
+        if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
             Long myClub = oSessionService.getIdClub();
             if (idClub != null && !idClub.equals(myClub)) {
                 throw new UnauthorizedException("Acceso denegado: solo noticias de su club");
@@ -77,6 +77,8 @@ public class NoticiaService {
     }
 
     public NoticiaEntity create(NoticiaEntity oNoticiaEntity) {
+        // regular usuarios cannot create noticias
+        oSessionService.denyUsuario();
         if (oSessionService.isEquipoAdmin()) {
             oSessionService.checkSameClub(oNoticiaEntity.getClub().getId());
         }
@@ -88,6 +90,8 @@ public class NoticiaService {
     }
 
     public NoticiaEntity update(NoticiaEntity oNoticiaEntity) {
+        // regular usuarios cannot modify noticias
+        oSessionService.denyUsuario();
         NoticiaEntity oNoticiaExistente = oNoticiaRepository.findById(oNoticiaEntity.getId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Noticia no encontrado con id: " + oNoticiaEntity.getId()));
@@ -104,6 +108,8 @@ public class NoticiaService {
     }
 
     public Long delete(Long id) {
+        // regular usuarios cannot delete noticias
+        oSessionService.denyUsuario();
         NoticiaEntity oNoticia = oNoticiaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Noticia no encontrado con id: " + id));
         if (oSessionService.isEquipoAdmin()) {
