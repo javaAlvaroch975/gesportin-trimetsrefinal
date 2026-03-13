@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, inject, signal } from '@angular/core';
+import { toIsoDateTime } from '../../../utils/date-utils';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -80,7 +81,7 @@ export class ClubFormUnrouted implements OnInit {
     this.submitting.set(true);
 
     const fechaValue = this.clubForm.value.fechaAlta;
-    const fechaConHora = this.toLocalDateTime(fechaValue);
+    const fechaConHora = toIsoDateTime(fechaValue);
 
     const formData = {
       id: this.isEditMode ? this.club?.id : undefined,
@@ -138,20 +139,6 @@ export class ClubFormUnrouted implements OnInit {
     });
   }
 
-  private toLocalDateTime(value: string): string {
-    if (!value) {
-      return '';
-    }
-    if (value.includes('T')) {
-      const [datePart, timePart] = value.split('T');
-      return `${datePart}T${(timePart || '00:00:00').slice(0, 8)}`;
-    }
-    if (value.includes(' ')) {
-      const [datePart, timePart] = value.split(' ');
-      return `${datePart}T${(timePart || '00:00:00').slice(0, 8)}`;
-    }
-    return `${value}T00:00:00`;
-  }
 
   private toDateInputValue(value: Date | string): string {
     if (!value) {

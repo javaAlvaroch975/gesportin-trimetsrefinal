@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter, inject, OnInit, signal } from '@angular/core';
+import { toIsoDateTime } from '../../../utils/date-utils';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -125,11 +126,7 @@ export class FacturaFormAdminUnrouted implements OnInit {
     this.submitting.set(true);
 
     const fechaForm: string = this.facturaForm.value.fecha;
-    const fechaLocalDateTime = fechaForm
-      ? fechaForm.length > 10
-        ? fechaForm.replace('T', ' ')
-        : `${fechaForm} 00:00:00`
-      : null;
+    const fechaLocalDateTime = fechaForm ? toIsoDateTime(fechaForm) : null;
 
     const payload: any = {
       fecha: fechaLocalDateTime,

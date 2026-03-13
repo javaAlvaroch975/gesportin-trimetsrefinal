@@ -3,9 +3,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 /**
  * DatetimePipe
  * Uso:
- *  - {{ value | datetime }} -> completa (dd/mm/yyyy hh:mm:ss)
- *  - {{ value | datetime:'solofechacompleta' }} -> dd/mm/yyyy
- *  - {{ value | datetime:'solofecha' }} -> dd/mm/yy
+ *  - {{ value | datetime }} -> completa (dd/MM/yyyy hh:mm)
+ *  - {{ value | datetime:'solofechacompleta' }} -> dd/MM/yyyy
+ *  - {{ value | datetime:'solofecha' }} -> dd/MM/yy
  *  - {{ value | datetime:'solohoracompleta' }} -> hh:mm:ss
  *  - {{ value | datetime:'solohora' }} -> hh:mm
  *
@@ -38,13 +38,26 @@ export class DatetimePipe implements PipeTransform {
         const d = new Date(iso);
         if (!isNaN(d.getTime())) return d;
       }
+      // yyyy-MM-dd (date only) -> treat as local date at midnight
+      const ymd = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (ymd) {
+        const year = Number(ymd[1]);
+        const month = Number(ymd[2]) - 1;
+        const day = Number(ymd[3]);
+        const d = new Date(year, month, day);
+        if (!isNaN(d.getTime())) return d;
+      }
+
       // dd/MM/yyyy -> convert to yyyy-MM-dd
       const dmy = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
       if (dmy) {
-        const iso = `${dmy[3]}-${dmy[2]}-${dmy[1]}T00:00:00`;
-        const d = new Date(iso);
+        const year = Number(dmy[3]);
+        const month = Number(dmy[2]) - 1;
+        const day = Number(dmy[1]);
+        const d = new Date(year, month, day);
         if (!isNaN(d.getTime())) return d;
       }
+
       // fallback to Date parsing (ISO or other browser-supported)
       const d = new Date(s);
       if (!isNaN(d.getTime())) return d;
@@ -66,7 +79,8 @@ export class DatetimePipe implements PipeTransform {
 
     switch ((mode || 'completa').toLowerCase()) {
       case 'completa':
-        return `${dd}/${mm}/${yyyy} ${hh}:${min}:${ss}`;
+        // Mostramos fecha y hora (sin segundos) para la UI.
+        return `${dd}/${mm}/${yyyy} ${hh}:${min}`;
       case 'solofechacompleta':
         return `${dd}/${mm}/${yyyy}`;
       case 'solofecha':
@@ -76,7 +90,7 @@ export class DatetimePipe implements PipeTransform {
       case 'solohora':
         return `${hh}:${min}`;
       default:
-        return `${dd}/${mm}/${yyyy} ${hh}:${min}:${ss}`;
+        return `${dd}/${mm}/${yyyy} ${hh}:${min}`;
     }
   }
 }

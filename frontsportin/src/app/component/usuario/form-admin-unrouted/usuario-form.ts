@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, inject, signal, computed, effect, TemplateRef, ViewChild } from '@angular/core';
+import { toIsoDateTime } from '../../../utils/date-utils';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -389,7 +390,7 @@ export class UsuarioFormAdminUnrouted implements OnInit {
       username: this.usuarioForm.value.username,
       password: this.usuarioForm.value.password || this.usuario?.password,
       genero: this.usuarioForm.value.genero,
-      fechaAlta: this.toLocalDateTime(this.usuarioForm.get('fechaAlta')?.value ?? this.usuario?.fechaAlta),
+      fechaAlta: toIsoDateTime(this.usuarioForm.get('fechaAlta')?.value ?? this.usuario?.fechaAlta),
       club: {
         id: this.usuarioForm.value.id_club
       },
@@ -449,21 +450,6 @@ export class UsuarioFormAdminUnrouted implements OnInit {
     });
   }
 
-  private toLocalDateTime(value: string | undefined | null): string {
-    if (!value) {
-      return '';
-    }
-    const text = String(value);
-    if (text.includes('T')) {
-      const [datePart, timePart] = text.split('T');
-      return `${datePart}T${(timePart || '00:00:00').slice(0, 8)}`;
-    }
-    if (text.includes(' ')) {
-      const [datePart, timePart] = text.split(' ');
-      return `${datePart}T${(timePart || '00:00:00').slice(0, 8)}`;
-    }
-    return `${text}T00:00:00`;
-  }
 
   private toDateInputValue(value: string | Date | undefined | null): string {
     if (!value) {

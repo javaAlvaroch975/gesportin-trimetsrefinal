@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, inject, signal, effect } from '@angular/core';
+import { toIsoDateTime } from '../../../utils/date-utils';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -179,11 +180,7 @@ export class CuotaFormAdminUnrouted implements OnInit {
     this.submitting.set(true);
 
     const fechaForm: string = this.cuotaForm.value.fecha;
-    const fechaLocalDateTime = fechaForm
-      ? fechaForm.length > 10
-        ? fechaForm.replace('T', ' ')
-        : `${fechaForm} 00:00:00`
-      : null;
+    const fechaLocalDateTime = fechaForm ? toIsoDateTime(fechaForm) : null;
 
     const cuotaData: any = {
       descripcion: this.cuotaForm.value.descripcion,

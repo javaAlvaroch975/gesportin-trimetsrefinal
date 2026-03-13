@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
+import { toIsoDateTime } from '../../../utils/date-utils';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -64,7 +65,7 @@ export class NoticiaEditAdminRouted implements OnInit {
       id: [{ value: 0, disabled: true }],
       titulo: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(255)]],
       contenido: ['', [Validators.required, Validators.minLength(3)]],
-      fecha: [new Date(), Validators.required],
+      fecha: [new Date().toISOString().split('T')[0], Validators.required],
       imagen: [null],
       id_club: [null, Validators.required],
     });
@@ -88,7 +89,7 @@ export class NoticiaEditAdminRouted implements OnInit {
           id: noticia.id,
           titulo: noticia.titulo,
           contenido: noticia.contenido,
-          fecha: noticia.fecha,
+          fecha: toIsoDateTime(noticia.fecha).split('T')[0],
           id_club: noticia.club?.id,
         });
         if (noticia.club) {
@@ -163,7 +164,7 @@ export class NoticiaEditAdminRouted implements OnInit {
       id: this.id_noticia(),
       titulo: this.noticiaForm.value.titulo,
       contenido: this.noticiaForm.value.contenido,
-      fecha: this.noticiaForm.value.fecha,
+      fecha: toIsoDateTime(this.noticiaForm.value.fecha),
       imagen: this.noticiaForm.value.imagen || null,
       club: { id: this.noticiaForm.value.id_club },
     };

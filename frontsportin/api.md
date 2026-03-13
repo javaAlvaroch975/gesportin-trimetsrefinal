@@ -5,7 +5,7 @@
 - CORS: habilitado para todos los orígenes (*)
 - Claves foráneas (`@ManyToOne`) se devuelven como objetos expandidos (p. ej. `usuario.club`, `equipo.categoria`).
 - Colecciones `@OneToMany` se exponen como contadores enteros: comentarios, puntuaciones, carritos, compras, ligas, etc.
-- Fechas con `@JsonFormat` usan el patrón `yyyy-MM-dd HH:mm:ss`.
+- Fechas con `@JsonFormat` usan el patrón `yyyy-MM-dd'T'HH:mm:ss` (ISO local date-time).
 - Paginación: cuando el controlador usa `@PageableDefault(size = 1000)`, el `size` por defecto es 1000; en otros casos aplica el valor por defecto de Spring si no se envía `size`.
 - Estructura de página:
 ```json

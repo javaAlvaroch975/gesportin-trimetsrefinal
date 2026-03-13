@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, inject, signal } from '@angular/core';
+import { toIsoDateTime } from '../../../utils/date-utils';
 import { SessionService } from '../../../service/session';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -78,11 +79,14 @@ export class NoticiaFormUnrouted implements OnInit {
   private loadNoticiaData(): void {
     if (!this.noticia) return;
 
+    const fechaIso = toIsoDateTime(this.noticia.fecha);
+    const fechaInput = fechaIso ? fechaIso.split('T')[0] : '';
+
     this.noticiaForm.patchValue({
       id: this.noticia.id,
       titulo: this.noticia.titulo,
       contenido: this.noticia.contenido,
-      fecha: this.noticia.fecha,
+      fecha: fechaInput,
       imagen: this.noticia.imagen || null,
       id_club: this.noticia.club?.id,
     });
@@ -155,8 +159,7 @@ export class NoticiaFormUnrouted implements OnInit {
     }
 
     const fechaValue = this.noticiaForm.value.fecha;
-    // Formato esperado por el backend: yyyy-MM-dd HH:mm:ss (con espacio, no con T)
-    const fechaConHora = fechaValue.includes(' ') ? fechaValue : `${fechaValue.split('T')[0]} 00:00:00`;
+    const fechaConHora = toIsoDateTime(fechaValue);
 
     const formData = {
       id: this.isEditMode ? this.noticia?.id : undefined,
