@@ -128,14 +128,4 @@ public class SessionService {
         }
     }
 
-    /**
-     * Throws UnauthorizedException when the requester is an equipo admin. Use for
-     * operations that this role is not allowed to perform at all (invoices, cart, etc.)
-     */
-    public void denyEquipoAdmin() {
-        if (isEquipoAdmin()) {
-            throw new UnauthorizedException("Acceso denegado: no tiene permisos en esta operación");
-        }
-    }
-
 }
