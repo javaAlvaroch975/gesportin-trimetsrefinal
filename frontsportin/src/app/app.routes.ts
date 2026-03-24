@@ -119,18 +119,6 @@ export const publicRoutes: Routes = [
 ];
 
 const protectedRoutes: Routes = [
-<<<<<<< Updated upstream
-  { path: '', component: Home, data: { allowClubAdmin: true } },
-  { path: 'usuario', component: UsuarioPlist, data: { allowClubAdmin: true } },
-  { path: 'usuario/tipousuario/:id_tipousuario', component: UsuarioPlist, data: { allowClubAdmin: true } },
-  { path: 'usuario/rol/:id_rol', component: UsuarioPlist, data: { allowClubAdmin: true } },
-  { path: 'usuario/club/:id_club', component: UsuarioPlist, data: { allowClubAdmin: true } },
-  { path: 'usuario/view/:id', component: UsuarioViewRouted, data: { allowClubAdmin: true } },
-  { path: 'usuario/new', component: UsuarioNewAdminRouted, data: { allowClubAdmin: true } },
-  { path: 'usuario/edit/:id', component: UsuarioEditAdminRouted, data: { allowClubAdmin: true } },
-  { path: 'usuario/delete/:id', component: UsuarioDeleteAdminRouted, data: { allowClubAdmin: true } },
-  { path: 'temporada', component: TemporadaPlist, data: { allowClubAdmin: true } },
-=======
   { path: '', component: Home },
   { path: 'usuario', component: UsuarioPlist },
   { path: 'usuario/tipousuario/:id_tipousuario', component: UsuarioPlist },
@@ -140,7 +128,7 @@ const protectedRoutes: Routes = [
   { path: 'usuario/new', component: UsuarioNewAdminRouted },
   { path: 'usuario/edit/:id', component: UsuarioEditAdminRouted },
   { path: 'temporada', component: TemporadaPlist },
->>>>>>> Stashed changes
+
   { path: 'temporada/club/:id_club', component: TemporadaPlist, data: { allowClubAdmin: true } },
   { path: 'temporada/edit/:id', component: TemporadaEditAdminRouted, data: { allowClubAdmin: true } },
 
@@ -200,14 +188,7 @@ const protectedRoutes: Routes = [
   { path: 'compra/delete/:id', component: CompraDeleteAdminRouted },
   { path: 'compra/edit/:id', component: CompraEditAdminRouted },
   { path: 'compra/new', component: CompraNewAdminRouted },
-<<<<<<< Updated upstream
-  { path: 'rolusuario', component: RolusuarioPlist, data: { allowClubAdmin: true } },
-  { path: 'rolusuario/new', component: RolusuarioNewAdminRouted, data: { allowClubAdmin: true } },
-  { path: 'rolusuario/view/:id', component: RolusuarioViewAdminRouted, data: { allowClubAdmin: true } },
-  { path: 'rolusuario/delete/:id', component: RolusuarioDeleteAdminRouted, data: { allowClubAdmin: true } },
-  { path: 'rolusuario/edit/:id', component: RolusuarioEditAdminRouted, data: { allowClubAdmin: true } },
-  { path: 'tipoarticulo', component: TipoarticuloPlistAdminRouted, data: { allowClubAdmin: true } },
-=======
+
   { path: 'rolusuario', component: RolusuarioPlist },
   { path: 'rolusuario/new', component: RolusuarioNewAdminRouted },
   { path: 'rolusuario/view/:id', component: RolusuarioViewAdminRouted },
@@ -215,7 +196,7 @@ const protectedRoutes: Routes = [
   { path: 'rolusuario/edit/:id', component: RolusuarioEditAdminRouted },
   { path: 'tipoarticulo', component: TipoarticuloPlistAdminRouted },
   { path: 'tipoarticulo/teamadmin', component: TipoarticuloPlistTeamAdminRouted, canActivate: [ClubAdminGuard] },
->>>>>>> Stashed changes
+
   { path: 'tipoarticulo/club/:id_club', component: TipoarticuloPlistAdminRouted, data: { allowClubAdmin: true } },
   { path: 'tipoarticulo/view/:id', component: TipoarticuloViewAdminRouted, data: { allowClubAdmin: true } },
   { path: 'tipoarticulo/edit/:id', component: TipoarticuloEditAdminRouted, data: { allowClubAdmin: true } },
@@ -252,16 +233,11 @@ const protectedRoutes: Routes = [
 
   { path: 'cuota/delete/:id', component: CuotaDeleteAdminRouted, data: { allowClubAdmin: true } },
 
-<<<<<<< Updated upstream
-  { path: 'tipousuario', component: TipousuarioPlistAdminRouted, data: { allowClubAdmin: true } },
-  { path: 'tipousuario/view/:id', component: TipousuarioViewAdminRouted, data: { allowClubAdmin: true } },
-  { path: 'equipo', component: PlistEquipo, data: { allowClubAdmin: true } },
-=======
   { path: 'tipousuario', component: TipousuarioPlistAdminRouted },
   { path: 'tipousuario/view/:id', component: TipousuarioViewAdminRouted },
   { path: 'equipo', component: PlistEquipo },
   { path: 'equipo/teamadmin', component: EquipoPlistTeamAdminRouted, canActivate: [ClubAdminGuard] },
->>>>>>> Stashed changes
+
   { path: 'equipo/categoria/:id_categoria', component: PlistEquipo, data: { allowClubAdmin: true } },
   { path: 'equipo/new', component: EquipoNewAdminRouted, data: { allowClubAdmin: true } },
 
