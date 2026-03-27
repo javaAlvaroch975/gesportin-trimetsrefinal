@@ -37,7 +37,7 @@ export class ComentarioartAdminPlist {
   private comentarioartService = inject(ComentarioartService);
   private route = inject(ActivatedRoute);
   private dialogRef = inject(MatDialogRef<ComentarioartAdminPlist>, { optional: true });
-  private session = inject(SessionService);
+  session = inject(SessionService);
 
   ngOnInit() {
     if (this.id_articulo != null) {

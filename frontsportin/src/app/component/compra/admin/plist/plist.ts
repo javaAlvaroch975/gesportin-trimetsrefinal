@@ -37,7 +37,7 @@ export class CompraAdminPlist {
   private compraService = inject(CompraService);
   private route = inject(ActivatedRoute);
   private dialogRef = inject(MatDialogRef<CompraAdminPlist>, { optional: true });
-  private session = inject(SessionService);
+  session = inject(SessionService);
 
   ngOnInit() {
     if (this.id_factura != null) {

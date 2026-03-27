@@ -34,7 +34,7 @@ export class UsuarioAdminPlist {
   private usuarioService = inject(UsuarioService);
   private route = inject(ActivatedRoute);
   private dialogRef = inject(MatDialogRef<UsuarioAdminPlist>, { optional: true });
-  private session = inject(SessionService);
+  session = inject(SessionService);
 
   ngOnInit() {
     this.searchSubscription = this.searchSubject

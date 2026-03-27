@@ -1,30 +1,30 @@
 <div>
-  <!-- Búsqueda por descripción -->
-  <div class="d-flex justify-content-center my-2">
-    <input
-      class="form-control me-2"
-      type="search"
-      placeholder="Buscar por descripción"
-      aria-label="Search"
-      (input)="onSearchDescription($any($event.target).value)"
-      [value]="descripcion()"
-      name="searchDescription"
-    />
-  </div>
+  @if (club() <= 0) {
+    <div class="d-flex justify-content-center my-2">
+      <input
+        class="form-control me-2"
+        type="search"
+        placeholder="Buscar por descripción"
+        aria-label="Search"
+        (input)="onSearchDescription($any($event.target).value)"
+        [value]="descripcion()"
+        name="searchField"
+      />
+    </div>
+  }
 
-  <!-- Total registros -->
   <div class="d-flex justify-content-center my-1">
     <small class="text-muted">Total registros: {{ totalRecords() || 0 }}</small>
     @if (club() > 0) {
       <small class="text-muted ms-3">Filtro: id de club = {{ club() }}</small>
       @if (!isDialogMode()) {
-        <a class="ms-2" [routerLink]="['/temporada']" role="button" title="Quitar filtro"
-          ><i class="bi bi-x-lg" aria-hidden="true"></i> Quitar filtro</a
-        >
+        <a class="ms-2" [routerLink]="['/temporada']" role="button" title="Quitar filtro">
+          <i class="bi bi-x-lg" aria-hidden="true"></i> Quitar filtro
+        </a>
       }
     }
-    @if (descripcion().length > 0) {
-      <small class="text-muted ms-3">Filtro: descripción contiene "{{ descripcion() }}"</small>
+    @if (descripcion() && descripcion().length > 0) {
+      <small class="text-muted ms-3">Filtro: búsqueda contiene "{{ descripcion() }}"</small>
     }
   </div>
 
@@ -32,14 +32,12 @@
     <div class="w-100 d-flex justify-content-center">
       @if (!isDialogMode()) {
         <a class="btn btn-primary new-btn" [routerLink]="['/temporada/new']" role="button">
-          <i class="bi bi-plus-circle" aria-hidden="true"></i>
-          <span class="d-none d-sm-inline">Nueva Temporada</span>
+          <i class="bi bi-plus-circle me-2" aria-hidden="true"></i><span class="d-none d-sm-inline">Nueva Temporada</span>
         </a>
       }
     </div>
   </div>
 
-  <!-- Paginación y RPP -->
   @if (totalRecords() > 0) {
     <div class="container-fluid p-0 my-1">
       <div class="controls-row mb-2">
@@ -60,115 +58,118 @@
   <div class="d-flex justify-content-center">
     <div class="table-responsive w-100">
       <table class="table table-striped table-bordered table-sm w-100">
-        <thead>
-          <tr>
-            <th scope="col" (click)="onOrder('id')" style="cursor: pointer; width: 5%">
-              <span class="header-inline">
-                ID
-                @if (orderField() === 'id') {
-                  @if (orderDirection() === 'asc') {
-                    <i class="bi bi-caret-up-fill ms-1" aria-hidden="true"></i>
-                  }
-                  @if (orderDirection() === 'desc') {
-                    <i class="bi bi-caret-down-fill ms-1" aria-hidden="true"></i>
-                  }
-                }
-              </span>
-            </th>
-            <th scope="col" (click)="onOrder('descripcion')" style="cursor: pointer">
-              <span class="header-inline">
-                Descripción
-                @if (orderField() === 'descripcion') {
-                  @if (orderDirection() === 'asc') {
-                    <i class="bi bi-caret-up-fill ms-1" aria-hidden="true"></i>
-                  }
-                  @if (orderDirection() === 'desc') {
-                    <i class="bi bi-caret-down-fill ms-1" aria-hidden="true"></i>
-                  }
-                }
-              </span>
-            </th>
-            <th scope="col" (click)="onOrder('club')" style="cursor: pointer" class="d-none d-md-table-cell">
-              <span class="header-inline">
-                <i class="bi bi-building me-1" aria-hidden="true"></i>Club
-                @if (orderField() === 'club') {
-                  @if (orderDirection() === 'asc') {
-                    <i class="bi bi-caret-up-fill ms-1" aria-hidden="true"></i>
-                  }
-                  @if (orderDirection() === 'desc') {
-                    <i class="bi bi-caret-down-fill ms-1" aria-hidden="true"></i>
-                  }
-                }
-              </span>
-            </th>
-            <th scope="col" class="d-none d-md-table-cell">
-              <span class="header-inline"><i class="bi bi-tags me-1"></i>Categorías</span>
-            </th>
-            <th scope="col" style="width: 7%">
-              <span class="header-inline">Acciones</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (oTemporada of oPage()?.content; track oTemporada.id) {
-            <tr>
-              <th scope="row" style="text-align: center">{{ oTemporada.id }}</th>
-              <td class="align-middle text-truncate">{{ oTemporada.descripcion }}</td>
-              <td class="align-middle d-none d-md-table-cell">
-                @if (isDialogMode()) {
-                  {{ oTemporada.club.nombre | trim: 27 }}
-                  {{ ' (' + oTemporada.club.id + ')' }}
-                } @else {
-                  <a [routerLink]="['/club/view', oTemporada.club.id]">
-                    {{ oTemporada.club.nombre | trim: 27 }}
-                    {{ ' (' + oTemporada.club.id + ')' }}
-                  </a>
-                  <a
-                    class="btn btn-warning btn-sm ms-2 float-end"
-                    [routerLink]="['/temporada/club', oTemporada.club.id]"
-                    role="button"
-                    title="Filtrar por club"
-                    ><i class="bi bi-funnel-fill" aria-hidden="true"></i
-                  ></a>
-                }
-              </td>
-              <td style="text-align: center" class="d-none d-md-table-cell">
-                @if (isDialogMode()) {
-                  {{ oTemporada.categorias }}
-                } @else {
-                  @if (oTemporada.categorias === 0) {
-                    <i class="bi bi-ban" aria-hidden="true"></i>
-                  } @else {
-                    <a [routerLink]="['/categoria/temporada', oTemporada.id]">
-                      {{ oTemporada.categorias }}
-                    </a>
-                  }
-                }
-              </td>
-              <td>
-                <div class="d-flex justify-content-center">
-                  @if (isDialogMode()) {
-                    <button
-                      class="btn btn-success btn-sm"
-                      (click)="onSelect(oTemporada)"
-                      title="Seleccionar"
-                    >
-                      <i class="bi bi-check-circle" aria-hidden="true"></i> Seleccionar
-                    </button>
-                  } @else {
-                    <div class="d-flex justify-content-center">
-                      <app-botonera-actions-plist
-                        [id]="oTemporada.id"
-                        strEntity="temporada"
-                      ></app-botonera-actions-plist>
-                    </div>
-                  }
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+                    <thead>
+                      <tr>
+                        <th scope="col" (click)="onOrder('id')" style="cursor: pointer; width: 5%">
+                          <div class="header-stacked">
+                            <div class="header-top">
+                              <i class="bi bi-hash" aria-hidden="true"></i>
+                              @if (orderField() === 'id') {
+                                @if (orderDirection() === 'asc') { <i class="bi bi-caret-up-fill" aria-hidden="true"></i> }
+                                @if (orderDirection() === 'desc') { <i class="bi bi-caret-down-fill" aria-hidden="true"></i> }
+                              }
+                            </div>
+                            <span>ID</span>
+                          </div>
+                        </th>
+                        <th scope="col" (click)="onOrder('descripcion')" style="cursor: pointer">
+                          <div class="header-stacked">
+                            <div class="header-top">
+                              <i class="bi bi-card-text" aria-hidden="true"></i>
+                              @if (orderField() === 'descripcion') {
+                                @if (orderDirection() === 'asc') { <i class="bi bi-caret-up-fill" aria-hidden="true"></i> }
+                                @if (orderDirection() === 'desc') { <i class="bi bi-caret-down-fill" aria-hidden="true"></i> }
+                              }
+                            </div>
+                            <span>Descripción</span>
+                          </div>
+                        </th>
+                        <th scope="col" (click)="onOrder('club')" style="cursor: pointer" class="d-none d-md-table-cell">
+                          <div class="header-stacked">
+                            <div class="header-top">
+                              <i class="bi bi-building" aria-hidden="true"></i>
+                              @if (orderField() === 'club') {
+                                @if (orderDirection() === 'asc') { <i class="bi bi-caret-up-fill" aria-hidden="true"></i> }
+                                @if (orderDirection() === 'desc') { <i class="bi bi-caret-down-fill" aria-hidden="true"></i> }
+                              }
+                            </div>
+                            <span>Club</span>
+                          </div>
+                        </th>
+                        <th scope="col" class="d-none d-md-table-cell">
+                          <div class="header-stacked">
+                            <div class="header-top"><i class="bi bi-tags" aria-hidden="true"></i></div>
+                            <span>Categorías</span>
+                          </div>
+                        </th>
+                        <th scope="col" style="width: 7%" class="text-center">
+                          <div class="header-stacked">
+                            <div class="header-top"><i class="bi bi-gear" aria-hidden="true"></i></div>
+                            <span>Acciones</span>
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (oTemporada of oPage()?.content; track oTemporada.id) {
+                        <tr>
+                          <th scope="row" style="text-align: center">{{ oTemporada.id }}</th>
+                          <td class="align-middle text-truncate">{{ oTemporada.descripcion }}</td>
+                          <td class="align-middle d-none d-md-table-cell">
+                            @if (isDialogMode()) {
+                              {{ oTemporada.club.nombre | trim: 27 }}
+                              {{ ' (' + oTemporada.club.id + ')' }}
+                            } @else {
+                              <a [routerLink]="['/club/view', oTemporada.club.id]">
+                                {{ oTemporada.club.nombre | trim: 27 }}
+                                {{ ' (' + oTemporada.club.id + ')' }}
+                              </a>
+                              <a
+                                class="btn btn-warning btn-sm ms-2 float-end"
+                                [routerLink]="['/temporada/club', oTemporada.club.id]"
+                                role="button"
+                                title="Filtrar por club"
+                                ><i class="bi bi-funnel-fill" aria-hidden="true"></i
+                              ></a>
+                            }
+                          </td>
+                          <td style="text-align: center" class="d-none d-md-table-cell">
+                            @if (isDialogMode()) {
+                              {{ oTemporada.categorias }}
+                            } @else {
+                              @if (oTemporada.categorias === 0) {
+                                <i class="bi bi-ban" aria-hidden="true"></i>
+                              } @else {
+                                <a [routerLink]="['/categoria/temporada', oTemporada.id]">
+                                  {{ oTemporada.categorias }}
+                                </a>
+                              }
+                            }
+                          </td>
+                          <td>
+                            <div class="d-flex justify-content-center">
+                              @if (isDialogMode()) {
+                                <button
+                                  class="btn btn-success btn-sm"
+                                  (click)="onSelect(oTemporada)"
+                                  title="Seleccionar"
+                                >
+                                  <i class="bi bi-check-circle" aria-hidden="true"></i> Seleccionar
+                                </button>
+                              } @else {
+                                <div class="d-flex justify-content-center">
+                                  <app-botonera-actions-plist
+                                    [id]="oTemporada.id"
+                                    strEntity="temporada"
+                                  ></app-botonera-actions-plist>
+                                </div>
+                              }
+                            </div>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
     </div>
   </div>
 </div>

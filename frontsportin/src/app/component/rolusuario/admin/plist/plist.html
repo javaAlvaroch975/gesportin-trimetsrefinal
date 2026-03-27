@@ -1,60 +1,121 @@
-<div class="container my-2">
-  <div class="d-flex justify-content-center my-3">
-    <h1 class="mb-0"><i class="bi bi-shield-check me-2" aria-hidden="true"></i>Roles de Usuario</h1>
-  </div>
-
-  <div class="d-flex justify-content-between align-items-center gap-2 mb-3 flex-wrap">
-    <small class="text-muted">Total registros: {{ totalRecords() || 0 }}</small>
-    <a
-      class="btn btn-primary"
-      routerLink="/rolusuario/new"
-      role="button"
-      >
-      <i class="bi bi-plus-circle"></i>
-      <span class="d-none d-sm-inline">Crear rol de usuario</span>
-    </a>
-  </div>
-
-  <div class="mb-3">
+<div>
+  <div class="d-flex justify-content-center my-2">
     <input
-      type="text"
-      class="form-control"
-      placeholder="Buscar por descripción..."
+      class="form-control me-2"
+      type="search"
+      placeholder="Buscar por descripción"
+      aria-label="Search"
       (input)="onSearchDescripcion($any($event.target).value)"
+      [value]="descripcion()"
+      name="searchField"
     />
   </div>
 
-  <div class="table-responsive">
-    <table class="table table-striped table-bordered table-sm w-100">
-      <thead>
-        <tr>
-          <th scope="col" (click)="onOrder('id')" style="cursor: pointer; width: 8%">ID</th>
-          <th scope="col" (click)="onOrder('descripcion')" style="cursor: pointer; width: 60%">Descripción</th>
-          <th scope="col" class="text-center" style="width: 15%">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (oRolusuario of oPage()?.content; track oRolusuario.id) {
-          <tr (click)="onSelect(oRolusuario)" [style.cursor]="isDialogMode() ? 'pointer' : 'default'">
-            <th scope="row" class="text-center">{{ oRolusuario.id }}</th>
-            <td>{{ oRolusuario.descripcion }}</td>
-            <td class="text-center">
-              <app-botonera-actions-plist [id]="oRolusuario.id" strEntity="rolusuario"></app-botonera-actions-plist>
-            </td>
-          </tr>
-        }
-        @empty {
-          <tr>
-            <td colspan="3" class="text-center text-muted py-3">No se encontraron registros</td>
-          </tr>
-        }
-      </tbody>
-    </table>
+  <div class="d-flex justify-content-center my-1">
+    <small class="text-muted">Total registros: {{ totalRecords() || 0 }}</small>
+    @if (descripcion() && descripcion().length > 0) {
+      <small class="text-muted ms-3">Filtro: búsqueda contiene "{{ descripcion() }}"</small>
+    }
   </div>
 
-  <app-paginacion
-    [numPage]="numPage()"
-    [numPages]="oPage()?.totalPages || 1"
-    (pageChange)="goToPage($event)"
-  ></app-paginacion>
+  <div class="d-flex my-1">
+    <div class="w-100 d-flex justify-content-center">
+      @if (!isDialogMode()) {
+        <a class="btn btn-primary new-btn" [routerLink]="['/rolusuario/new']" role="button">
+          <i class="bi bi-plus-circle me-2" aria-hidden="true"></i><span class="d-none d-sm-inline">Crear rol de usuario</span>
+        </a>
+      }
+    </div>
+  </div>
+
+  @if (totalRecords() > 0) {
+    <div class="container-fluid p-0 my-1">
+      <div class="controls-row mb-2">
+        <div class="col-control left">
+          <app-paginacion
+            [numPage]="numPage()"
+            [numPages]="oPage()?.totalPages || 1"
+            (pageChange)="goToPage($event)"
+          ></app-paginacion>
+        </div>
+        <div class="col-control right">
+          <app-botonera-rpp [numRpp]="numRpp()" (rppChange)="onRppChange($event)"></app-botonera-rpp>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="d-flex justify-content-center">
+    <div class="table-responsive w-100">
+      <table class="table table-striped table-bordered table-sm w-100">
+                  <thead>
+                    <tr>
+                      <th scope="col" (click)="onOrder('id')" style="cursor: pointer; width: 8%">
+                        <div class="header-stacked">
+                          <div class="header-top">
+                            <i class="bi bi-hash" aria-hidden="true"></i>
+                            @if (orderField() === 'id') {
+                              @if (orderDirection() === 'asc') { <i class="bi bi-caret-up-fill" aria-hidden="true"></i> }
+                              @if (orderDirection() === 'desc') { <i class="bi bi-caret-down-fill" aria-hidden="true"></i> }
+                            }
+                          </div>
+                          <span>ID</span>
+                        </div>
+                      </th>
+                      <th scope="col" (click)="onOrder('descripcion')" style="cursor: pointer; width: 55%">
+                        <div class="header-stacked">
+                          <div class="header-top">
+                            <i class="bi bi-card-text" aria-hidden="true"></i>
+                            @if (orderField() === 'descripcion') {
+                              @if (orderDirection() === 'asc') { <i class="bi bi-caret-up-fill" aria-hidden="true"></i> }
+                              @if (orderDirection() === 'desc') { <i class="bi bi-caret-down-fill" aria-hidden="true"></i> }
+                            }
+                          </div>
+                          <span>Descripción</span>
+                        </div>
+                      </th>
+                      <th scope="col" class="d-none d-md-table-cell" style="width: 12%">
+                        <div class="header-stacked">
+                          <div class="header-top"><i class="bi bi-people" aria-hidden="true"></i></div>
+                          <span>Usuarios</span>
+                        </div>
+                      </th>
+                      <th scope="col" class="text-center" style="width: 15%">
+                        <div class="header-stacked">
+                          <div class="header-top"><i class="bi bi-gear" aria-hidden="true"></i></div>
+                          <span>Acciones</span>
+                        </div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (oRolusuario of oPage()?.content; track oRolusuario.id) {
+                      <tr (click)="onSelect(oRolusuario)" [style.cursor]="isDialogMode() ? 'pointer' : 'default'">
+                        <th scope="row" class="text-center">{{ oRolusuario.id }}</th>
+                        <td>{{ oRolusuario.descripcion }}</td>
+                        <td class="text-center d-none d-md-table-cell">
+                          @if (isDialogMode()) {
+                            {{ oRolusuario.usuarios || 0 }}
+                          } @else {
+                            @if (!oRolusuario.usuarios || oRolusuario.usuarios === 0) {
+                              <i class="bi bi-ban" aria-hidden="true"></i>
+                            } @else {
+                              <a [routerLink]="['/usuario/rol', oRolusuario.id]">{{ oRolusuario.usuarios }}</a>
+                            }
+                          }
+                        </td>
+                        <td class="text-center">
+                          <app-botonera-actions-plist [id]="oRolusuario.id" strEntity="rolusuario"></app-botonera-actions-plist>
+                        </td>
+                      </tr>
+                    }
+                    @empty {
+                      <tr>
+                        <td colspan="4" class="text-center text-muted py-3">No se encontraron registros</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+    </div>
+  </div>
 </div>

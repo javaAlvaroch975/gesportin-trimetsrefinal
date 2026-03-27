@@ -37,7 +37,7 @@ export class CarritoAdminPlist {
   private carritoService = inject(CarritoService);
   private route = inject(ActivatedRoute);
   private dialogRef = inject(MatDialogRef<CarritoAdminPlist>, { optional: true });
-  private session = inject(SessionService);
+  session = inject(SessionService);
 
   ngOnInit() {
     if (this.id_usuario != null) {

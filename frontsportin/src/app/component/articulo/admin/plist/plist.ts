@@ -36,7 +36,7 @@ export class ArticuloAdminPlist {
   private articuloService = inject(ArticuloService);
   private route = inject(ActivatedRoute);
   private dialogRef = inject(MatDialogRef<ArticuloAdminPlist>, { optional: true });
-  private session = inject(SessionService);
+  session = inject(SessionService);
 
   ngOnInit() {
     if (this.id_tipoarticulo != null) {

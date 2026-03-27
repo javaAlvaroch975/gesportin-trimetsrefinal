@@ -40,7 +40,7 @@ export class LigaAdminPlist {
   private oLigaService = inject(LigaService);
   private route = inject(ActivatedRoute);
   private dialogRef = inject(MatDialogRef<LigaAdminPlist>, { optional: true });
-  private session = inject(SessionService);
+  session = inject(SessionService);
 
   ngOnInit(): void {
     if (this.equipo != null) {

@@ -36,7 +36,7 @@ export class PartidoAdminPlist {
   private partidoService = inject(PartidoService);
   private route = inject(ActivatedRoute);
   private dialogRef = inject(MatDialogRef<PartidoAdminPlist>, { optional: true });
-  private session = inject(SessionService);
+  session = inject(SessionService);
 
   ngOnInit() {
     if (this.liga != null) {

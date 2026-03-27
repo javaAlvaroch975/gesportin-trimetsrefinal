@@ -36,7 +36,7 @@ export class FacturaAdminPlist {
   private facturaService = inject(FacturaService);
   private route = inject(ActivatedRoute);
   private dialogRef = inject(MatDialogRef<FacturaAdminPlist>, { optional: true });
-  private session = inject(SessionService);
+  session = inject(SessionService);
 
   ngOnInit() {
     if (this.id_usuario != null) {

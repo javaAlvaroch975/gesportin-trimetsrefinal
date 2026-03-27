@@ -145,5 +145,9 @@ export class ComentarioAdminPlist implements OnDestroy {
     return `${serverURL}/${imagen}`;
   }
 
+  isDialogMode(): boolean {
+    return false;
+  }
+
   private oComentarioService = inject(ComentarioService);
 }

@@ -37,7 +37,7 @@ export class PagoAdminPlist {
   private pagoService = inject(PagoService);
   private route = inject(ActivatedRoute);
   private dialogRef = inject(MatDialogRef<PagoAdminPlist>, { optional: true });
-  private session = inject(SessionService);
+  session = inject(SessionService);
 
   ngOnInit() {
     if (this.id_cuota != null) {

@@ -34,7 +34,7 @@ export class TipousuarioAdminPlist {
   private tipousuarioService = inject(TipousuarioService);
   private route = inject(ActivatedRoute);
   private dialogRef = inject(MatDialogRef<TipousuarioAdminPlist>, { optional: true });
-  private session = inject(SessionService);
+  session = inject(SessionService);
 
   ngOnInit() {
     this.searchSubscription = this.searchSubject

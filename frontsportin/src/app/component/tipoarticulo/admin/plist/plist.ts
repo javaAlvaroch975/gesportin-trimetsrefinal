@@ -36,7 +36,7 @@ export class TipoarticuloAdminPlist {
   private tipoarticuloService = inject(TipoarticuloService);
   private route = inject(ActivatedRoute);
   private dialogRef = inject(MatDialogRef<TipoarticuloAdminPlist>, { optional: true });
-  private session = inject(SessionService);
+  session = inject(SessionService);
 
   ngOnInit() {
     if (this.id_club != null) {

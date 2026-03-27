@@ -1,51 +1,148 @@
-<div class="container my-2">
-  <div class="d-flex justify-content-center my-3">
-    <h1 class="mb-0"><i class="bi bi-flag-fill me-2" aria-hidden="true"></i>Ligas</h1>
-  </div>
+<div>
+  @if (message()) {
+    <div class="d-flex justify-content-center my-2">
+      <div class="alert alert-success w-100 text-center" role="alert">
+        {{ message() }}
+      </div>
+    </div>
+  }
+
+  @if (!equipo || equipo <= 0) {
+    <div class="d-flex justify-content-center my-2">
+      <input
+        class="form-control me-2"
+        type="search"
+        placeholder="Buscar por nombre"
+        aria-label="Search"
+        (input)="onSearchNombre($any($event.target).value)"
+        [value]="nombre()"
+        name="searchField"
+      />
+    </div>
+  }
 
   <div class="d-flex justify-content-center my-1">
     <small class="text-muted">Total registros: {{ totalRecords() || 0 }}</small>
     @if (equipo && equipo > 0) {
       <small class="text-muted ms-3">Filtro: id de equipo = {{ equipo }}</small>
-      <a class="ms-2" [routerLink]="['/liga']" role="button" title="Quitar filtro">
-        <i class="bi bi-x-lg" aria-hidden="true"></i> Quitar filtro
-      </a>
+      @if (!isDialogMode()) {
+        <a class="ms-2" [routerLink]="['/liga']" role="button" title="Quitar filtro">
+          <i class="bi bi-x-lg" aria-hidden="true"></i> Quitar filtro
+        </a>
+      }
+    }
+    @if (nombre() && nombre().length > 0) {
+      <small class="text-muted ms-3">Filtro: búsqueda contiene "{{ nombre() }}"</small>
     }
   </div>
 
-  <div class="d-flex justify-content-center my-2">
-    <a *ngIf="!session.isClubAdmin()" class="btn btn-primary new-btn" [routerLink]="['/liga/new']" role="button">
-      <i class="bi bi-plus-circle" aria-hidden="true"></i>
-      <span class="d-none d-sm-inline">Crear liga</span>
-    </a>
+  <div class="d-flex my-1">
+    <div class="w-100 d-flex justify-content-center">
+      @if (!session.isClubAdmin()) {
+        <a class="btn btn-primary new-btn" [routerLink]="['/liga/new']" role="button">
+          <i class="bi bi-plus-circle me-2" aria-hidden="true"></i><span class="d-none d-sm-inline">Crear liga</span>
+        </a>
+      }
+    </div>
   </div>
+
+  @if (totalRecords() > 0) {
+    <div class="container-fluid p-0 my-1">
+      <div class="controls-row mb-2">
+        <div class="col-control left">
+          <app-paginacion
+            [numPage]="numPage()"
+            [numPages]="oPage()?.totalPages || 1"
+            (pageChange)="goToPage($event)"
+          ></app-paginacion>
+        </div>
+        <div class="col-control right">
+          <app-botonera-rpp [numRpp]="numRpp()" (rppChange)="onRppChange($event)"></app-botonera-rpp>
+        </div>
+      </div>
+    </div>
+  }
 
   <div class="d-flex justify-content-center">
     <div class="table-responsive w-100">
       <table class="table table-striped table-bordered table-sm w-100">
-        <thead>
-          <tr>
-            <th scope="col" (click)="onOrder('id')" style="cursor: pointer; width: 5%">ID</th>
-            <th scope="col" (click)="onOrder('nombre')" style="cursor: pointer; width: 45%">Nombre</th>
-            <th scope="col" style="width: 20%">Equipo</th>
-            <th scope="col" class="text-center" style="width: 20%">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (liga of oPage()?.content; track liga.id) {
-            <tr>
-              <th scope="row" class="text-center">{{ liga.id }}</th>
-              <td>{{ liga.nombre }}</td>
-              <td>
-                <a [routerLink]="['/equipo/view', liga.equipo.id]">{{ liga.equipo.nombre }}</a>
-              </td>
-              <td class="text-center">
-                <app-botonera-actions-plist [id]="liga.id" strEntity="liga"></app-botonera-actions-plist>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+                    <thead>
+                      <tr>
+                        <th scope="col" (click)="onOrder('id')" style="cursor: pointer; width: 5%">
+                          <div class="header-stacked">
+                            <div class="header-top">
+                              <i class="bi bi-hash" aria-hidden="true"></i>
+                              @if (orderField() === 'id') {
+                                @if (orderDirection() === 'asc') { <i class="bi bi-caret-up-fill" aria-hidden="true"></i> }
+                                @if (orderDirection() === 'desc') { <i class="bi bi-caret-down-fill" aria-hidden="true"></i> }
+                              }
+                            </div>
+                            <span>ID</span>
+                          </div>
+                        </th>
+                        <th scope="col" (click)="onOrder('nombre')" style="cursor: pointer; width: 35%">
+                          <div class="header-stacked">
+                            <div class="header-top">
+                              <i class="bi bi-tag" aria-hidden="true"></i>
+                              @if (orderField() === 'nombre') {
+                                @if (orderDirection() === 'asc') { <i class="bi bi-caret-up-fill" aria-hidden="true"></i> }
+                                @if (orderDirection() === 'desc') { <i class="bi bi-caret-down-fill" aria-hidden="true"></i> }
+                              }
+                            </div>
+                            <span>Nombre</span>
+                          </div>
+                        </th>
+                        <th scope="col" style="width: 25%">
+                          <div class="header-stacked">
+                            <div class="header-top"><i class="bi bi-people" aria-hidden="true"></i></div>
+                            <span>Equipo</span>
+                          </div>
+                        </th>
+                        <th scope="col" class="d-none d-md-table-cell" style="width: 12%">
+                          <div class="header-stacked">
+                            <div class="header-top"><i class="bi bi-flag" aria-hidden="true"></i></div>
+                            <span>Partidos</span>
+                          </div>
+                        </th>
+                        <th scope="col" class="text-center" style="width: 15%">
+                          <div class="header-stacked">
+                            <div class="header-top"><i class="bi bi-gear" aria-hidden="true"></i></div>
+                            <span>Acciones</span>
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (liga of oPage()?.content; track liga.id) {
+                        <tr (click)="onSelect(liga)" [style.cursor]="isDialogMode() ? 'pointer' : 'default'">
+                          <th scope="row" class="text-center">{{ liga.id }}</th>
+                          <td>{{ liga.nombre }}</td>
+                          <td>
+                            @if (isDialogMode()) {
+                              {{ liga.equipo.nombre }}
+                            } @else {
+                              <a [routerLink]="['/equipo/view', liga.equipo.id]">{{ liga.equipo.nombre }}</a>
+                              <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/liga/equipo', liga.equipo.id]" role="button" title="Filtrar por equipo"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
+                            }
+                          </td>
+                          <td class="text-center d-none d-md-table-cell">
+                            @if (isDialogMode()) {
+                              {{ liga.partidos || 0 }}
+                            } @else {
+                              @if (!liga.partidos || liga.partidos === 0) {
+                                <i class="bi bi-ban" aria-hidden="true"></i>
+                              } @else {
+                                <a [routerLink]="['/partido/liga', liga.id]">{{ liga.partidos }}</a>
+                              }
+                            }
+                          </td>
+                          <td class="text-center">
+                            <app-botonera-actions-plist [id]="liga.id" strEntity="liga"></app-botonera-actions-plist>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
     </div>
   </div>
 </div>

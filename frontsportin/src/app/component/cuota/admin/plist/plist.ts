@@ -36,7 +36,7 @@ export class CuotaAdminPlist {
   private cuotaService = inject(CuotaService);
   private route = inject(ActivatedRoute);
   private dialogRef = inject(MatDialogRef<CuotaAdminPlist>, { optional: true });
-  private session = inject(SessionService);
+  session = inject(SessionService);
 
   ngOnInit() {
     if (this.id_equipo != null) {
