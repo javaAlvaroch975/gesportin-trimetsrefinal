@@ -10,7 +10,7 @@ import { NoticiaService } from '../../../../service/noticia';
 import { IComentario } from '../../../../model/comentario';
 import { IUsuario } from '../../../../model/usuario';
 import { INoticia } from '../../../../model/noticia';
-import { UsuarioPlistAdminUnrouted } from '../../../usuario/plist-admin-unrouted/usuario-plist-admin-unrouted';
+import { UsuarioAdminPlist } from '../../../usuario/admin/plist/plist';
 import { NoticiaAdminPlist } from '../../../noticia/admin/plist/plist';
 
 @Component({
@@ -105,7 +105,7 @@ export class ComentarioAdminForm implements OnInit {
   }
 
   openUsuarioFinderModal(): void {
-    const dialogRef = this.dialog.open(UsuarioPlistAdminUnrouted, {
+    const dialogRef = this.dialog.open(UsuarioAdminPlist, {
       height: '800px', width: '1300px', maxWidth: '95vw', panelClass: 'usuario-dialog',
       data: { title: 'Elegir usuario', message: 'Seleccione el usuario para el comentario' }
     });

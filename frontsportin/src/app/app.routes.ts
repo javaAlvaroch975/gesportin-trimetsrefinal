@@ -2,14 +2,12 @@ import { Routes } from '@angular/router';
 import { Home } from './component/shared/home/home';
 import { Logout } from './component/shared/logout/logout';
 import { LoginComponent } from './component/shared/login/login.component';
-import { UsuarioPlist } from './component/usuario/usuario-plist/usuario-plist';
 import { ArticuloAdminPlistPage } from './page/articulo/admin/plist/plist';
 import { ArticuloAdminViewPage } from './page/articulo/admin/view/view';
 import { ArticuloAdminNewPage } from './page/articulo/admin/new/new';
 import { ArticuloAdminEditPage } from './page/articulo/admin/edit/edit';
 import { ArticuloAdminDeletePage } from './page/articulo/admin/delete/delete';
 import { ArticuloTeamadminPlistPage } from './page/articulo/teamadmin/plist/plist';
-import { UsuarioViewRouted } from './component/usuario/view-routed/usuario-view';
 import { CategoriaAdminPlistPage } from './page/categoria/admin/plist/plist';
 import { PartidoAdminPlistPage } from './page/partido/admin/plist/plist';
 import { PartidoTeamadminPlistPage } from './page/partido/teamadmin/plist/plist';
@@ -24,7 +22,6 @@ import { CompraTeamadminPlistPage } from './page/compra/teamadmin/plist/plist';
 import { CompraAdminViewPage } from './page/compra/admin/view/view';
 import { CompraAdminDeletePage } from './page/compra/admin/delete/delete';
 import { CarritoTeamadminPlistPage } from './page/carrito/teamadmin/plist/plist';
-import { RolusuarioPlist } from './component/rolusuario/plist-admin-routed/rolusuario-plist';
 import { TipoarticuloAdminPlistPage } from './page/tipoarticulo/admin/plist/plist';
 import { TipoarticuloTeamadminPlistPage } from './page/tipoarticulo/teamadmin/plist/plist';
 import { TipoarticuloAdminViewPage } from './page/tipoarticulo/admin/view/view';
@@ -46,7 +43,6 @@ import { ClubAdminPlistPage } from './page/club/admin/plist/plist';
 import { CuotaTeamadminPlistPage } from './page/cuota/teamadmin/plist/plist';
 import { CuotaAdminPlistPage } from './page/cuota/admin/plist/plist';
 import { CuotaAdminNewPage } from './page/cuota/admin/new/new';
-import { TipousuarioPlistAdminRouted } from './component/tipousario/plist-admin-routed/tipousuario-plist';
 import { EquipoAdminPlistPage } from './page/equipo/admin/plist/plist';
 import { EquipoAdminViewPage } from './page/equipo/admin/view/view';
 import { EquipoAdminEditPage } from './page/equipo/admin/edit/edit';
@@ -80,9 +76,6 @@ import { PagoAdminNewPage } from './page/pago/admin/new/new';
 import { ClubAdminViewPage } from './page/club/admin/view/view';
 import { CuotaAdminViewPage } from './page/cuota/admin/view/view';
 import { CarritoAdminViewPage } from './page/carrito/admin/view/view';
-import { TipousuarioViewAdminRouted } from './component/tipousario/view-admin-routed/tipousuario-view';
-import { RolusuarioViewAdminRouted } from './component/rolusuario/view-admin-routed/rolusuario-view';
-import { RolusuarioNewAdminRouted } from './component/rolusuario/new-admin-routed/rolusuario-new';
 import { CategoriaAdminViewPage } from './page/categoria/admin/view/view';
 import { CategoriaAdminEditPage } from './page/categoria/admin/edit/edit';
 import { CategoriaAdminNewPage } from './page/categoria/admin/new/new';
@@ -92,10 +85,8 @@ import { ComentarioartAdminEditPage } from './page/comentarioart/admin/edit/edit
 import { ComentarioAdminEditPage } from './page/comentario/admin/edit/edit';
 import { ComentarioAdminDeletePage } from './page/comentario/admin/delete/delete';
 import { PagoAdminDeletePage } from './page/pago/admin/delete/delete';
-import { RolusuarioDeleteAdminRouted } from './component/rolusuario/delete-admin-routed/rolusuario-delete';
 import { TemporadaAdminEditPage } from './page/temporada/admin/edit/edit';
 import { ClubAdminDeletePage } from './page/club/admin/delete/delete';
-import { RolusuarioEditAdminRouted } from './component/rolusuario/edit-admin-routed/rolusuario-edit';
 import { CategoriaAdminDeletePage } from './page/categoria/admin/delete/delete';
 import { ClubAdminEditPage } from './page/club/admin/edit/edit';
 import { CarritoAdminDeletePage } from './page/carrito/admin/delete/delete';
@@ -113,13 +104,24 @@ import { NoticiaAdminDeletePage } from './page/noticia/admin/delete/delete';
 import { ClubAdminNewPage } from './page/club/admin/new/new';
 import { ClubPlistTeamadminPage } from './page/club/teamadmin/plist/plist';
 import { CuotaAdminDeletePage } from './page/cuota/admin/delete/delete';
-import { UsuarioEditAdminRouted } from './component/usuario/edit-admin-routed/usuario-edit';
-import { UsuarioNewAdminRouted } from './component/usuario/new-admin-routed/usuario-new';
-import { UsuarioDeleteAdminRouted } from './component/usuario/delete-admin-routed/usuario-delete';
 import { JugadorAdminEditPage } from './page/jugador/admin/edit/edit';
 import { CompraAdminEditPage } from './page/compra/admin/edit/edit';
 import { CompraAdminNewPage } from './page/compra/admin/new/new';
 import { TemporadaAdminNewPage } from './page/temporada/admin/new/new';
+import { RolusuarioAdminPlistPage } from './page/rolusuario/admin/plist/plist';
+import { RolusuarioAdminViewPage } from './page/rolusuario/admin/view/view';
+import { RolusuarioAdminNewPage } from './page/rolusuario/admin/new/new';
+import { RolusuarioAdminEditPage } from './page/rolusuario/admin/edit/edit';
+import { RolusuarioAdminDeletePage } from './page/rolusuario/admin/delete/delete';
+import { TipousuarioAdminPlistPage } from './page/tipousuario/admin/plist/plist';
+import { TipousuarioAdminViewPage } from './page/tipousuario/admin/view/view';
+import { TipousuarioAdminNewPage } from './page/tipousuario/admin/new/new';
+import { TipousuarioAdminEditPage } from './page/tipousuario/admin/edit/edit';
+import { UsuarioAdminPlistPage } from './page/usuario/admin/plist/plist';
+import { UsuarioAdminViewPage } from './page/usuario/admin/view/view';
+import { UsuarioAdminNewPage } from './page/usuario/admin/new/new';
+import { UsuarioAdminEditPage } from './page/usuario/admin/edit/edit';
+import { UsuarioTeamadminPlistPage } from './page/usuario/teamadmin/plist/plist';
 import { AdminGuard } from './guards/admin.guard';
 import { ClubAdminGuard } from './guards/club-admin.guard';
 
@@ -130,13 +132,13 @@ export const publicRoutes: Routes = [
 
 const protectedRoutes: Routes = [
   { path: '', component: Home },
-  { path: 'usuario', component: UsuarioPlist },
-  { path: 'usuario/tipousuario/:id_tipousuario', component: UsuarioPlist },
-  { path: 'usuario/rol/:id_rol', component: UsuarioPlist },
-  { path: 'usuario/club/:id_club', component: UsuarioPlist },
-  { path: 'usuario/view/:id', component: UsuarioViewRouted },
-  { path: 'usuario/new', component: UsuarioNewAdminRouted },
-  { path: 'usuario/edit/:id', component: UsuarioEditAdminRouted },
+  { path: 'usuario', component: UsuarioAdminPlistPage },
+  { path: 'usuario/tipousuario/:id_tipousuario', component: UsuarioAdminPlistPage },
+  { path: 'usuario/rol/:id_rol', component: UsuarioAdminPlistPage },
+  { path: 'usuario/club/:id_club', component: UsuarioAdminPlistPage },
+  { path: 'usuario/view/:id', component: UsuarioAdminViewPage },
+  { path: 'usuario/new', component: UsuarioAdminNewPage },
+  { path: 'usuario/edit/:id', component: UsuarioAdminEditPage },
   { path: 'temporada', component: TemporadaAdminPlistPage },
 
   { path: 'temporada/club/:id_club', component: TemporadaAdminPlistPage, data: { allowClubAdmin: true } },
@@ -158,7 +160,7 @@ const protectedRoutes: Routes = [
   { path: 'liga/edit/:id', component: LigaAdminEditPage, data: { allowClubAdmin: true } },
   { path: 'articulo', component: ArticuloAdminPlistPage, data: { allowClubAdmin: true } },
   { path: 'articulo/tipoarticulo/:id_tipoarticulo', component: ArticuloAdminPlistPage, data: { allowClubAdmin: true } },
-  { path: 'usuario/:id', component: UsuarioViewRouted },
+  { path: 'usuario/:id', component: UsuarioAdminViewPage },
   { path: 'articulo/new', component: ArticuloAdminNewPage, data: { allowClubAdmin: true } },
 
   { path: 'articulo/:tipoarticulo', component: ArticuloAdminPlistPage, data: { allowClubAdmin: true } },
@@ -199,11 +201,11 @@ const protectedRoutes: Routes = [
   { path: 'compra/edit/:id', component: CompraAdminEditPage },
   { path: 'compra/new', component: CompraAdminNewPage },
 
-  { path: 'rolusuario', component: RolusuarioPlist },
-  { path: 'rolusuario/new', component: RolusuarioNewAdminRouted },
-  { path: 'rolusuario/view/:id', component: RolusuarioViewAdminRouted },
-  { path: 'rolusuario/delete/:id', component: RolusuarioDeleteAdminRouted },
-  { path: 'rolusuario/edit/:id', component: RolusuarioEditAdminRouted },
+  { path: 'rolusuario', component: RolusuarioAdminPlistPage },
+  { path: 'rolusuario/new', component: RolusuarioAdminNewPage },
+  { path: 'rolusuario/view/:id', component: RolusuarioAdminViewPage },
+  { path: 'rolusuario/delete/:id', component: RolusuarioAdminDeletePage },
+  { path: 'rolusuario/edit/:id', component: RolusuarioAdminEditPage },
   { path: 'tipoarticulo', component: TipoarticuloAdminPlistPage },
 
   { path: 'tipoarticulo/club/:id_club', component: TipoarticuloAdminPlistPage, data: { allowClubAdmin: true } },
@@ -243,8 +245,10 @@ const protectedRoutes: Routes = [
 
   { path: 'cuota/delete/:id', component: CuotaAdminDeletePage, data: { allowClubAdmin: true } },
 
-  { path: 'tipousuario', component: TipousuarioPlistAdminRouted },
-  { path: 'tipousuario/view/:id', component: TipousuarioViewAdminRouted },
+  { path: 'tipousuario', component: TipousuarioAdminPlistPage },
+  { path: 'tipousuario/view/:id', component: TipousuarioAdminViewPage },
+  { path: 'tipousuario/new', component: TipousuarioAdminNewPage },
+  { path: 'tipousuario/edit/:id', component: TipousuarioAdminEditPage },
   { path: 'equipo', component: EquipoAdminPlistPage },
   { path: 'equipo/teamadmin', component: EquipoTeamadminPlistPage, canActivate: [ClubAdminGuard] },
 
@@ -300,6 +304,7 @@ const protectedRoutes: Routes = [
 
 export const routes: Routes = [
   ...publicRoutes,
+  { path: 'usuario/teamadmin', component: UsuarioTeamadminPlistPage, canActivate: [ClubAdminGuard] },
   { path: 'club/teamadmin', component: ClubPlistTeamadminPage, canActivate: [ClubAdminGuard] },
   { path: 'temporada/teamadmin', component: TemporadaTeamadminPlistPage, canActivate: [ClubAdminGuard] },
   { path: 'categoria/teamadmin', component: CategoriaTeamadminPlistPage, canActivate: [ClubAdminGuard] },

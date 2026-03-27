@@ -11,7 +11,7 @@ import { ICategoria } from '../../../../model/categoria';
 import { IUsuario } from '../../../../model/usuario';
 import { IEquipo } from '../../../../model/equipo';
 import { CategoriaAdminPlist } from '../../../categoria/admin/plist/plist';
-import { UsuarioPlistAdminUnrouted } from '../../../usuario/plist-admin-unrouted/usuario-plist-admin-unrouted';
+import { UsuarioAdminPlist } from '../../../usuario/admin/plist/plist';
 
 @Component({
   selector: 'app-equipo-admin-form',
@@ -147,7 +147,7 @@ export class EquipoAdminForm implements OnInit {
   }
 
   openEntrenadorFinderModal(): void {
-    const dialogRef = this.dialog.open(UsuarioPlistAdminUnrouted, {
+    const dialogRef = this.dialog.open(UsuarioAdminPlist, {
       height: '800px',
       width: '1300px',
       maxWidth: '95vw',

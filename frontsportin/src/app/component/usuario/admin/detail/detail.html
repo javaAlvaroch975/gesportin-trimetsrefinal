@@ -1,0 +1,35 @@
+<div class="container py-3">
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 border rounded bg-light p-2 mb-3">
+    <div>
+      <div class="text-uppercase small text-muted fw-semibold">Usuarios</div>
+      <div class="fw-bold">Detalle de usuario</div>
+      <div class="text-muted small">Panel administrativo</div>
+    </div>
+    <a class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2" routerLink="/usuario">
+      <i class="bi bi-arrow-left"></i>Volver
+    </a>
+  </div>
+
+  @if (loading()) {
+    <div class="row justify-content-center"><div class="col-lg-8 text-center py-3"><div class="spinner-border text-secondary" role="status"><span class="visually-hidden">Cargando...</span></div></div></div>
+  }
+
+  @if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (!loading() && !error() && oUsuario()) {
+    <div class="card border">
+      <div class="card-body">
+        <div><strong>ID:</strong> {{ oUsuario()?.id }}</div>
+        <div><strong>Nombre:</strong> {{ oUsuario()?.nombre }}</div>
+        <div><strong>Apellido 1:</strong> {{ oUsuario()?.apellido1 }}</div>
+        <div><strong>Apellido 2:</strong> {{ oUsuario()?.apellido2 || '-' }}</div>
+        <div><strong>Username:</strong> {{ oUsuario()?.username }}</div>
+        <div><strong>Genero:</strong> {{ oUsuario()?.genero || '-' }}</div>
+        <div><strong>Tipo de Usuario:</strong> {{ oUsuario()?.tipousuario?.descripcion }}</div>
+        <div><strong>Rol:</strong> {{ oUsuario()?.rolusuario?.descripcion }}</div>
+        <div><strong>Club:</strong> <a [routerLink]="['/club/view', oUsuario()?.club?.id]">{{ oUsuario()?.club?.nombre }}</a></div>
+      </div>
+    </div>
+  }

@@ -1,0 +1,18 @@
+<div class="container py-3">
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 border rounded bg-light p-2 mb-3">
+        <div>
+          <div class="text-uppercase small text-muted fw-semibold">Tipos de Usuario</div>
+          <div class="fw-bold">Crear nuevo tipo de usuario</div>
+        </div>
+      </div>
+      <app-tipousuario-admin-form
+        [tipousuario]="null"
+        [isEditMode]="false"
+        (formSuccess)="onFormSuccess()"
+        (formCancel)="onFormCancel()"
+      ></app-tipousuario-admin-form>
+    </div>
+  </div>
+</div>

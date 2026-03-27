@@ -11,7 +11,7 @@ import { IPuntuacion } from '../../../../model/puntuacion';
 import { INoticia } from '../../../../model/noticia';
 import { IUsuario } from '../../../../model/usuario';
 import { NoticiaAdminPlist } from '../../../noticia/admin/plist/plist';
-import { UsuarioPlistAdminUnrouted } from '../../../usuario/plist-admin-unrouted/usuario-plist-admin-unrouted';
+import { UsuarioAdminPlist } from '../../../usuario/admin/plist/plist';
 
 @Component({
   standalone: true,
@@ -160,7 +160,7 @@ export class PuntuacionAdminForm implements OnInit {
   }
 
   openUsuarioFinderModal(): void {
-    const dialogRef = this.dialog.open(UsuarioPlistAdminUnrouted, {
+    const dialogRef = this.dialog.open(UsuarioAdminPlist, {
       height: '800px', width: '1100px', maxWidth: '95vw', panelClass: 'usuario-dialog',
       data: { title: 'Elegir usuario', message: 'Seleccione el usuario para la puntuación' }
     });

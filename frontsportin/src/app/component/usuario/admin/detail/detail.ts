@@ -1,0 +1,47 @@
+import { Component, signal, OnInit, inject, Input, Signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { UsuarioService } from '../../../../service/usuarioService';
+import { IUsuario } from '../../../../model/usuario';
+
+@Component({
+  standalone: true,
+  selector: 'app-usuario-admin-detail',
+  imports: [CommonModule, RouterLink],
+  templateUrl: './detail.html',
+  styleUrl: './detail.css',
+})
+export class UsuarioAdminDetail implements OnInit {
+  @Input() id: Signal<number> = signal(0);
+
+  private usuarioService = inject(UsuarioService);
+
+  oUsuario = signal<IUsuario | null>(null);
+  loading = signal(true);
+  error = signal<string | null>(null);
+
+  ngOnInit(): void {
+    const idUsuario = this.id();
+    if (!idUsuario || isNaN(idUsuario)) {
+      this.error.set('ID de usuario no válido');
+      this.loading.set(false);
+      return;
+    }
+    this.load(idUsuario);
+  }
+
+  private load(id: number): void {
+    this.usuarioService.get(id).subscribe({
+      next: (data) => {
+        this.oUsuario.set(data);
+        this.loading.set(false);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.error.set('Error cargando el usuario');
+        console.error(err);
+        this.loading.set(false);
+      },
+    });
+  }
+}

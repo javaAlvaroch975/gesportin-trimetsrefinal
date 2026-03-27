@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+th {
+  user-select: none;
+}
+
+th:hover {
+  background-color: #f5f5f5;
+}
+
+.table-responsive {
+  margin: 20px 0;
+}
