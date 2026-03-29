@@ -1,7 +1,6 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { IArticulo } from '../../../../model/articulo';
 import { ITipoarticulo } from '../../../../model/tipoarticulo';
 import { ICarrito } from '../../../../model/carrito';
@@ -20,7 +19,7 @@ interface TiendaGroup {
 @Component({
   selector: 'app-carrito-usuario-tienda',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './tienda.html',
   styleUrl: './tienda.css',
 })

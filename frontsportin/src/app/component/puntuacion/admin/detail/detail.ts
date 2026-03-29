@@ -2,14 +2,13 @@ import { Component, signal, OnInit, inject, Input, Signal } from '@angular/core'
 import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { DatetimePipe } from '../../../../pipe/datetime-pipe';
 import { PuntuacionService } from '../../../../service/puntuacion';
 import { IPuntuacion } from '../../../../model/puntuacion';
 
 @Component({
   standalone: true,
   selector: 'app-puntuacion-admin-detail',
-  imports: [CommonModule, RouterLink, DatetimePipe],
+  imports: [CommonModule, RouterLink],
   templateUrl: './detail.html',
   styleUrl: './detail.css',
 })

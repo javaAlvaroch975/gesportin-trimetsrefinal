@@ -175,26 +175,26 @@
                         <td>{{ oUsuario.username }}</td>
                         <td>
                           @if (isDialogMode()) {
-                            {{ oUsuario.club?.nombre || 'N/A' }}
+                            {{ oUsuario.club.nombre || 'N/A' }}
                           } @else {
-                            <a [routerLink]="['/club/view', oUsuario.club?.id]">{{ oUsuario.club?.nombre || 'N/A' }}</a>
-                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/usuario/club', oUsuario.club?.id]" role="button" title="Filtrar por club"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
+                            <a [routerLink]="['/club/view', oUsuario.club.id]">{{ oUsuario.club.nombre || 'N/A' }}</a>
+                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/usuario/club', oUsuario.club.id]" role="button" title="Filtrar por club"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
                           }
                         </td>
                         <td>
                           @if (isDialogMode()) {
-                            {{ oUsuario.tipousuario?.descripcion || '-' }}
+                            {{ oUsuario.tipousuario.descripcion || '-' }}
                           } @else {
-                            <a [routerLink]="['/tipousuario/view', oUsuario.tipousuario?.id]">{{ oUsuario.tipousuario?.descripcion || '-' }}</a>
-                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/usuario/tipousuario', oUsuario.tipousuario?.id]" role="button" title="Filtrar por tipo de usuario"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
+                            <a [routerLink]="['/tipousuario/view', oUsuario.tipousuario.id]">{{ oUsuario.tipousuario.descripcion || '-' }}</a>
+                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/usuario/tipousuario', oUsuario.tipousuario.id]" role="button" title="Filtrar por tipo de usuario"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
                           }
                         </td>
                         <td class="d-none d-md-table-cell">
                           @if (isDialogMode()) {
-                            {{ oUsuario.rolusuario?.descripcion || '-' }}
+                            {{ oUsuario.rolusuario.descripcion || '-' }}
                           } @else {
-                            <a [routerLink]="['/rolusuario/view', oUsuario.rolusuario?.id]">{{ oUsuario.rolusuario?.descripcion || '-' }}</a>
-                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/usuario/rol', oUsuario.rolusuario?.id]" role="button" title="Filtrar por rol"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
+                            <a [routerLink]="['/rolusuario/view', oUsuario.rolusuario.id]">{{ oUsuario.rolusuario.descripcion || '-' }}</a>
+                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/usuario/rol', oUsuario.rolusuario.id]" role="button" title="Filtrar por rol"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
                           }
                         </td>
                         <td class="text-center d-none d-md-table-cell">

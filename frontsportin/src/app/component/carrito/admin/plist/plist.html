@@ -119,18 +119,18 @@
                         <td class="text-end">{{ oCarrito.cantidad }}</td>
                         <td>
                           @if (isDialogMode()) {
-                            {{ oCarrito.articulo?.descripcion || 'N/A' }}
+                            {{ oCarrito.articulo.descripcion || 'N/A' }}
                           } @else {
-                            <a [routerLink]="['/articulo/view', oCarrito.articulo?.id]">{{ oCarrito.articulo?.descripcion || 'N/A' }}</a>
-                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/carrito/articulo', oCarrito.articulo?.id]" role="button" title="Filtrar por artículo"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
+                            <a [routerLink]="['/articulo/view', oCarrito.articulo.id]">{{ oCarrito.articulo.descripcion || 'N/A' }}</a>
+                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/carrito/articulo', oCarrito.articulo.id]" role="button" title="Filtrar por artículo"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
                           }
                         </td>
                         <td>
                           @if (isDialogMode()) {
-                            {{ oCarrito.usuario?.nombre || 'N/A' }}
+                            {{ oCarrito.usuario.nombre || 'N/A' }}
                           } @else {
-                            <a [routerLink]="['/usuario/view', oCarrito.usuario?.id]">{{ oCarrito.usuario?.nombre || 'N/A' }}</a>
-                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/carrito/usuario', oCarrito.usuario?.id]" role="button" title="Filtrar por usuario"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
+                            <a [routerLink]="['/usuario/view', oCarrito.usuario.id]">{{ oCarrito.usuario.nombre || 'N/A' }}</a>
+                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/carrito/usuario', oCarrito.usuario.id]" role="button" title="Filtrar por usuario"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
                           }
                         </td>
                         <td class="text-center">

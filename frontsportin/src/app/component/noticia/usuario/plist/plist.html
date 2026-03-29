@@ -24,7 +24,7 @@
             }
           </div>
           <h3 class="news-title">{{ noticia.titulo }}</h3>
-          <p class="news-excerpt">{{ noticia.contenido | slice:0:160 }}@if ((noticia.contenido?.length ?? 0) > 160) {<span>...</span>}</p>
+          <p class="news-excerpt">{{ noticia.contenido | slice:0:160 }}@if (noticia.contenido.length > 160) {<span>...</span>}</p>
         </div>
         @if (noticia.imagen) {
           <div class="news-card-img">

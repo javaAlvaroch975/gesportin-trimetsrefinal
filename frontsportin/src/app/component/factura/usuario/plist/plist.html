@@ -40,7 +40,7 @@
               <tbody>
                 @for (c of row.compras; track c.id) {
                   <tr>
-                    <td>{{ c.articulo?.descripcion }}</td>
+                    <td>{{ c.articulo.descripcion }}</td>
                     <td class="text-center">{{ c.cantidad }}</td>
                     <td class="text-end">{{ c.precio | currency:'EUR':'symbol':'1.2-2' }}</td>
                     <td class="text-end fw-semibold">{{ c.precio * c.cantidad | currency:'EUR':'symbol':'1.2-2' }}</td>

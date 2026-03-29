@@ -132,18 +132,18 @@
                         <td class="text-end">{{ oCompra.precio }}</td>
                         <td>
                           @if (isDialogMode()) {
-                            {{ oCompra.articulo?.descripcion || 'N/A' }}
+                            {{ oCompra.articulo.descripcion || 'N/A' }}
                           } @else {
-                            <a [routerLink]="['/articulo/view', oCompra.articulo?.id]">{{ oCompra.articulo?.descripcion || 'N/A' }}</a>
-                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/compra/articulo', oCompra.articulo?.id]" role="button" title="Filtrar por artículo"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
+                            <a [routerLink]="['/articulo/view', oCompra.articulo.id]">{{ oCompra.articulo.descripcion || 'N/A' }}</a>
+                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/compra/articulo', oCompra.articulo.id]" role="button" title="Filtrar por artículo"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
                           }
                         </td>
                         <td>
                           @if (isDialogMode()) {
-                            Factura {{ oCompra.factura?.id }}
+                            Factura {{ oCompra.factura.id }}
                           } @else {
-                            <a [routerLink]="['/factura/view', oCompra.factura?.id]">Factura {{ oCompra.factura?.id }}</a>
-                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/compra/factura', oCompra.factura?.id]" role="button" title="Filtrar por factura"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
+                            <a [routerLink]="['/factura/view', oCompra.factura.id]">Factura {{ oCompra.factura.id }}</a>
+                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/compra/factura', oCompra.factura.id]" role="button" title="Filtrar por factura"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
                           }
                         </td>
                         <td class="text-center">

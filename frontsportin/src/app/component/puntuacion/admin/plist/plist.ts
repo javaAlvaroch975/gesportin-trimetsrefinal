@@ -6,7 +6,6 @@ import { IPuntuacion } from '../../../../model/puntuacion';
 import { PuntuacionService } from '../../../../service/puntuacion';
 import { Paginacion } from '../../../shared/paginacion/paginacion';
 import { BotoneraRpp } from '../../../shared/botonera-rpp/botonera-rpp';
-import { TrimPipe } from '../../../../pipe/trim-pipe';
 import { BotoneraActionsPlist } from '../../../shared/botonera-actions-plist/botonera-actions-plist';
 import { SessionService } from '../../../../service/session';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -14,7 +13,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 @Component({
   standalone: true,
   selector: 'app-puntuacion-admin-plist',
-  imports: [Paginacion, BotoneraRpp, TrimPipe, RouterLink, BotoneraActionsPlist],
+  imports: [Paginacion, BotoneraRpp, RouterLink, BotoneraActionsPlist],
   templateUrl: './plist.html',
   styleUrl: './plist.css',
 })

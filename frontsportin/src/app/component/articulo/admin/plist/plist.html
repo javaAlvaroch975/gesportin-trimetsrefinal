@@ -149,10 +149,10 @@
                         <td class="text-end">{{ oArticulo.descuento }}%</td>
                         <td>
                           @if (isDialogMode()) {
-                            {{ oArticulo.tipoarticulo?.descripcion || 'N/A' }}
+                            {{ oArticulo.tipoarticulo.descripcion || 'N/A' }}
                           } @else {
-                            <a [routerLink]="['/tipoarticulo/view', oArticulo.tipoarticulo?.id]">{{ oArticulo.tipoarticulo?.descripcion || 'N/A' }}</a>
-                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/articulo/tipoarticulo', oArticulo.tipoarticulo?.id]" role="button" title="Filtrar por tipo artículo"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
+                            <a [routerLink]="['/tipoarticulo/view', oArticulo.tipoarticulo.id]">{{ oArticulo.tipoarticulo.descripcion || 'N/A' }}</a>
+                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/articulo/tipoarticulo', oArticulo.tipoarticulo.id]" role="button" title="Filtrar por tipo artículo"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
                           }
                         </td>
                         <td class="text-center d-none d-md-table-cell">

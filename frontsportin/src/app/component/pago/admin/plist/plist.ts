@@ -10,13 +10,12 @@ import { IPage } from '../../../../model/plist';
 import { PagoService } from '../../../../service/pago';
 import { BotoneraRpp } from '../../../shared/botonera-rpp/botonera-rpp';
 import { Paginacion } from '../../../shared/paginacion/paginacion';
-import { TrimPipe } from '../../../../pipe/trim-pipe';
 import { BotoneraActionsPlist } from '../../../shared/botonera-actions-plist/botonera-actions-plist';
 
 @Component({
   standalone: true,
   selector: 'app-pago-admin-plist',
-  imports: [RouterLink, BotoneraRpp, Paginacion, TrimPipe, BotoneraActionsPlist],
+  imports: [RouterLink, BotoneraRpp, Paginacion, BotoneraActionsPlist],
   templateUrl: './plist.html',
   styleUrl: './plist.css',
 })

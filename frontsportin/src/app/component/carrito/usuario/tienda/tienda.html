@@ -86,7 +86,7 @@
         @for (item of carrito(); track item.id) {
           <div class="td-cart-item">
             <div class="td-cart-item-info">
-              <span class="td-cart-item-name">{{ item.articulo?.descripcion }}</span>
+              <span class="td-cart-item-name">{{ item.articulo.descripcion }}</span>
               <span class="td-cart-item-price">{{ item.articulo ? (precioFinal(item.articulo) | currency:'EUR':'symbol':'1.2-2') : '' }} / ud.</span>
             </div>
             <div class="td-cart-item-controls">

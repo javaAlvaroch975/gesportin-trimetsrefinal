@@ -151,18 +151,18 @@
                         </td>
                         <td>
                           @if (isDialogMode()) {
-                            {{ oJugador.usuario?.nombre || 'N/A' }}
+                            {{ oJugador.usuario.nombre || 'N/A' }}
                           } @else {
-                            <a [routerLink]="['/usuario/view', oJugador.usuario?.id]">{{ oJugador.usuario?.nombre || 'N/A' }}</a>
-                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/jugador/usuario', oJugador.usuario?.id]" role="button" title="Filtrar por usuario"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
+                            <a [routerLink]="['/usuario/view', oJugador.usuario.id]">{{ oJugador.usuario.nombre || 'N/A' }}</a>
+                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/jugador/usuario', oJugador.usuario.id]" role="button" title="Filtrar por usuario"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
                           }
                         </td>
                         <td>
                           @if (isDialogMode()) {
-                            {{ oJugador.equipo?.nombre || 'N/A' }}
+                            {{ oJugador.equipo.nombre || 'N/A' }}
                           } @else {
-                            <a [routerLink]="['/equipo/view', oJugador.equipo?.id]">{{ oJugador.equipo?.nombre || 'N/A' }}</a>
-                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/jugador/equipo', oJugador.equipo?.id]" role="button" title="Filtrar por equipo"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
+                            <a [routerLink]="['/equipo/view', oJugador.equipo.id]">{{ oJugador.equipo.nombre || 'N/A' }}</a>
+                            <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="['/jugador/equipo', oJugador.equipo.id]" role="button" title="Filtrar por equipo"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
                           }
                         </td>
                         <td class="text-center d-none d-md-table-cell">

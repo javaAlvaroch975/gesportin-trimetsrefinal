@@ -1,5 +1,5 @@
 import { Component, computed, inject, Input, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -8,15 +8,13 @@ import { SessionService } from '../../../../service/session';
 import { IUsuario } from '../../../../model/usuario';
 import { IPage } from '../../../../model/plist';
 import { UsuarioService } from '../../../../service/usuarioService';
-import { BotoneraRpp } from '../../../shared/botonera-rpp/botonera-rpp';
 import { Paginacion } from '../../../shared/paginacion/paginacion';
-import { TrimPipe } from '../../../../pipe/trim-pipe';
 import { BotoneraActionsPlist } from '../../../shared/botonera-actions-plist/botonera-actions-plist';
 
 @Component({
   standalone: true,
   selector: 'app-usuario-teamadmin-plist',
-  imports: [RouterLink, BotoneraRpp, Paginacion, TrimPipe, BotoneraActionsPlist],
+  imports: [Paginacion, BotoneraActionsPlist],
   templateUrl: './plist.html',
   styleUrl: './plist.css',
 })

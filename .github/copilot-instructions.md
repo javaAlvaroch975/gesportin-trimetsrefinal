@@ -2,11 +2,30 @@
 
 Load the detailed guidance based on on context:
 
-| Topic                   | Reference                                                                          | Load When                                                               |
-| ----------------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| Gestión de permisos| [references/permisos.md](references/permisos.md) | Cuando tengas que tomar decisones sobre permisos para tipos de usuarios (tipousuario id=1,2,3)|
-| Gestión de permisos| [references/roles.md](references/roles.md) | Cuando tengas que tomar decisones sobre permisos para tipos de usuarios (tipousuario id=1,2,3)|
-| Estructura de la base de datos | [references/database.md](references/database.md) | Cuando necesites saber sobre entidades, atributos y relaciones |
-| Estructura de la base de datos | [references/database.sql](references/database.sql) | Cuando necesites saber sobre entidades, atributos y relaciones |
-| Estructura de la API | [references/api.md](references/api.md) | Cuando necesites saber sobre los endpoints de la API de backend |
-| Estructura entidades | [references/entidades.md](references/entidades.md) | Cuando necesites saber sobre las entidades y sus expansiones |
+## Gestión de permisos
+* Reference: [references/permisos.md](references/permisos.md)
+* Load When: Cuando tengas que tomar decisones sobre permisos para tipos de usuarios (tipousuario id=1,2,3).
+
+## Gestión de permisos
+* Reference: [references/roles.md](references/roles.md)
+* Load When: Cuando tengas que tomar decisones sobre permisos para tipos de usuarios (tipousuario id=1,2,3).
+
+## Estructura de la base de datos
+* Reference: [references/database.md](references/database.md)
+* Load When: Cuando necesites saber sobre entidades, atributos y relaciones en la base de datos.
+
+## Estructura de la API
+* Reference: [references/api.md](references/api.md)
+* Load When: Cuando necesites saber sobre los endpoints de la API de backend.
+
+## Estructura entidades
+* Reference: [references/entidades.md](references/entidades.md)
+* Load When: Cuando necesites saber sobre las entidades y sus expansiones en el backend.
+
+## Estructura backend
+* Reference: [references/backend.md](references/backend.md)
+* Load When: Siempre que tengas que desarrollar o modificar código en el backend.
+
+## Estructura frontend
+* Reference: [references/frontend.md](references/frontend.md)
+* Load When: Siempre que tengas que desarrollar o modificar código en el frontend.
