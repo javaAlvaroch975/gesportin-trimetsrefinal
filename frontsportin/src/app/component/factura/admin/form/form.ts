@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { FacturaService } from '../../../../service/factura-service';
 import { UsuarioService } from '../../../../service/usuarioService';
+import { UsuarioAdminPlist } from '../../../usuario/admin/plist/plist';
 import { IFactura } from '../../../../model/factura';
 import { IUsuario } from '../../../../model/usuario';
 import { SessionService } from '../../../../service/session';
@@ -13,7 +14,7 @@ import { SessionService } from '../../../../service/session';
 @Component({
   selector: 'app-factura-admin-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, UsuarioAdminPlist],
   templateUrl: './form.html',
   styleUrl: './form.css',
 })
@@ -33,7 +34,7 @@ export class FacturaAdminForm implements OnInit {
   facturaForm!: FormGroup;
   error = signal<string | null>(null);
   submitting = signal(false);
-  usuarios = signal<IUsuario[]>([]);
+  selectedUsuario = signal<IUsuario | null>(null);
 
   constructor() {
     effect(() => {
@@ -46,7 +47,6 @@ export class FacturaAdminForm implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.loadUsuarios();
 
     if (this.factura) {
       this.loadFacturaData(this.factura);
@@ -67,17 +67,26 @@ export class FacturaAdminForm implements OnInit {
       fecha: factura.fecha,
       id_usuario: factura.usuario?.id,
     });
+    if (factura.usuario?.id) {
+      this.loadUsuario(factura.usuario.id);
+    }
   }
 
-  private loadUsuarios(): void {
-    this.oUsuarioService.getPage(0, 1000, 'nombre', 'asc', '').subscribe({
-      next: (page) => {
-        this.usuarios.set(page.content);
-      },
-      error: (err: HttpErrorResponse) => {
-        console.error(err);
-        this.snackBar.open('Error cargando usuarios', 'Cerrar', { duration: 3000 });
-      },
+  private loadUsuario(idUsuario: number): void {
+    this.oUsuarioService.get(idUsuario).subscribe({
+      next: (usuario) => this.selectedUsuario.set(usuario),
+      error: () => this.selectedUsuario.set(null),
+    });
+  }
+
+  openUsuarioFinderModal(): void {
+    const dialogRef = this.dialog.open(UsuarioAdminPlist, { height: '800px', width: '1100px', maxWidth: '95vw' });
+    dialogRef.afterClosed().subscribe((usuario: IUsuario | null) => {
+      if (usuario?.id != null) {
+        this.facturaForm.patchValue({ id_usuario: usuario.id });
+        this.selectedUsuario.set(usuario);
+        this.snackBar.open(`Usuario seleccionado: ${usuario.nombre} ${usuario.apellido1}`, 'Cerrar', { duration: 3000 });
+      }
     });
   }
 

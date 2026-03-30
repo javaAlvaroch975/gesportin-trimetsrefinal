@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { TipoarticuloService } from '../../../../service/tipoarticulo';
 import { ClubService } from '../../../../service/club';
+import { ClubAdminPlist } from '../../../club/admin/plist/plist';
 import { ITipoarticulo } from '../../../../model/tipoarticulo';
 import { IClub } from '../../../../model/club';
 import { SessionService } from '../../../../service/session';
@@ -13,7 +14,7 @@ import { SessionService } from '../../../../service/session';
 @Component({
   selector: 'app-tipoarticulo-admin-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ClubAdminPlist],
   templateUrl: './form.html',
   styleUrl: './form.css',
 })
@@ -33,9 +34,7 @@ export class TipoarticuloAdminForm implements OnInit {
   tipoarticuloForm!: FormGroup;
   error = signal<string | null>(null);
   submitting = signal(false);
-  clubs = signal<IClub[]>([]);
   selectedClub = signal<IClub | null>(null);
-  displayIdClub = signal<number | null>(null);
 
   constructor() {
     effect(() => {
@@ -48,7 +47,6 @@ export class TipoarticuloAdminForm implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.loadClubs();
 
     if (this.tipoarticulo) {
       this.loadTipoarticuloData(this.tipoarticulo);
@@ -61,15 +59,6 @@ export class TipoarticuloAdminForm implements OnInit {
       descripcion: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(255)]],
       id_club: [null, Validators.required],
     });
-
-    this.tipoarticuloForm.get('id_club')?.valueChanges.subscribe((id) => {
-      if (id) {
-        this.loadClub(Number(id));
-      } else {
-        this.selectedClub.set(null);
-        this.displayIdClub.set(null);
-      }
-    });
   }
 
   private loadTipoarticuloData(tipoarticulo: ITipoarticulo): void {
@@ -79,45 +68,26 @@ export class TipoarticuloAdminForm implements OnInit {
       id_club: tipoarticulo.club?.id,
     });
     if (tipoarticulo.club?.id) {
-      this.syncClub(tipoarticulo.club.id);
+      this.loadClub(tipoarticulo.club.id);
     }
   }
 
   private loadClub(idClub: number): void {
     this.oClubService.get(idClub).subscribe({
-      next: (club) => {
+      next: (club) => this.selectedClub.set(club),
+      error: () => this.selectedClub.set(null),
+    });
+  }
+
+  openClubFinderModal(): void {
+    const dialogRef = this.dialog.open(ClubAdminPlist, { height: '800px', width: '1100px', maxWidth: '95vw' });
+    dialogRef.afterClosed().subscribe((club: IClub | null) => {
+      if (club?.id != null) {
+        this.tipoarticuloForm.patchValue({ id_club: club.id });
         this.selectedClub.set(club);
-        this.displayIdClub.set(club.id);
-      },
-      error: (err: HttpErrorResponse) => {
-        this.selectedClub.set(null);
-        this.displayIdClub.set(null);
-        console.error(err);
-        this.snackBar.open('Error cargando el club', 'Cerrar', { duration: 3000 });
-      },
+        this.snackBar.open(`Club seleccionado: ${club.nombre}`, 'Cerrar', { duration: 3000 });
+      }
     });
-  }
-
-  private loadClubs(): void {
-    this.oClubService.getPage(0, 1000, 'nombre', 'asc').subscribe({
-      next: (page) => {
-        this.clubs.set(page.content);
-        const currentId = this.tipoarticuloForm.get('id_club')?.value;
-        if (currentId) {
-          this.syncClub(Number(currentId));
-        }
-      },
-      error: (err: HttpErrorResponse) => {
-        console.error(err);
-        this.snackBar.open('Error cargando clubs', 'Cerrar', { duration: 3000 });
-      },
-    });
-  }
-
-  private syncClub(idClub: number): void {
-    const selected = this.clubs().find((c) => c.id === idClub) || null;
-    this.selectedClub.set(selected);
-    this.displayIdClub.set(selected?.id ?? null);
   }
 
   get descripcion() {

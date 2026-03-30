@@ -5,39 +5,53 @@
       <input id="id" type="text" class="form-control" formControlName="id" readonly />
     </div>
 
-    <div class="mb-3">
-      <label for="id_cuota" class="form-label">Cuota <span class="text-danger">*</span></label>
-      <select
-        id="id_cuota"
-        class="form-select"
-        formControlName="id_cuota"
-        [class.is-invalid]="id_cuota?.invalid && id_cuota?.touched"
-      >
-        <option [ngValue]="null">Selecciona cuota</option>
-        @for (cuota of cuotas(); track cuota.id) {
-          <option [value]="cuota.id">{{ cuota.descripcion }} ({{ cuota.id }})</option>
+    <div class="p-3 rounded mb-3" style="background-color: #f8f9fa; border-left: 4px solid #0d6efd;">
+      <div class="mb-2">
+        <label class="form-label">Cuota <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" [value]="selectedCuota()?.descripcion || ''" readonly />
+      </div>
+      <div class="d-flex gap-3 align-items-end">
+        <button type="button" class="btn btn-info" (click)="openCuotaFinderModal()">
+          <i class="bi bi-search me-2"></i>Buscar
+        </button>
+        <div>
+          <label class="form-label">ID Cuota</label>
+          <input type="text" class="form-control" [value]="id_cuota?.value || ''" readonly />
+        </div>
+        @if (selectedCuota()) {
+          <div class="flex-grow-1">
+            <label class="form-label">Descripción</label>
+            <p class="form-control-plaintext fw-semibold mb-0">{{ selectedCuota()?.descripcion }}</p>
+          </div>
         }
-      </select>
+      </div>
       @if (id_cuota?.invalid && id_cuota?.touched) {
-        <div class="invalid-feedback">La cuota es obligatoria.</div>
+        <div class="text-danger small mt-1">La cuota es obligatoria.</div>
       }
     </div>
 
-    <div class="mb-3">
-      <label for="id_jugador" class="form-label">Jugador <span class="text-danger">*</span></label>
-      <select
-        id="id_jugador"
-        class="form-select"
-        formControlName="id_jugador"
-        [class.is-invalid]="id_jugador?.invalid && id_jugador?.touched"
-      >
-        <option [ngValue]="null">Selecciona jugador</option>
-        @for (jugador of jugadores(); track jugador.id) {
-          <option [value]="jugador.id">{{ jugador.usuario.nombre }} {{ jugador.usuario.apellido1 }} {{ jugador.usuario.apellido2 }} ({{ jugador.id }})</option>
+    <div class="p-3 rounded mb-3" style="background-color: #f8f9fa; border-left: 4px solid #0d6efd;">
+      <div class="mb-2">
+        <label class="form-label">Jugador <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" [value]="selectedJugador() ? (selectedJugador()?.usuario?.nombre + ' ' + selectedJugador()?.usuario?.apellido1 + ' — Dorsal ' + selectedJugador()?.dorsal) : ''" readonly />
+      </div>
+      <div class="d-flex gap-3 align-items-end">
+        <button type="button" class="btn btn-info" (click)="openJugadorFinderModal()">
+          <i class="bi bi-search me-2"></i>Buscar
+        </button>
+        <div>
+          <label class="form-label">ID Jugador</label>
+          <input type="text" class="form-control" [value]="id_jugador?.value || ''" readonly />
+        </div>
+        @if (selectedJugador()) {
+          <div class="flex-grow-1">
+            <label class="form-label">Nombre</label>
+            <p class="form-control-plaintext fw-semibold mb-0">{{ selectedJugador()?.usuario?.nombre }} {{ selectedJugador()?.usuario?.apellido1 }}</p>
+          </div>
         }
-      </select>
+      </div>
       @if (id_jugador?.invalid && id_jugador?.touched) {
-        <div class="invalid-feedback">El jugador es obligatorio.</div>
+        <div class="text-danger small mt-1">El jugador es obligatorio.</div>
       }
     </div>
 

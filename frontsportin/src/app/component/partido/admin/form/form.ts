@@ -9,11 +9,12 @@ import { LigaService } from '../../../../service/liga';
 import { IPartido } from '../../../../model/partido';
 import { ILiga } from '../../../../model/liga';
 import { SessionService } from '../../../../service/session';
+import { LigaAdminPlist } from '../../../liga/admin/plist/plist';
 
 @Component({
   selector: 'app-partido-admin-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LigaAdminPlist],
   templateUrl: './form.html',
   styleUrl: './form.css',
 })
@@ -33,9 +34,7 @@ export class PartidoAdminForm implements OnInit {
   partidoForm!: FormGroup;
   error = signal<string | null>(null);
   submitting = signal(false);
-  ligas = signal<ILiga[]>([]);
   selectedLiga = signal<ILiga | null>(null);
-  displayIdLiga = signal<number | null>(null);
 
   constructor() {
     effect(() => {
@@ -48,7 +47,6 @@ export class PartidoAdminForm implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.loadLigas();
 
     if (this.partido) {
       this.loadPartidoData(this.partido);
@@ -63,15 +61,6 @@ export class PartidoAdminForm implements OnInit {
       local: [null, Validators.required],
       resultado: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(255)]],
     });
-
-    this.partidoForm.get('id_liga')?.valueChanges.subscribe((id) => {
-      if (id) {
-        this.loadLiga(Number(id));
-      } else {
-        this.selectedLiga.set(null);
-        this.displayIdLiga.set(null);
-      }
-    });
   }
 
   private loadPartidoData(partido: IPartido): void {
@@ -82,49 +71,14 @@ export class PartidoAdminForm implements OnInit {
       local: partido.local ? 1 : 0,
       resultado: partido.resultado,
     });
-    if (partido.liga?.id) {
-      this.syncLiga(partido.liga.id);
-    }
+    if (partido.liga?.id) this.loadLiga(partido.liga.id);
   }
 
   private loadLiga(idLiga: number): void {
     this.oLigaService.get(idLiga).subscribe({
-      next: (liga) => {
-        this.selectedLiga.set(liga);
-        this.displayIdLiga.set(liga.id);
-      },
-      error: (err: HttpErrorResponse) => {
-        this.selectedLiga.set(null);
-        this.displayIdLiga.set(null);
-        console.error(err);
-        this.snackBar.open('Error cargando la liga', 'Cerrar', { duration: 3000 });
-      },
+      next: (liga) => this.selectedLiga.set(liga),
+      error: () => this.selectedLiga.set(null),
     });
-  }
-
-  private loadLigas(): void {
-    const clubId = this.sessionService.isClubAdmin() ? this.sessionService.getClubId() ?? 0 : 0;
-    const ligas$ = clubId > 0 ? this.oLigaService.getPage(0, 1000, 'nombre', 'asc', '', clubId) : this.oLigaService.getPage(0, 1000, 'nombre', 'asc', '');
-
-    ligas$.subscribe({
-      next: (page) => {
-        this.ligas.set(page.content);
-        const currentId = this.partidoForm.get('id_liga')?.value;
-        if (currentId) {
-          this.syncLiga(Number(currentId));
-        }
-      },
-      error: (err: HttpErrorResponse) => {
-        console.error(err);
-        this.snackBar.open('Error cargando ligas', 'Cerrar', { duration: 3000 });
-      },
-    });
-  }
-
-  private syncLiga(idLiga: number): void {
-    const selected = this.ligas().find((l) => l.id === idLiga) || null;
-    this.selectedLiga.set(selected);
-    this.displayIdLiga.set(selected?.id ?? null);
   }
 
   get rival() {
@@ -141,6 +95,21 @@ export class PartidoAdminForm implements OnInit {
 
   get resultado() {
     return this.partidoForm.get('resultado');
+  }
+
+  openLigaFinderModal(): void {
+    const dialogRef = this.dialog.open(LigaAdminPlist, {
+      height: '800px',
+      width: '1100px',
+      maxWidth: '95vw',
+    });
+    dialogRef.afterClosed().subscribe((liga: ILiga | null) => {
+      if (liga?.id != null) {
+        this.partidoForm.patchValue({ id_liga: liga.id });
+        this.selectedLiga.set(liga);
+        this.snackBar.open(`Liga seleccionada: ${liga.nombre}`, 'Cerrar', { duration: 3000 });
+      }
+    });
   }
 
   onSubmit(): void {

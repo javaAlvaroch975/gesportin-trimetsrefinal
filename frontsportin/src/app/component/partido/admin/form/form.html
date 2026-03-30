@@ -23,21 +23,28 @@
       }
     </div>
 
-    <div class="mb-3">
-      <label for="id_liga" class="form-label">Liga <span class="text-danger">*</span></label>
-      <select
-        id="id_liga"
-        class="form-select"
-        formControlName="id_liga"
-        [class.is-invalid]="id_liga?.invalid && id_liga?.touched"
-      >
-        <option [ngValue]="null">Selecciona liga</option>
-        @for (liga of ligas(); track liga.id) {
-          <option [value]="liga.id">{{ liga.nombre }} ({{ liga.id }})</option>
+    <div class="p-3 rounded mb-3" style="background-color: #f8f9fa; border-left: 4px solid #0d6efd;">
+      <div class="mb-2">
+        <label class="form-label">Liga <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" [value]="selectedLiga()?.nombre || ''" readonly />
+      </div>
+      <div class="d-flex gap-3 align-items-end">
+        <button type="button" class="btn btn-info" (click)="openLigaFinderModal()">
+          <i class="bi bi-search me-2"></i>Buscar
+        </button>
+        <div>
+          <label class="form-label">ID Liga</label>
+          <input type="text" class="form-control" [value]="id_liga?.value || ''" readonly />
+        </div>
+        @if (selectedLiga()) {
+          <div class="flex-grow-1">
+            <label class="form-label">Nombre</label>
+            <p class="form-control-plaintext fw-semibold mb-0">{{ selectedLiga()?.nombre }}</p>
+          </div>
         }
-      </select>
+      </div>
       @if (id_liga?.invalid && id_liga?.touched) {
-        <div class="invalid-feedback">La liga es obligatoria.</div>
+        <div class="text-danger small mt-1">La liga es obligatoria.</div>
       }
     </div>
 

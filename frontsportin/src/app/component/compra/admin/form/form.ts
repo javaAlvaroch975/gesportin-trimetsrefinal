@@ -11,11 +11,13 @@ import { ICompra } from '../../../../model/compra';
 import { IArticulo } from '../../../../model/articulo';
 import { IFactura } from '../../../../model/factura';
 import { SessionService } from '../../../../service/session';
+import { ArticuloAdminPlist } from '../../../articulo/admin/plist/plist';
+import { FacturaAdminPlist } from '../../../factura/admin/plist/plist';
 
 @Component({
   selector: 'app-compra-admin-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ArticuloAdminPlist, FacturaAdminPlist],
   templateUrl: './form.html',
   styleUrl: './form.css',
 })
@@ -36,8 +38,8 @@ export class CompraAdminForm implements OnInit {
   compraForm!: FormGroup;
   error = signal<string | null>(null);
   submitting = signal(false);
-  articulos = signal<IArticulo[]>([]);
-  facturas = signal<IFactura[]>([]);
+  selectedArticulo = signal<IArticulo | null>(null);
+  selectedFactura = signal<IFactura | null>(null);
 
   constructor() {
     effect(() => {
@@ -50,8 +52,6 @@ export class CompraAdminForm implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.loadArticulos();
-    this.loadFacturas();
 
     if (this.compra) {
       this.loadCompraData(this.compra);
@@ -68,6 +68,20 @@ export class CompraAdminForm implements OnInit {
     });
   }
 
+  private loadArticulo(idArticulo: number): void {
+    this.oArticuloService.get(idArticulo).subscribe({
+      next: (articulo) => this.selectedArticulo.set(articulo),
+      error: () => this.selectedArticulo.set(null),
+    });
+  }
+
+  private loadFactura(idFactura: number): void {
+    this.oFacturaService.get(idFactura).subscribe({
+      next: (factura) => this.selectedFactura.set(factura),
+      error: () => this.selectedFactura.set(null),
+    });
+  }
+
   private loadCompraData(compra: ICompra): void {
     this.compraForm.patchValue({
       id: compra.id,
@@ -76,30 +90,8 @@ export class CompraAdminForm implements OnInit {
       id_articulo: compra.articulo?.id,
       id_factura: compra.factura?.id,
     });
-  }
-
-  private loadArticulos(): void {
-    this.oArticuloService.getPage(0, 1000, 'descripcion', 'asc', '').subscribe({
-      next: (page) => {
-        this.articulos.set(page.content);
-      },
-      error: (err: HttpErrorResponse) => {
-        console.error(err);
-        this.snackBar.open('Error cargando artículos', 'Cerrar', { duration: 3000 });
-      },
-    });
-  }
-
-  private loadFacturas(): void {
-    this.oFacturaService.getPage(0, 1000, 'id', 'asc').subscribe({
-      next: (page) => {
-        this.facturas.set(page.content);
-      },
-      error: (err: HttpErrorResponse) => {
-        console.error(err);
-        this.snackBar.open('Error cargando facturas', 'Cerrar', { duration: 3000 });
-      },
-    });
+    if (compra.articulo?.id) this.loadArticulo(compra.articulo.id);
+    if (compra.factura?.id) this.loadFactura(compra.factura.id);
   }
 
   get cantidad() {
@@ -116,6 +108,36 @@ export class CompraAdminForm implements OnInit {
 
   get id_factura() {
     return this.compraForm.get('id_factura');
+  }
+
+  openArticuloFinderModal(): void {
+    const dialogRef = this.dialog.open(ArticuloAdminPlist, {
+      height: '800px',
+      width: '1100px',
+      maxWidth: '95vw',
+    });
+    dialogRef.afterClosed().subscribe((articulo: IArticulo | null) => {
+      if (articulo?.id != null) {
+        this.compraForm.patchValue({ id_articulo: articulo.id });
+        this.selectedArticulo.set(articulo);
+        this.snackBar.open(`Artículo seleccionado: ${articulo.descripcion}`, 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+
+  openFacturaFinderModal(): void {
+    const dialogRef = this.dialog.open(FacturaAdminPlist, {
+      height: '800px',
+      width: '1100px',
+      maxWidth: '95vw',
+    });
+    dialogRef.afterClosed().subscribe((factura: IFactura | null) => {
+      if (factura?.id != null) {
+        this.compraForm.patchValue({ id_factura: factura.id });
+        this.selectedFactura.set(factura);
+        this.snackBar.open(`Factura seleccionada: #${factura.id}`, 'Cerrar', { duration: 3000 });
+      }
+    });
   }
 
   onSubmit(): void {

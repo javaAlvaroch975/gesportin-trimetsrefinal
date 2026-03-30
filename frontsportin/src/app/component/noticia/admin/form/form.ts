@@ -33,7 +33,6 @@ export class NoticiaAdminForm implements OnInit {
   noticiaForm!: FormGroup;
   loading = signal(false);
   submitting = signal(false);
-  clubes = signal<IClub[]>([]);
   selectedClub = signal<IClub | null>(null);
   displayIdClub = signal<number | null>(null);
 
@@ -41,7 +40,6 @@ export class NoticiaAdminForm implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.loadClubs();
 
     if (this.noticia) {
       this.loadNoticiaData();
@@ -100,37 +98,32 @@ export class NoticiaAdminForm implements OnInit {
 
   private loadClub(idClub: number): void {
     this.displayIdClub.set(idClub);
-    const c = this.clubes().find((x) => x.id === idClub) || null;
-    this.selectedClub.set(c);
+    this.oClubService.get(idClub).subscribe({
+      next: (club) => this.selectedClub.set(club),
+      error: () => this.selectedClub.set(null),
+    });
   }
 
   private syncClub(idClub: number): void {
     this.displayIdClub.set(idClub);
-    const c = this.clubes().find((x) => x.id === idClub) || null;
-    this.selectedClub.set(c);
+    this.oClubService.get(idClub).subscribe({
+      next: (club) => this.selectedClub.set(club),
+      error: () => this.selectedClub.set(null),
+    });
   }
 
   private loadClubs(): void {
     if (this.session.isClubAdmin()) {
-      this.loading.set(false);
       return;
     }
-
-    this.loading.set(true);
     this.oClubService.getPage(0, 1000, 'nombre', 'asc').subscribe({
       next: (page) => {
-        this.clubes.set(page.content);
         const idActual = this.noticiaForm.get('id_club')?.value;
         if (idActual) {
           this.syncClub(idActual);
         }
-        this.loading.set(false);
       },
-      error: (err: HttpErrorResponse) => {
-        this.snackBar.open('Error cargando clubs', 'Cerrar', { duration: 4000 });
-        console.error(err);
-        this.loading.set(false);
-      },
+      error: () => {},
     });
   }
 

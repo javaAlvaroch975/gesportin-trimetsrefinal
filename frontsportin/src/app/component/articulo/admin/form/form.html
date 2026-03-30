@@ -59,21 +59,28 @@
       }
     </div>
 
-    <div class="mb-3">
-      <label for="id_tipoarticulo" class="form-label">Tipo de Artículo <span class="text-danger">*</span></label>
-      <select
-        id="id_tipoarticulo"
-        class="form-select"
-        formControlName="id_tipoarticulo"
-        [class.is-invalid]="id_tipoarticulo?.invalid && id_tipoarticulo?.touched"
-      >
-        <option [ngValue]="null">Selecciona tipo de artículo</option>
-        @for (tipoarticulo of tipoarticulos(); track tipoarticulo.id) {
-          <option [value]="tipoarticulo.id">{{ tipoarticulo.descripcion }} ({{ tipoarticulo.id }})</option>
+    <div class="p-3 rounded mb-3" style="background-color: #f8f9fa; border-left: 4px solid #0d6efd;">
+      <div class="mb-2">
+        <label class="form-label">Tipo de Artículo <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" [value]="selectedTipoarticulo()?.descripcion || ''" readonly />
+      </div>
+      <div class="d-flex gap-3 align-items-end">
+        <button type="button" class="btn btn-info" (click)="openTipoarticuloFinderModal()">
+          <i class="bi bi-search me-2"></i>Buscar
+        </button>
+        <div>
+          <label class="form-label">ID Tipo</label>
+          <input type="text" class="form-control" [value]="id_tipoarticulo?.value || ''" readonly />
+        </div>
+        @if (selectedTipoarticulo()) {
+          <div class="flex-grow-1">
+            <label class="form-label">Descripción</label>
+            <p class="form-control-plaintext fw-semibold mb-0">{{ selectedTipoarticulo()?.descripcion }}</p>
+          </div>
         }
-      </select>
+      </div>
       @if (id_tipoarticulo?.invalid && id_tipoarticulo?.touched) {
-        <div class="invalid-feedback">El tipo de artículo es obligatorio.</div>
+        <div class="text-danger small mt-1">El tipo de artículo es obligatorio.</div>
       }
     </div>
 

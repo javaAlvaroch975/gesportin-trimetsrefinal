@@ -11,11 +11,13 @@ import { IPago } from '../../../../model/pago';
 import { ICuota } from '../../../../model/cuota';
 import { IJugador } from '../../../../model/jugador';
 import { SessionService } from '../../../../service/session';
+import { CuotaAdminPlist } from '../../../cuota/admin/plist/plist';
+import { JugadorAdminPlist } from '../../../jugador/admin/plist/plist';
 
 @Component({
   selector: 'app-pago-admin-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, CuotaAdminPlist, JugadorAdminPlist],
   templateUrl: './form.html',
   styleUrl: './form.css',
 })
@@ -36,10 +38,8 @@ export class PagoAdminForm implements OnInit {
   pagoForm!: FormGroup;
   error = signal<string | null>(null);
   submitting = signal(false);
-  cuotas = signal<ICuota[]>([]);
-  jugadores = signal<IJugador[]>([]);
   selectedCuota = signal<ICuota | null>(null);
-  displayIdCuota = signal<number | null>(null);
+  selectedJugador = signal<IJugador | null>(null);
 
   constructor() {
     effect(() => {
@@ -52,8 +52,6 @@ export class PagoAdminForm implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.loadCuotas();
-    this.loadJugadores();
 
     if (this.pago) {
       this.loadPagoData(this.pago);
@@ -68,15 +66,6 @@ export class PagoAdminForm implements OnInit {
       abonado: [0, [Validators.required, Validators.min(0)]],
       fecha: ['', Validators.required],
     });
-
-    this.pagoForm.get('id_cuota')?.valueChanges.subscribe((id) => {
-      if (id) {
-        this.loadCuota(Number(id));
-      } else {
-        this.selectedCuota.set(null);
-        this.displayIdCuota.set(null);
-      }
-    });
   }
 
   private loadPagoData(pago: IPago): void {
@@ -87,58 +76,22 @@ export class PagoAdminForm implements OnInit {
       abonado: pago.abonado,
       fecha: pago.fecha,
     });
-    if (pago.cuota?.id) {
-      this.syncCuota(pago.cuota.id);
-    }
+    if (pago.cuota?.id) this.loadCuota(pago.cuota.id);
+    if (pago.jugador?.id) this.loadJugador(pago.jugador.id);
   }
 
   private loadCuota(idCuota: number): void {
     this.oCuotaService.get(idCuota).subscribe({
-      next: (cuota) => {
-        this.selectedCuota.set(cuota);
-        this.displayIdCuota.set(cuota.id);
-      },
-      error: (err: HttpErrorResponse) => {
-        this.selectedCuota.set(null);
-        this.displayIdCuota.set(null);
-        console.error(err);
-        this.snackBar.open('Error cargando la cuota', 'Cerrar', { duration: 3000 });
-      },
+      next: (cuota) => this.selectedCuota.set(cuota),
+      error: () => this.selectedCuota.set(null),
     });
   }
 
-  private loadCuotas(): void {
-    this.oCuotaService.getPage(0, 1000, 'descripcion', 'asc', '').subscribe({
-      next: (page) => {
-        this.cuotas.set(page.content);
-        const currentId = this.pagoForm.get('id_cuota')?.value;
-        if (currentId) {
-          this.syncCuota(Number(currentId));
-        }
-      },
-      error: (err: HttpErrorResponse) => {
-        console.error(err);
-        this.snackBar.open('Error cargando cuotas', 'Cerrar', { duration: 3000 });
-      },
+  private loadJugador(idJugador: number): void {
+    this.oJugadorService.getById(idJugador).subscribe({
+      next: (jugador) => this.selectedJugador.set(jugador),
+      error: () => this.selectedJugador.set(null),
     });
-  }
-
-  private loadJugadores(): void {
-    this.oJugadorService.getPage(0, 1000, 'dorsal', 'asc', '').subscribe({
-      next: (page) => {
-        this.jugadores.set(page.content);
-      },
-      error: (err: HttpErrorResponse) => {
-        console.error(err);
-        this.snackBar.open('Error cargando jugadores', 'Cerrar', { duration: 3000 });
-      },
-    });
-  }
-
-  private syncCuota(idCuota: number): void {
-    const selected = this.cuotas().find((c) => c.id === idCuota) || null;
-    this.selectedCuota.set(selected);
-    this.displayIdCuota.set(selected?.id ?? null);
   }
 
   get id_cuota() {
@@ -155,6 +108,36 @@ export class PagoAdminForm implements OnInit {
 
   get fecha() {
     return this.pagoForm.get('fecha');
+  }
+
+  openCuotaFinderModal(): void {
+    const dialogRef = this.dialog.open(CuotaAdminPlist, {
+      height: '800px',
+      width: '1100px',
+      maxWidth: '95vw',
+    });
+    dialogRef.afterClosed().subscribe((cuota: ICuota | null) => {
+      if (cuota?.id != null) {
+        this.pagoForm.patchValue({ id_cuota: cuota.id });
+        this.selectedCuota.set(cuota);
+        this.snackBar.open(`Cuota seleccionada: ${cuota.descripcion}`, 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+
+  openJugadorFinderModal(): void {
+    const dialogRef = this.dialog.open(JugadorAdminPlist, {
+      height: '800px',
+      width: '1100px',
+      maxWidth: '95vw',
+    });
+    dialogRef.afterClosed().subscribe((jugador: IJugador | null) => {
+      if (jugador?.id != null) {
+        this.pagoForm.patchValue({ id_jugador: jugador.id });
+        this.selectedJugador.set(jugador);
+        this.snackBar.open(`Jugador seleccionado: ${jugador.usuario?.nombre} ${jugador.usuario?.apellido1}`, 'Cerrar', { duration: 3000 });
+      }
+    });
   }
 
   onSubmit(): void {

@@ -9,11 +9,12 @@ import { TipoarticuloService } from '../../../../service/tipoarticulo';
 import { IArticulo } from '../../../../model/articulo';
 import { ITipoarticulo } from '../../../../model/tipoarticulo';
 import { SessionService } from '../../../../service/session';
+import { TipoarticuloAdminPlist } from '../../../tipoarticulo/admin/plist/plist';
 
 @Component({
   selector: 'app-articulo-admin-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TipoarticuloAdminPlist],
   templateUrl: './form.html',
   styleUrl: './form.css',
 })
@@ -33,9 +34,7 @@ export class ArticuloAdminForm implements OnInit {
   articuloForm!: FormGroup;
   error = signal<string | null>(null);
   submitting = signal(false);
-  tipoarticulos = signal<ITipoarticulo[]>([]);
   selectedTipoarticulo = signal<ITipoarticulo | null>(null);
-  displayIdTipoarticulo = signal<number | null>(null);
 
   constructor() {
     effect(() => {
@@ -48,7 +47,6 @@ export class ArticuloAdminForm implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.loadTipoarticulos();
 
     if (this.articulo) {
       this.loadArticuloData(this.articulo);
@@ -63,15 +61,6 @@ export class ArticuloAdminForm implements OnInit {
       descuento: [0, [Validators.min(0), Validators.max(100)]],
       id_tipoarticulo: [null, Validators.required],
     });
-
-    this.articuloForm.get('id_tipoarticulo')?.valueChanges.subscribe((id) => {
-      if (id) {
-        this.loadTipoarticulo(Number(id));
-      } else {
-        this.selectedTipoarticulo.set(null);
-        this.displayIdTipoarticulo.set(null);
-      }
-    });
   }
 
   private loadArticuloData(articulo: IArticulo): void {
@@ -82,49 +71,14 @@ export class ArticuloAdminForm implements OnInit {
       descuento: articulo.descuento,
       id_tipoarticulo: articulo.tipoarticulo?.id,
     });
-    if (articulo.tipoarticulo?.id) {
-      this.syncTipoarticulo(articulo.tipoarticulo.id);
-    }
+    if (articulo.tipoarticulo?.id) this.loadTipoarticulo(articulo.tipoarticulo.id);
   }
 
   private loadTipoarticulo(idTipoarticulo: number): void {
     this.oTipoarticuloService.get(idTipoarticulo).subscribe({
-      next: (tipoarticulo) => {
-        this.selectedTipoarticulo.set(tipoarticulo);
-        this.displayIdTipoarticulo.set(tipoarticulo.id);
-      },
-      error: (err: HttpErrorResponse) => {
-        this.selectedTipoarticulo.set(null);
-        this.displayIdTipoarticulo.set(null);
-        console.error(err);
-        this.snackBar.open('Error cargando el tipo de artículo', 'Cerrar', { duration: 3000 });
-      },
+      next: (tipoarticulo) => this.selectedTipoarticulo.set(tipoarticulo),
+      error: () => this.selectedTipoarticulo.set(null),
     });
-  }
-
-  private loadTipoarticulos(): void {
-    const clubId = this.sessionService.isClubAdmin() ? this.sessionService.getClubId() ?? 0 : 0;
-    const tipoarticulos$ = clubId > 0 ? this.oTipoarticuloService.getPage(0, 1000, 'descripcion', 'asc', '', clubId) : this.oTipoarticuloService.getPage(0, 1000, 'descripcion', 'asc', '');
-
-    tipoarticulos$.subscribe({
-      next: (page) => {
-        this.tipoarticulos.set(page.content);
-        const currentId = this.articuloForm.get('id_tipoarticulo')?.value;
-        if (currentId) {
-          this.syncTipoarticulo(Number(currentId));
-        }
-      },
-      error: (err: HttpErrorResponse) => {
-        console.error(err);
-        this.snackBar.open('Error cargando tipos de artículo', 'Cerrar', { duration: 3000 });
-      },
-    });
-  }
-
-  private syncTipoarticulo(idTipoarticulo: number): void {
-    const selected = this.tipoarticulos().find((t) => t.id === idTipoarticulo) || null;
-    this.selectedTipoarticulo.set(selected);
-    this.displayIdTipoarticulo.set(selected?.id ?? null);
   }
 
   get descripcion() {
@@ -141,6 +95,21 @@ export class ArticuloAdminForm implements OnInit {
 
   get id_tipoarticulo() {
     return this.articuloForm.get('id_tipoarticulo');
+  }
+
+  openTipoarticuloFinderModal(): void {
+    const dialogRef = this.dialog.open(TipoarticuloAdminPlist, {
+      height: '800px',
+      width: '1100px',
+      maxWidth: '95vw',
+    });
+    dialogRef.afterClosed().subscribe((tipoarticulo: ITipoarticulo | null) => {
+      if (tipoarticulo?.id != null) {
+        this.articuloForm.patchValue({ id_tipoarticulo: tipoarticulo.id });
+        this.selectedTipoarticulo.set(tipoarticulo);
+        this.snackBar.open(`Tipo seleccionado: ${tipoarticulo.descripcion}`, 'Cerrar', { duration: 3000 });
+      }
+    });
   }
 
   onSubmit(): void {

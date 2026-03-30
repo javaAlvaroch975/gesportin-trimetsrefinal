@@ -76,57 +76,78 @@
       }
     </div>
 
-    <div class="mb-3">
-      <label for="id_tipousuario" class="form-label">Tipo de Usuario <span class="text-danger">*</span></label>
-      <select
-        id="id_tipousuario"
-        class="form-select"
-        formControlName="id_tipousuario"
-        [class.is-invalid]="id_tipousuario?.invalid && id_tipousuario?.touched"
-      >
-        <option [ngValue]="null">Selecciona tipo de usuario</option>
-        @for (tipo of tipousuarios(); track tipo.id) {
-          <option [value]="tipo.id">{{ tipo.descripcion }}</option>
+    <div class="p-3 rounded mb-3" style="background-color: #f8f9fa; border-left: 4px solid #0d6efd;">
+      <div class="mb-2">
+        <label class="form-label">Tipo de Usuario <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" [value]="selectedTipousuario()?.descripcion || ''" readonly />
+      </div>
+      <div class="d-flex gap-3 align-items-end">
+        <button type="button" class="btn btn-info" (click)="openTipousuarioFinderModal()">
+          <i class="bi bi-search me-2"></i>Buscar
+        </button>
+        <div>
+          <label class="form-label">ID Tipo</label>
+          <input type="text" class="form-control" [value]="id_tipousuario?.value || ''" readonly />
+        </div>
+        @if (selectedTipousuario()) {
+          <div class="flex-grow-1">
+            <label class="form-label">Descripción</label>
+            <p class="form-control-plaintext fw-semibold mb-0">{{ selectedTipousuario()?.descripcion }}</p>
+          </div>
         }
-      </select>
+      </div>
       @if (id_tipousuario?.invalid && id_tipousuario?.touched) {
-        <div class="invalid-feedback">Tipo de usuario es obligatorio.</div>
+        <div class="text-danger small mt-1">Tipo de usuario es obligatorio.</div>
       }
     </div>
 
-    <div class="mb-3">
-      <label for="id_rolusuario" class="form-label">Rol de Usuario <span class="text-danger">*</span></label>
-      <select
-        id="id_rolusuario"
-        class="form-select"
-        formControlName="id_rolusuario"
-        [class.is-invalid]="id_rolusuario?.invalid && id_rolusuario?.touched"
-      >
-        <option [ngValue]="null">Selecciona rol de usuario</option>
-        @for (rol of rolusuarios(); track rol.id) {
-          <option [value]="rol.id">{{ rol.descripcion }}</option>
+    <div class="p-3 rounded mb-3" style="background-color: #f8f9fa; border-left: 4px solid #0d6efd;">
+      <div class="mb-2">
+        <label class="form-label">Rol de Usuario <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" [value]="selectedRolusuario()?.descripcion || ''" readonly />
+      </div>
+      <div class="d-flex gap-3 align-items-end">
+        <button type="button" class="btn btn-info" (click)="openRolusuarioFinderModal()">
+          <i class="bi bi-search me-2"></i>Buscar
+        </button>
+        <div>
+          <label class="form-label">ID Rol</label>
+          <input type="text" class="form-control" [value]="id_rolusuario?.value || ''" readonly />
+        </div>
+        @if (selectedRolusuario()) {
+          <div class="flex-grow-1">
+            <label class="form-label">Descripción</label>
+            <p class="form-control-plaintext fw-semibold mb-0">{{ selectedRolusuario()?.descripcion }}</p>
+          </div>
         }
-      </select>
+      </div>
       @if (id_rolusuario?.invalid && id_rolusuario?.touched) {
-        <div class="invalid-feedback">Rol de usuario es obligatorio.</div>
+        <div class="text-danger small mt-1">Rol de usuario es obligatorio.</div>
       }
     </div>
 
-    <div class="mb-3">
-      <label for="id_club" class="form-label">Club <span class="text-danger">*</span></label>
-      <select
-        id="id_club"
-        class="form-select"
-        formControlName="id_club"
-        [class.is-invalid]="id_club?.invalid && id_club?.touched"
-      >
-        <option [ngValue]="null">Selecciona club</option>
-        @for (club of clubs(); track club.id) {
-          <option [value]="club.id">{{ club.nombre }}</option>
+    <div class="p-3 rounded mb-3" style="background-color: #f8f9fa; border-left: 4px solid #0d6efd;">
+      <div class="mb-2">
+        <label class="form-label">Club <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" [value]="selectedClub()?.nombre || ''" readonly />
+      </div>
+      <div class="d-flex gap-3 align-items-end">
+        <button type="button" class="btn btn-info" (click)="openClubFinderModal()">
+          <i class="bi bi-search me-2"></i>Buscar
+        </button>
+        <div>
+          <label class="form-label">ID Club</label>
+          <input type="text" class="form-control" [value]="id_club?.value || ''" readonly />
+        </div>
+        @if (selectedClub()) {
+          <div class="flex-grow-1">
+            <label class="form-label">Nombre</label>
+            <p class="form-control-plaintext fw-semibold mb-0">{{ selectedClub()?.nombre }}</p>
+          </div>
         }
-      </select>
+      </div>
       @if (id_club?.invalid && id_club?.touched) {
-        <div class="invalid-feedback">Club es obligatorio.</div>
+        <div class="text-danger small mt-1">Club es obligatorio.</div>
       }
     </div>
 

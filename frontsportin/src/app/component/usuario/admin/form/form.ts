@@ -13,11 +13,14 @@ import { IClub } from '../../../../model/club';
 import { ITipousuario } from '../../../../model/tipousuario';
 import { IRolusuario } from '../../../../model/rolusuario';
 import { SessionService } from '../../../../service/session';
+import { ClubAdminPlist } from '../../../club/admin/plist/plist';
+import { TipousuarioAdminPlist } from '../../../tipousuario/admin/plist/plist';
+import { RolusuarioAdminPlist } from '../../../rolusuario/admin/plist/plist';
 
 @Component({
   selector: 'app-usuario-admin-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ClubAdminPlist, TipousuarioAdminPlist, RolusuarioAdminPlist],
   templateUrl: './form.html',
   styleUrl: './form.css',
 })
@@ -39,9 +42,9 @@ export class UsuarioAdminForm implements OnInit {
   usuarioForm!: FormGroup;
   error = signal<string | null>(null);
   submitting = signal(false);
-  clubs = signal<IClub[]>([]);
-  tipousuarios = signal<ITipousuario[]>([]);
-  rolusuarios = signal<IRolusuario[]>([]);
+  selectedClub = signal<IClub | null>(null);
+  selectedTipousuario = signal<ITipousuario | null>(null);
+  selectedRolusuario = signal<IRolusuario | null>(null);
 
   constructor() {
     effect(() => {
@@ -54,9 +57,6 @@ export class UsuarioAdminForm implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.loadClubs();
-    this.loadTipousuarios();
-    this.loadRolusuarios();
 
     if (this.usuario) {
       this.loadUsuarioData(this.usuario);
@@ -95,41 +95,29 @@ export class UsuarioAdminForm implements OnInit {
       id_rolusuario: usuario.rolusuario?.id,
       id_club: usuario.club?.id,
     });
+    if (usuario.tipousuario?.id) this.loadTipousuario(usuario.tipousuario.id);
+    if (usuario.rolusuario?.id) this.loadRolusuario(usuario.rolusuario.id);
+    if (usuario.club?.id) this.loadClub(usuario.club.id);
   }
 
-  private loadClubs(): void {
-    this.oClubService.getPage(0, 1000, 'nombre', 'asc').subscribe({
-      next: (page) => {
-        this.clubs.set(page.content);
-      },
-      error: (err: HttpErrorResponse) => {
-        console.error(err);
-        this.snackBar.open('Error cargando clubs', 'Cerrar', { duration: 3000 });
-      },
+  private loadClub(idClub: number): void {
+    this.oClubService.get(idClub).subscribe({
+      next: (club) => this.selectedClub.set(club),
+      error: () => this.selectedClub.set(null),
     });
   }
 
-  private loadTipousuarios(): void {
-    this.oTipousuarioService.getAll().subscribe({
-      next: (data) => {
-        this.tipousuarios.set(data);
-      },
-      error: (err: HttpErrorResponse) => {
-        console.error(err);
-        this.snackBar.open('Error cargando tipos de usuario', 'Cerrar', { duration: 3000 });
-      },
+  private loadTipousuario(idTipousuario: number): void {
+    this.oTipousuarioService.get(idTipousuario).subscribe({
+      next: (tipo) => this.selectedTipousuario.set(tipo),
+      error: () => this.selectedTipousuario.set(null),
     });
   }
 
-  private loadRolusuarios(): void {
-    this.oRolusuarioService.getPage(0, 1000, 'id', 'asc').subscribe({
-      next: (page) => {
-        this.rolusuarios.set(page.content);
-      },
-      error: (err: HttpErrorResponse) => {
-        console.error(err);
-        this.snackBar.open('Error cargando roles de usuario', 'Cerrar', { duration: 3000 });
-      },
+  private loadRolusuario(idRolusuario: number): void {
+    this.oRolusuarioService.get(idRolusuario).subscribe({
+      next: (rol) => this.selectedRolusuario.set(rol),
+      error: () => this.selectedRolusuario.set(null),
     });
   }
 
@@ -163,6 +151,51 @@ export class UsuarioAdminForm implements OnInit {
 
   get id_club() {
     return this.usuarioForm.get('id_club');
+  }
+
+  openTipousuarioFinderModal(): void {
+    const dialogRef = this.dialog.open(TipousuarioAdminPlist, {
+      height: '600px',
+      width: '800px',
+      maxWidth: '95vw',
+    });
+    dialogRef.afterClosed().subscribe((tipo: ITipousuario | null) => {
+      if (tipo?.id != null) {
+        this.usuarioForm.patchValue({ id_tipousuario: tipo.id });
+        this.selectedTipousuario.set(tipo);
+        this.snackBar.open(`Tipo seleccionado: ${tipo.descripcion}`, 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+
+  openRolusuarioFinderModal(): void {
+    const dialogRef = this.dialog.open(RolusuarioAdminPlist, {
+      height: '600px',
+      width: '800px',
+      maxWidth: '95vw',
+    });
+    dialogRef.afterClosed().subscribe((rol: IRolusuario | null) => {
+      if (rol?.id != null) {
+        this.usuarioForm.patchValue({ id_rolusuario: rol.id });
+        this.selectedRolusuario.set(rol);
+        this.snackBar.open(`Rol seleccionado: ${rol.descripcion}`, 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+
+  openClubFinderModal(): void {
+    const dialogRef = this.dialog.open(ClubAdminPlist, {
+      height: '800px',
+      width: '1100px',
+      maxWidth: '95vw',
+    });
+    dialogRef.afterClosed().subscribe((club: IClub | null) => {
+      if (club?.id != null) {
+        this.usuarioForm.patchValue({ id_club: club.id });
+        this.selectedClub.set(club);
+        this.snackBar.open(`Club seleccionado: ${club.nombre}`, 'Cerrar', { duration: 3000 });
+      }
+    });
   }
 
   onSubmit(): void {

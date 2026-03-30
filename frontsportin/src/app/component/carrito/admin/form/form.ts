@@ -11,11 +11,13 @@ import { ICarrito } from '../../../../model/carrito';
 import { IArticulo } from '../../../../model/articulo';
 import { IUsuario } from '../../../../model/usuario';
 import { SessionService } from '../../../../service/session';
+import { ArticuloAdminPlist } from '../../../articulo/admin/plist/plist';
+import { UsuarioAdminPlist } from '../../../usuario/admin/plist/plist';
 
 @Component({
   selector: 'app-carrito-admin-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ArticuloAdminPlist, UsuarioAdminPlist],
   templateUrl: './form.html',
   styleUrl: './form.css',
 })
@@ -36,8 +38,8 @@ export class CarritoAdminForm implements OnInit {
   carritoForm!: FormGroup;
   error = signal<string | null>(null);
   submitting = signal(false);
-  articulos = signal<IArticulo[]>([]);
-  usuarios = signal<IUsuario[]>([]);
+  selectedArticulo = signal<IArticulo | null>(null);
+  selectedUsuario = signal<IUsuario | null>(null);
 
   constructor() {
     effect(() => {
@@ -50,8 +52,6 @@ export class CarritoAdminForm implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.loadArticulos();
-    this.loadUsuarios();
 
     if (this.carrito) {
       this.loadCarritoData(this.carrito);
@@ -74,29 +74,21 @@ export class CarritoAdminForm implements OnInit {
       id_articulo: carrito.articulo?.id,
       id_usuario: carrito.usuario?.id,
     });
+    if (carrito.articulo?.id) this.loadArticulo(carrito.articulo.id);
+    if (carrito.usuario?.id) this.loadUsuario(carrito.usuario.id);
   }
 
-  private loadArticulos(): void {
-    this.oArticuloService.getPage(0, 1000, 'descripcion', 'asc', '').subscribe({
-      next: (page) => {
-        this.articulos.set(page.content);
-      },
-      error: (err: HttpErrorResponse) => {
-        console.error(err);
-        this.snackBar.open('Error cargando artículos', 'Cerrar', { duration: 3000 });
-      },
+  private loadArticulo(idArticulo: number): void {
+    this.oArticuloService.get(idArticulo).subscribe({
+      next: (articulo) => this.selectedArticulo.set(articulo),
+      error: () => this.selectedArticulo.set(null),
     });
   }
 
-  private loadUsuarios(): void {
-    this.oUsuarioService.getPage(0, 1000, 'nombre', 'asc', '').subscribe({
-      next: (page) => {
-        this.usuarios.set(page.content);
-      },
-      error: (err: HttpErrorResponse) => {
-        console.error(err);
-        this.snackBar.open('Error cargando usuarios', 'Cerrar', { duration: 3000 });
-      },
+  private loadUsuario(idUsuario: number): void {
+    this.oUsuarioService.get(idUsuario).subscribe({
+      next: (usuario) => this.selectedUsuario.set(usuario),
+      error: () => this.selectedUsuario.set(null),
     });
   }
 
@@ -110,6 +102,36 @@ export class CarritoAdminForm implements OnInit {
 
   get id_usuario() {
     return this.carritoForm.get('id_usuario');
+  }
+
+  openArticuloFinderModal(): void {
+    const dialogRef = this.dialog.open(ArticuloAdminPlist, {
+      height: '800px',
+      width: '1100px',
+      maxWidth: '95vw',
+    });
+    dialogRef.afterClosed().subscribe((articulo: IArticulo | null) => {
+      if (articulo?.id != null) {
+        this.carritoForm.patchValue({ id_articulo: articulo.id });
+        this.selectedArticulo.set(articulo);
+        this.snackBar.open(`Artículo seleccionado: ${articulo.descripcion}`, 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+
+  openUsuarioFinderModal(): void {
+    const dialogRef = this.dialog.open(UsuarioAdminPlist, {
+      height: '800px',
+      width: '1100px',
+      maxWidth: '95vw',
+    });
+    dialogRef.afterClosed().subscribe((usuario: IUsuario | null) => {
+      if (usuario?.id != null) {
+        this.carritoForm.patchValue({ id_usuario: usuario.id });
+        this.selectedUsuario.set(usuario);
+        this.snackBar.open(`Usuario seleccionado: ${usuario.nombre} ${usuario.apellido1}`, 'Cerrar', { duration: 3000 });
+      }
+    });
   }
 
   onSubmit(): void {

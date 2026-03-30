@@ -7,6 +7,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ComentarioartService } from '../../../../service/comentarioart';
 import { ArticuloService } from '../../../../service/articulo';
 import { UsuarioService } from '../../../../service/usuarioService';
+import { ArticuloAdminPlist } from '../../../articulo/admin/plist/plist';
+import { UsuarioAdminPlist } from '../../../usuario/admin/plist/plist';
 import { IComentarioart } from '../../../../model/comentarioart';
 import { IArticulo } from '../../../../model/articulo';
 import { IUsuario } from '../../../../model/usuario';
@@ -15,7 +17,7 @@ import { SessionService } from '../../../../service/session';
 @Component({
   selector: 'app-comentarioart-admin-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ArticuloAdminPlist, UsuarioAdminPlist],
   templateUrl: './form.html',
   styleUrl: './form.css',
 })
@@ -36,8 +38,8 @@ export class ComentarioartAdminForm implements OnInit {
   comentarioartForm!: FormGroup;
   error = signal<string | null>(null);
   submitting = signal(false);
-  articulos = signal<IArticulo[]>([]);
-  usuarios = signal<IUsuario[]>([]);
+  selectedArticulo = signal<IArticulo | null>(null);
+  selectedUsuario = signal<IUsuario | null>(null);
 
   constructor() {
     effect(() => {
@@ -50,8 +52,6 @@ export class ComentarioartAdminForm implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.loadArticulos();
-    this.loadUsuarios();
 
     if (this.comentarioart) {
       this.loadComentarioartData(this.comentarioart);
@@ -74,29 +74,47 @@ export class ComentarioartAdminForm implements OnInit {
       id_articulo: comentarioart.articulo?.id || comentarioart.idArticulo,
       id_usuario: comentarioart.usuario?.id || comentarioart.idUsuario,
     });
+    if (comentarioart.articulo?.id) {
+      this.loadArticulo(comentarioart.articulo.id);
+    }
+    if (comentarioart.usuario?.id) {
+      this.loadUsuario(comentarioart.usuario.id);
+    }
   }
 
-  private loadArticulos(): void {
-    this.oArticuloService.getPage(0, 1000, 'descripcion', 'asc', '').subscribe({
-      next: (page) => {
-        this.articulos.set(page.content);
-      },
-      error: (err: HttpErrorResponse) => {
-        console.error(err);
-        this.snackBar.open('Error cargando artículos', 'Cerrar', { duration: 3000 });
-      },
+  private loadArticulo(idArticulo: number): void {
+    this.oArticuloService.get(idArticulo).subscribe({
+      next: (articulo) => this.selectedArticulo.set(articulo),
+      error: () => this.selectedArticulo.set(null),
     });
   }
 
-  private loadUsuarios(): void {
-    this.oUsuarioService.getPage(0, 1000, 'nombre', 'asc', '').subscribe({
-      next: (page) => {
-        this.usuarios.set(page.content);
-      },
-      error: (err: HttpErrorResponse) => {
-        console.error(err);
-        this.snackBar.open('Error cargando usuarios', 'Cerrar', { duration: 3000 });
-      },
+  private loadUsuario(idUsuario: number): void {
+    this.oUsuarioService.get(idUsuario).subscribe({
+      next: (usuario) => this.selectedUsuario.set(usuario),
+      error: () => this.selectedUsuario.set(null),
+    });
+  }
+
+  openArticuloFinderModal(): void {
+    const dialogRef = this.dialog.open(ArticuloAdminPlist, { height: '800px', width: '1100px', maxWidth: '95vw' });
+    dialogRef.afterClosed().subscribe((articulo: IArticulo | null) => {
+      if (articulo?.id != null) {
+        this.comentarioartForm.patchValue({ id_articulo: articulo.id });
+        this.selectedArticulo.set(articulo);
+        this.snackBar.open(`Artículo seleccionado: ${articulo.descripcion}`, 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+
+  openUsuarioFinderModal(): void {
+    const dialogRef = this.dialog.open(UsuarioAdminPlist, { height: '800px', width: '1100px', maxWidth: '95vw' });
+    dialogRef.afterClosed().subscribe((usuario: IUsuario | null) => {
+      if (usuario?.id != null) {
+        this.comentarioartForm.patchValue({ id_usuario: usuario.id });
+        this.selectedUsuario.set(usuario);
+        this.snackBar.open(`Usuario seleccionado: ${usuario.nombre} ${usuario.apellido1}`, 'Cerrar', { duration: 3000 });
+      }
     });
   }
 

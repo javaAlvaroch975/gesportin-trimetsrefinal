@@ -40,39 +40,53 @@
       }
     </div>
 
-    <div class="mb-3">
-      <label for="id_articulo" class="form-label">Artículo <span class="text-danger">*</span></label>
-      <select
-        id="id_articulo"
-        class="form-select"
-        formControlName="id_articulo"
-        [class.is-invalid]="id_articulo?.invalid && id_articulo?.touched"
-      >
-        <option [ngValue]="null">Selecciona artículo</option>
-        @for (articulo of articulos(); track articulo.id) {
-          <option [value]="articulo.id">{{ articulo.descripcion }} ({{ articulo.id }})</option>
+    <div class="p-3 rounded mb-3" style="background-color: #f8f9fa; border-left: 4px solid #0d6efd;">
+      <div class="mb-2">
+        <label class="form-label">Artículo <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" [value]="selectedArticulo()?.descripcion || ''" readonly />
+      </div>
+      <div class="d-flex gap-3 align-items-end">
+        <button type="button" class="btn btn-info" (click)="openArticuloFinderModal()">
+          <i class="bi bi-search me-2"></i>Buscar
+        </button>
+        <div>
+          <label class="form-label">ID Artículo</label>
+          <input type="text" class="form-control" [value]="id_articulo?.value || ''" readonly />
+        </div>
+        @if (selectedArticulo()) {
+          <div class="flex-grow-1">
+            <label class="form-label">Descripción</label>
+            <p class="form-control-plaintext fw-semibold mb-0">{{ selectedArticulo()?.descripcion }}</p>
+          </div>
         }
-      </select>
+      </div>
       @if (id_articulo?.invalid && id_articulo?.touched) {
-        <div class="invalid-feedback">El artículo es obligatorio.</div>
+        <div class="text-danger small mt-1">El artículo es obligatorio.</div>
       }
     </div>
 
-    <div class="mb-3">
-      <label for="id_factura" class="form-label">Factura <span class="text-danger">*</span></label>
-      <select
-        id="id_factura"
-        class="form-select"
-        formControlName="id_factura"
-        [class.is-invalid]="id_factura?.invalid && id_factura?.touched"
-      >
-        <option [ngValue]="null">Selecciona factura</option>
-        @for (factura of facturas(); track factura.id) {
-          <option [value]="factura.id">Factura {{ factura.id }} ({{ factura.id }})</option>
+    <div class="p-3 rounded mb-3" style="background-color: #f8f9fa; border-left: 4px solid #0d6efd;">
+      <div class="mb-2">
+        <label class="form-label">Factura <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" [value]="selectedFactura() ? 'Factura #' + selectedFactura()?.id : ''" readonly />
+      </div>
+      <div class="d-flex gap-3 align-items-end">
+        <button type="button" class="btn btn-info" (click)="openFacturaFinderModal()">
+          <i class="bi bi-search me-2"></i>Buscar
+        </button>
+        <div>
+          <label class="form-label">ID Factura</label>
+          <input type="text" class="form-control" [value]="id_factura?.value || ''" readonly />
+        </div>
+        @if (selectedFactura()) {
+          <div class="flex-grow-1">
+            <label class="form-label">Usuario</label>
+            <p class="form-control-plaintext fw-semibold mb-0">{{ selectedFactura()?.usuario?.nombre }} {{ selectedFactura()?.usuario?.apellido1 }}</p>
+          </div>
         }
-      </select>
+      </div>
       @if (id_factura?.invalid && id_factura?.touched) {
-        <div class="invalid-feedback">La factura es obligatoria.</div>
+        <div class="text-danger small mt-1">La factura es obligatoria.</div>
       }
     </div>
 
