@@ -17,7 +17,7 @@
 
 <div class="container-fluid">
   <div class="row">
-    @if (!isUser() && !isClubAdmin()) {
+    @if (isAdmin()) {
       <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
         <div class="position-sticky pt-3">
           <app-sidebar></app-sidebar>
@@ -25,7 +25,7 @@
       </nav>
     }
 
-    <main [class]="(isUser() || isClubAdmin()) ? 'col-12 px-3 px-md-4 py-3 main-content' : 'col-md-9 ms-sm-auto col-lg-10 px-3 px-md-4 py-3 main-content'">
+    <main [class]="isAdmin() ? 'col-md-9 ms-sm-auto col-lg-10 px-3 px-md-4 py-3 main-content' : 'col-12 px-3 px-md-4 py-3 main-content'">
       <router-outlet></router-outlet>
 
       <div class="mt-4 text-muted text-center border-top pt-3">

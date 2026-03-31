@@ -17,18 +17,21 @@ export class App {
   private destroyRef = inject(DestroyRef);
   isUser = signal(this.session.isUser());
   isClubAdmin = signal(this.session.isClubAdmin());
+  isAdmin = signal(this.session.isAdmin());
 
   constructor() {
     this.session.subjectLogin.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       setTimeout(() => {
         this.isUser.set(this.session.isUser());
         this.isClubAdmin.set(this.session.isClubAdmin());
+        this.isAdmin.set(this.session.isAdmin());
       });
     });
     this.session.subjectLogout.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       setTimeout(() => {
         this.isUser.set(false);
         this.isClubAdmin.set(false);
+        this.isAdmin.set(false);
       });
     });
   }
