@@ -28,7 +28,7 @@ public class JugadorApi {
     @Autowired
     private JugadorService oJugadorService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id:[0-9]+}")
     public ResponseEntity<JugadorEntity> get(@PathVariable Long id) {
         return ResponseEntity.ok(oJugadorService.get(id));
     }
@@ -52,7 +52,7 @@ public class JugadorApi {
         return ResponseEntity.ok(oJugadorService.update(jugadorEntity));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id:[0-9]+}")
     public ResponseEntity<Long> delete(@PathVariable Long id) {
         return ResponseEntity.ok(oJugadorService.delete(id));
     }
