@@ -23,6 +23,7 @@ export class UsuarioTeamadminDeletePage implements OnInit {
     { label: 'Eliminar Usuario' },
   ]);
   id_usuario = signal<number>(0);
+  private returnUrlAfterDelete = '/usuario/teamadmin';
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -35,9 +36,10 @@ export class UsuarioTeamadminDeletePage implements OnInit {
           if (usuario.club) {
             items.push({ label: usuario.club.nombre, route: `/club/teamadmin/view/${usuario.club.id}` });
           }
-          items.push({ label: 'Usuarios', route: '/usuario/teamadmin' });
+          items.push({ label: 'Usuarios', route: usuario.club ? `/usuario/teamadmin/club/${usuario.club.id}` : '/usuario/teamadmin' });
           items.push({ label: `${usuario.nombre} ${usuario.apellido1}`, route: `/usuario/teamadmin/view/${usuario.id}` });
           items.push({ label: 'Eliminar Usuario' });
+          this.returnUrlAfterDelete = usuario.club ? `/usuario/teamadmin/club/${usuario.club.id}` : '/usuario/teamadmin';
           this.breadcrumbItems.set(items);
         },
         error: () => { this.error.set('Error cargando el registro'); },
@@ -51,7 +53,7 @@ export class UsuarioTeamadminDeletePage implements OnInit {
     this.usuarioService.delete(this.id_usuario()).subscribe({
       next: () => {
         this.notificacion.info('Usuario eliminado/a');
-        this.router.navigate(['/usuario/teamadmin']);
+        this.router.navigate([this.returnUrlAfterDelete]);
       },
       error: (err: HttpErrorResponse) => {
         this.error.set('Error eliminando el registro');

@@ -20,11 +20,13 @@ export class JugadorTeamadminDeletePage implements OnInit {
   breadcrumbItems = signal<BreadcrumbItem[]>([
     { label: 'Mis Clubes', route: '/club/teamadmin' },
     { label: 'Temporadas', route: '/temporada/teamadmin' },
+    { label: 'Categorías', route: '/categoria/teamadmin' },
     { label: 'Equipos', route: '/equipo/teamadmin' },
     { label: 'Jugadores', route: '/jugador/teamadmin' },
     { label: 'Eliminar Jugador' },
   ]);
   id_jugador = signal<number>(0);
+  private returnUrlAfterDelete = '/jugador/teamadmin';
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -56,7 +58,9 @@ export class JugadorTeamadminDeletePage implements OnInit {
           } else {
             items.push({ label: 'Equipos', route: '/equipo/teamadmin' });
           }
-          items.push({ label: 'Jugadores', route: equipo ? `/jugador/teamadmin/equipo/${equipo.id}` : '/jugador/teamadmin' });
+          const jugadoresRoute = equipo ? `/jugador/teamadmin/equipo/${equipo.id}` : '/jugador/teamadmin';
+          this.returnUrlAfterDelete = jugadoresRoute;
+          items.push({ label: 'Jugadores', route: jugadoresRoute });
           items.push({ label: `${jugador.usuario.nombre} ${jugador.usuario.apellido1}`, route: `/jugador/teamadmin/view/${jugador.id}` });
           items.push({ label: 'Eliminar Jugador' });
           this.breadcrumbItems.set(items);
@@ -72,7 +76,7 @@ export class JugadorTeamadminDeletePage implements OnInit {
     this.jugadorService.delete(this.id_jugador()).subscribe({
       next: () => {
         this.notificacion.info('Jugador eliminado/a');
-        this.router.navigate(['/jugador/teamadmin']);
+        this.router.navigate([this.returnUrlAfterDelete]);
       },
       error: (err: HttpErrorResponse) => {
         this.error.set('Error eliminando el registro');

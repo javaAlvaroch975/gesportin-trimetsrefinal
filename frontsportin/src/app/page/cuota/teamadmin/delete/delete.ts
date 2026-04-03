@@ -20,11 +20,13 @@ export class CuotaTeamadminDeletePage implements OnInit {
   breadcrumbItems = signal<BreadcrumbItem[]>([
     { label: 'Mis Clubes', route: '/club/teamadmin' },
     { label: 'Temporadas', route: '/temporada/teamadmin' },
+    { label: 'Categorías', route: '/categoria/teamadmin' },
     { label: 'Equipos', route: '/equipo/teamadmin' },
     { label: 'Cuotas', route: '/cuota/teamadmin' },
     { label: 'Eliminar Cuota' },
   ]);
   id_cuota = signal<number>(0);
+  private returnUrlAfterDelete = '/cuota/teamadmin';
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -56,7 +58,9 @@ export class CuotaTeamadminDeletePage implements OnInit {
           } else {
             items.push({ label: 'Equipos', route: '/equipo/teamadmin' });
           }
-          items.push({ label: 'Cuotas', route: equipo ? `/cuota/teamadmin/equipo/${equipo.id}` : '/cuota/teamadmin' });
+          const cuotasRoute = equipo ? `/cuota/teamadmin/equipo/${equipo.id}` : '/cuota/teamadmin';
+          this.returnUrlAfterDelete = cuotasRoute;
+          items.push({ label: 'Cuotas', route: cuotasRoute });
           items.push({ label: cuota.descripcion, route: `/cuota/teamadmin/view/${cuota.id}` });
           items.push({ label: 'Eliminar Cuota' });
           this.breadcrumbItems.set(items);
@@ -72,7 +76,7 @@ export class CuotaTeamadminDeletePage implements OnInit {
     this.cuotaService.delete(this.id_cuota()).subscribe({
       next: () => {
         this.notificacion.info('Cuota eliminado/a');
-        this.router.navigate(['/cuota/teamadmin']);
+        this.router.navigate([this.returnUrlAfterDelete]);
       },
       error: (err: HttpErrorResponse) => {
         this.error.set('Error eliminando el registro');

@@ -41,6 +41,7 @@ export class ArticuloTeamadminEditPage implements OnInit {
           items.push({ label: 'Artículos', route: tipo ? `/articulo/teamadmin/tipoarticulo/${tipo.id}` : '/articulo/teamadmin' });
           items.push({ label: art.descripcion, route: `/articulo/teamadmin/view/${art.id}` });
           items.push({ label: 'Editar Artículo' });
+          if (tipo?.id) { this.returnUrl = `/articulo/teamadmin/tipoarticulo/${tipo.id}`; }
           this.breadcrumbItems.set(items);
         },
         error: () => {},

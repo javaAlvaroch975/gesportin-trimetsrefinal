@@ -24,6 +24,7 @@ export class CategoriaTeamadminDeletePage implements OnInit {
     { label: 'Eliminar Categoría' },
   ]);
   id_categoria = signal<number>(0);
+  private returnUrlAfterDelete = '/categoria/teamadmin';
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -44,6 +45,7 @@ export class CategoriaTeamadminDeletePage implements OnInit {
           items.push({ label: 'Categorías', route: temp ? `/categoria/teamadmin/temporada/${temp.id}` : '/categoria/teamadmin' });
           items.push({ label: cat.nombre, route: `/categoria/teamadmin/view/${cat.id}` });
           items.push({ label: 'Eliminar Categoría' });
+          this.returnUrlAfterDelete = temp ? `/categoria/teamadmin/temporada/${temp.id}` : '/categoria/teamadmin';
           this.breadcrumbItems.set(items);
         },
         error: () => { this.error.set('Error cargando el registro'); },
@@ -57,7 +59,7 @@ export class CategoriaTeamadminDeletePage implements OnInit {
     this.categoriaService.delete(this.id_categoria()).subscribe({
       next: () => {
         this.notificacion.info('Categoria eliminado/a');
-        this.router.navigate(['/categoria/teamadmin']);
+        this.router.navigate([this.returnUrlAfterDelete]);
       },
       error: (err: HttpErrorResponse) => {
         this.error.set('Error eliminando el registro');

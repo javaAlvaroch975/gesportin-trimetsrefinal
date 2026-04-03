@@ -23,6 +23,7 @@ export class NoticiaTeamadminDeletePage implements OnInit {
     { label: 'Eliminar Noticia' },
   ]);
   id_noticia = signal<number>(0);
+  private returnUrlAfterDelete = '/noticia/teamadmin';
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -35,9 +36,10 @@ export class NoticiaTeamadminDeletePage implements OnInit {
           if (noticia.club) {
             items.push({ label: noticia.club.nombre, route: `/club/teamadmin/view/${noticia.club.id}` });
           }
-          items.push({ label: 'Noticias', route: '/noticia/teamadmin' });
+          items.push({ label: 'Noticias', route: noticia.club ? `/noticia/teamadmin/club/${noticia.club.id}` : '/noticia/teamadmin' });
           items.push({ label: noticia.titulo, route: `/noticia/teamadmin/view/${noticia.id}` });
           items.push({ label: 'Eliminar Noticia' });
+          this.returnUrlAfterDelete = noticia.club ? `/noticia/teamadmin/club/${noticia.club.id}` : '/noticia/teamadmin';
           this.breadcrumbItems.set(items);
         },
         error: () => { this.error.set('Error cargando el registro'); },
@@ -51,7 +53,7 @@ export class NoticiaTeamadminDeletePage implements OnInit {
     this.noticiaService.delete(this.id_noticia()).subscribe({
       next: () => {
         this.notificacion.info('Noticia eliminado/a');
-        this.router.navigate(['/noticia/teamadmin']);
+        this.router.navigate([this.returnUrlAfterDelete]);
       },
       error: (err: HttpErrorResponse) => {
         this.error.set('Error eliminando el registro');

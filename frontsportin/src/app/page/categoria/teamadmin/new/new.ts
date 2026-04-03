@@ -37,6 +37,7 @@ export class CategoriaTeamadminNewPage implements OnInit {
           items.push({ label: temp.descripcion, route: `/temporada/teamadmin/view/${temp.id}` });
           items.push({ label: 'Categorías', route: `/categoria/teamadmin/temporada/${temp.id}` });
           items.push({ label: 'Nueva Categoría' });
+          this.returnUrl = `/categoria/teamadmin/temporada/${temp.id}`;
           this.breadcrumbItems.set(items);
         },
         error: () => {},

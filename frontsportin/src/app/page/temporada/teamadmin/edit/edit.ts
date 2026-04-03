@@ -32,9 +32,10 @@ export class TemporadaTeamadminEditPage implements OnInit {
           if (temp.club) {
             items.push({ label: temp.club.nombre, route: `/club/teamadmin/view/${temp.club.id}` });
           }
-          items.push({ label: 'Temporadas', route: '/temporada/teamadmin' });
+          items.push({ label: 'Temporadas', route: temp.club ? `/temporada/teamadmin/club/${temp.club.id}` : '/temporada/teamadmin' });
           items.push({ label: temp.descripcion, route: `/temporada/teamadmin/view/${temp.id}` });
           items.push({ label: 'Editar Temporada' });
+          if (temp.club) { this.returnUrl = `/temporada/teamadmin/club/${temp.club.id}`; }
           this.breadcrumbItems.set(items);
         },
         error: () => {},

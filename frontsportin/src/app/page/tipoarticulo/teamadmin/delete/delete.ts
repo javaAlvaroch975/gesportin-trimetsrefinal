@@ -24,6 +24,7 @@ export class TipoarticuloTeamadminDeletePage implements OnInit {
     { label: 'Eliminar Tipo' },
   ]);
   id_tipoarticulo = signal<number>(0);
+  private returnUrlAfterDelete = '/tipoarticulo/teamadmin';
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -36,9 +37,10 @@ export class TipoarticuloTeamadminDeletePage implements OnInit {
           if (tipo.club) {
             items.push({ label: tipo.club.nombre, route: `/club/teamadmin/view/${tipo.club.id}` });
           }
-          items.push({ label: 'Tipos de Artículo', route: '/tipoarticulo/teamadmin' });
+          items.push({ label: 'Tipos de Artículo', route: tipo.club ? `/tipoarticulo/teamadmin/club/${tipo.club.id}` : '/tipoarticulo/teamadmin' });
           items.push({ label: tipo.descripcion, route: `/tipoarticulo/teamadmin/view/${tipo.id}` });
           items.push({ label: 'Eliminar Tipo' });
+          this.returnUrlAfterDelete = tipo.club ? `/tipoarticulo/teamadmin/club/${tipo.club.id}` : '/tipoarticulo/teamadmin';
           this.breadcrumbItems.set(items);
         },
         error: () => { this.error.set('Error cargando el registro'); },
@@ -52,7 +54,7 @@ export class TipoarticuloTeamadminDeletePage implements OnInit {
     this.tipoarticuloService.delete(this.id_tipoarticulo()).subscribe({
       next: () => {
         this.notificacion.info('Tipoarticulo eliminado/a');
-        this.router.navigate(['/tipoarticulo/teamadmin']);
+        this.router.navigate([this.returnUrlAfterDelete]);
       },
       error: (err: HttpErrorResponse) => {
         this.error.set('Error eliminando el registro');

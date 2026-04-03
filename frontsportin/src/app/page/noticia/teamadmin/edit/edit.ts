@@ -32,9 +32,10 @@ export class NoticiaTeamadminEditPage implements OnInit {
           if (noticia.club) {
             items.push({ label: noticia.club.nombre, route: `/club/teamadmin/view/${noticia.club.id}` });
           }
-          items.push({ label: 'Noticias', route: '/noticia/teamadmin' });
+          items.push({ label: 'Noticias', route: noticia.club ? `/noticia/teamadmin/club/${noticia.club.id}` : '/noticia/teamadmin' });
           items.push({ label: noticia.titulo, route: `/noticia/teamadmin/view/${noticia.id}` });
           items.push({ label: 'Editar Noticia' });
+          if (noticia.club) { this.returnUrl = `/noticia/teamadmin/club/${noticia.club.id}`; }
           this.breadcrumbItems.set(items);
         },
         error: () => {},

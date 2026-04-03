@@ -24,6 +24,7 @@ export class ComentarioTeamadminDeletePage implements OnInit {
     { label: 'Eliminar Comentario' },
   ]);
   id_comentario = signal<number>(0);
+  private returnUrlAfterDelete = '/comentario/teamadmin';
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -43,6 +44,7 @@ export class ComentarioTeamadminDeletePage implements OnInit {
           }
           items.push({ label: 'Comentarios', route: noticia ? `/comentario/teamadmin/noticia/${noticia.id}` : '/comentario/teamadmin' });
           items.push({ label: 'Eliminar Comentario' });
+          this.returnUrlAfterDelete = noticia ? `/comentario/teamadmin/noticia/${noticia.id}` : '/comentario/teamadmin';
           this.breadcrumbItems.set(items);
         },
         error: () => { this.error.set('Error cargando el registro'); },
@@ -56,7 +58,7 @@ export class ComentarioTeamadminDeletePage implements OnInit {
     this.comentarioService.delete(this.id_comentario()).subscribe({
       next: () => {
         this.notificacion.info('Comentario eliminado');
-        this.router.navigate(['/comentario/teamadmin']);
+        this.router.navigate([this.returnUrlAfterDelete]);
       },
       error: (err: HttpErrorResponse) => {
         this.error.set('Error eliminando el registro');

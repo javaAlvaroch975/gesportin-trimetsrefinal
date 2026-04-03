@@ -43,6 +43,7 @@ export class EquipoTeamadminNewPage implements OnInit {
           items.push({ label: cat.nombre, route: `/categoria/teamadmin/view/${cat.id}` });
           items.push({ label: 'Equipos', route: `/equipo/teamadmin/categoria/${cat.id}` });
           items.push({ label: 'Nuevo Equipo' });
+          this.returnUrl = `/equipo/teamadmin/categoria/${cat.id}`;
           this.breadcrumbItems.set(items);
         },
         error: () => {},

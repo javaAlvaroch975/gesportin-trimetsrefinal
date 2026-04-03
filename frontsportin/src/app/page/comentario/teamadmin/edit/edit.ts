@@ -40,6 +40,7 @@ export class ComentarioTeamadminEditPage implements OnInit {
           }
           items.push({ label: 'Comentarios', route: noticia ? `/comentario/teamadmin/noticia/${noticia.id}` : '/comentario/teamadmin' });
           items.push({ label: 'Editar Comentario' });
+          if (noticia?.id) { this.returnUrl = `/comentario/teamadmin/noticia/${noticia.id}`; }
           this.breadcrumbItems.set(items);
         },
         error: () => {},

@@ -56,6 +56,7 @@ export class PagoTeamadminNewPage implements OnInit {
           items.push({ label: cuota.descripcion, route: `/cuota/teamadmin/view/${cuota.id}` });
           items.push({ label: 'Pagos', route: `/pago/teamadmin/cuota/${cuota.id}` });
           items.push({ label: 'Nuevo Pago' });
+          this.returnUrl = `/pago/teamadmin/cuota/${cuota.id}`;
           this.breadcrumbItems.set(items);
         },
         error: () => {},

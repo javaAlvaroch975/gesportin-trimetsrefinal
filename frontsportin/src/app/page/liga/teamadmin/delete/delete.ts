@@ -20,11 +20,13 @@ export class LigaTeamadminDeletePage implements OnInit {
   breadcrumbItems = signal<BreadcrumbItem[]>([
     { label: 'Mis Clubes', route: '/club/teamadmin' },
     { label: 'Temporadas', route: '/temporada/teamadmin' },
+    { label: 'Categorías', route: '/categoria/teamadmin' },
     { label: 'Equipos', route: '/equipo/teamadmin' },
     { label: 'Ligas', route: '/liga/teamadmin' },
     { label: 'Eliminar Liga' },
   ]);
   id_liga = signal<number>(0);
+  private returnUrlAfterDelete = '/liga/teamadmin';
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -59,6 +61,7 @@ export class LigaTeamadminDeletePage implements OnInit {
           items.push({ label: 'Ligas', route: equipo ? `/liga/teamadmin/equipo/${equipo.id}` : '/liga/teamadmin' });
           items.push({ label: liga.nombre, route: `/liga/teamadmin/view/${liga.id}` });
           items.push({ label: 'Eliminar Liga' });
+          this.returnUrlAfterDelete = equipo ? `/liga/teamadmin/equipo/${equipo.id}` : '/liga/teamadmin';
           this.breadcrumbItems.set(items);
         },
         error: () => { this.error.set('Error cargando el registro'); },
@@ -72,7 +75,7 @@ export class LigaTeamadminDeletePage implements OnInit {
     this.ligaService.delete(this.id_liga()).subscribe({
       next: () => {
         this.notificacion.info('Liga eliminado/a');
-        this.router.navigate(['/liga/teamadmin']);
+        this.router.navigate([this.returnUrlAfterDelete]);
       },
       error: (err: HttpErrorResponse) => {
         this.error.set('Error eliminando el registro');

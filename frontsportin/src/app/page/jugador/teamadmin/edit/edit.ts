@@ -34,6 +34,9 @@ export class JugadorTeamadminEditPage implements OnInit {
           const equipo = jugador.equipo;
           const cat = equipo?.categoria;
           const temp = cat?.temporada;
+          if (equipo?.id) {
+            this.returnUrl = `/jugador/teamadmin/equipo/${equipo.id}`;
+          }
           const items: BreadcrumbItem[] = [{ label: 'Mis Clubes', route: '/club/teamadmin' }];
           if (temp?.club) {
             items.push({ label: temp.club.nombre, route: `/club/teamadmin/view/${temp.club.id}` });

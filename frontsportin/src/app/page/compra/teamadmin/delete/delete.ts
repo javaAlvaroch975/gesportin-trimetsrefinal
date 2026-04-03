@@ -25,6 +25,7 @@ export class CompraTeamadminDeletePage implements OnInit {
     { label: 'Eliminar Compra' },
   ]);
   id_compra = signal<number>(0);
+  private returnUrlAfterDelete = '/compra/teamadmin';
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -49,6 +50,7 @@ export class CompraTeamadminDeletePage implements OnInit {
           }
           items.push({ label: 'Compras', route: art ? `/compra/teamadmin/articulo/${art.id}` : '/compra/teamadmin' });
           items.push({ label: 'Eliminar Compra' });
+          this.returnUrlAfterDelete = art ? `/compra/teamadmin/articulo/${art.id}` : '/compra/teamadmin';
           this.breadcrumbItems.set(items);
         },
         error: () => { this.error.set('Error cargando el registro'); },
@@ -62,7 +64,7 @@ export class CompraTeamadminDeletePage implements OnInit {
     this.compraService.delete(this.id_compra()).subscribe({
       next: () => {
         this.notificacion.info('Compra eliminada');
-        this.router.navigate(['/compra/teamadmin']);
+        this.router.navigate([this.returnUrlAfterDelete]);
       },
       error: (err: HttpErrorResponse) => {
         this.error.set('Error eliminando el registro');

@@ -62,6 +62,7 @@ export class PartidoTeamadminEditPage implements OnInit {
           items.push({ label: 'Partidos', route: liga ? `/partido/teamadmin/liga/${liga.id}` : '/partido/teamadmin' });
           items.push({ label: partido.rival, route: `/partido/teamadmin/view/${partido.id}` });
           items.push({ label: 'Editar Partido' });
+          if (liga?.id) { this.returnUrl = `/partido/teamadmin/liga/${liga.id}`; }
           this.breadcrumbItems.set(items);
         },
         error: () => {},

@@ -40,6 +40,7 @@ export class FacturaTeamadminEditPage implements OnInit {
           }
           items.push({ label: 'Facturas', route: usuario ? `/factura/teamadmin/usuario/${usuario.id}` : '/factura/teamadmin' });
           items.push({ label: 'Editar Factura' });
+          if (usuario?.id) { this.returnUrl = `/factura/teamadmin/usuario/${usuario.id}`; }
           this.breadcrumbItems.set(items);
         },
         error: () => {},

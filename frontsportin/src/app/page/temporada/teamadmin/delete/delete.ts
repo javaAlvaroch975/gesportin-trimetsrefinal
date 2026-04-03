@@ -24,6 +24,7 @@ export class TemporadaTeamadminDeletePage implements OnInit {
     { label: 'Eliminar Temporada' },
   ]);
   id_temporada = signal<number>(0);
+  private returnUrlAfterDelete = '/temporada/teamadmin';
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -36,9 +37,10 @@ export class TemporadaTeamadminDeletePage implements OnInit {
           if (temp.club) {
             items.push({ label: temp.club.nombre, route: `/club/teamadmin/view/${temp.club.id}` });
           }
-          items.push({ label: 'Temporadas', route: '/temporada/teamadmin' });
+          items.push({ label: 'Temporadas', route: temp.club ? `/temporada/teamadmin/club/${temp.club.id}` : '/temporada/teamadmin' });
           items.push({ label: temp.descripcion, route: `/temporada/teamadmin/view/${temp.id}` });
           items.push({ label: 'Eliminar Temporada' });
+          this.returnUrlAfterDelete = temp.club ? `/temporada/teamadmin/club/${temp.club.id}` : '/temporada/teamadmin';
           this.breadcrumbItems.set(items);
         },
         error: () => { this.error.set('Error cargando el registro'); },
@@ -52,7 +54,7 @@ export class TemporadaTeamadminDeletePage implements OnInit {
     this.temporadaService.delete(this.id_temporada()).subscribe({
       next: () => {
         this.notificacion.success('Temporada eliminada correctamente');
-        this.router.navigate(['/temporada/teamadmin']);
+        this.router.navigate([this.returnUrlAfterDelete]);
       },
       error: (err: HttpErrorResponse) => {
         this.error.set('Error eliminando el registro');

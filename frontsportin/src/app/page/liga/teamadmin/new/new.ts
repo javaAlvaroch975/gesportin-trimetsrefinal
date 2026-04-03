@@ -51,6 +51,7 @@ export class LigaTeamadminNewPage implements OnInit {
           items.push({ label: equipo.nombre!, route: `/equipo/teamadmin/view/${equipo.id}` });
           items.push({ label: 'Ligas', route: `/liga/teamadmin/equipo/${equipo.id}` });
           items.push({ label: 'Nueva Liga' });
+          this.returnUrl = `/liga/teamadmin/equipo/${equipo.id}`;
           this.breadcrumbItems.set(items);
         },
         error: () => {},

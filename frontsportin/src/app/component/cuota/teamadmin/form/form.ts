@@ -78,11 +78,12 @@ export class CuotaTeamadminForm implements OnInit {
   }
 
   private loadCuotaData(cuota: ICuota): void {
+    const fechaStr = cuota.fecha ? String(cuota.fecha).substring(0, 10) : '';
     this.cuotaForm.patchValue({
       id: cuota.id,
       descripcion: cuota.descripcion,
       cantidad: cuota.cantidad,
-      fecha: cuota.fecha,
+      fecha: fechaStr,
       id_equipo: cuota.equipo?.id,
     });
     if (cuota.equipo?.id) this.loadEquipo(cuota.equipo.id);
@@ -136,10 +137,13 @@ export class CuotaTeamadminForm implements OnInit {
 
     this.submitting.set(true);
 
+    const fechaRaw: string = this.cuotaForm.value.fecha ?? '';
+    const fecha = fechaRaw.includes('T') ? fechaRaw : fechaRaw + 'T00:00:00';
+
     const cuotaData: any = {
       descripcion: this.cuotaForm.value.descripcion,
       cantidad: Number(this.cuotaForm.value.cantidad),
-      fecha: this.cuotaForm.value.fecha,
+      fecha,
       equipo: { id: Number(this.cuotaForm.value.id_equipo) },
     };
 

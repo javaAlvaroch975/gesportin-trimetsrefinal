@@ -31,6 +31,7 @@ export class JugadorTeamadminNewPage implements OnInit {
       this.idEquipo.set(n);
       this.equipoService.get(n).subscribe({
         next: (equipo) => {
+          this.returnUrl = `/jugador/teamadmin/equipo/${equipo.id}`;
           const cat = equipo.categoria;
           const temp = cat?.temporada;
           const items: BreadcrumbItem[] = [{ label: 'Mis Clubes', route: '/club/teamadmin' }];

@@ -56,6 +56,7 @@ export class PartidoTeamadminNewPage implements OnInit {
           items.push({ label: liga.nombre, route: `/liga/teamadmin/view/${liga.id}` });
           items.push({ label: 'Partidos', route: `/partido/teamadmin/liga/${liga.id}` });
           items.push({ label: 'Nuevo Partido' });
+          this.returnUrl = `/partido/teamadmin/liga/${liga.id}`;
           this.breadcrumbItems.set(items);
         },
         error: () => {},

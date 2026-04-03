@@ -57,6 +57,7 @@ export class LigaTeamadminEditPage implements OnInit {
           items.push({ label: 'Ligas', route: equipo ? `/liga/teamadmin/equipo/${equipo.id}` : '/liga/teamadmin' });
           items.push({ label: liga.nombre, route: `/liga/teamadmin/view/${liga.id}` });
           items.push({ label: 'Editar Liga' });
+          if (equipo?.id) { this.returnUrl = `/liga/teamadmin/equipo/${equipo.id}`; }
           this.breadcrumbItems.set(items);
         },
         error: () => {},

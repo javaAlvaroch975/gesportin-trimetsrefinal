@@ -61,6 +61,7 @@ export class PagoTeamadminEditPage implements OnInit {
           }
           items.push({ label: 'Pagos', route: cuota ? `/pago/teamadmin/cuota/${cuota.id}` : '/pago/teamadmin' });
           items.push({ label: 'Editar Pago' });
+          if (cuota?.id) { this.returnUrl = `/pago/teamadmin/cuota/${cuota.id}`; }
           this.breadcrumbItems.set(items);
         },
         error: () => {},

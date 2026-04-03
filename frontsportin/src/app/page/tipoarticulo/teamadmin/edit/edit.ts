@@ -32,9 +32,10 @@ export class TipoarticuloTeamadminEditPage implements OnInit {
           if (tipo.club) {
             items.push({ label: tipo.club.nombre, route: `/club/teamadmin/view/${tipo.club.id}` });
           }
-          items.push({ label: 'Tipos de Artículo', route: '/tipoarticulo/teamadmin' });
+          items.push({ label: 'Tipos de Artículo', route: tipo.club ? `/tipoarticulo/teamadmin/club/${tipo.club.id}` : '/tipoarticulo/teamadmin' });
           items.push({ label: tipo.descripcion, route: `/tipoarticulo/teamadmin/view/${tipo.id}` });
           items.push({ label: 'Editar Tipo' });
+          if (tipo.club) { this.returnUrl = `/tipoarticulo/teamadmin/club/${tipo.club.id}`; }
           this.breadcrumbItems.set(items);
         },
         error: () => {},

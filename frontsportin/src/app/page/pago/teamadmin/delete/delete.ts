@@ -24,6 +24,7 @@ export class PagoTeamadminDeletePage implements OnInit {
     { label: 'Eliminar Pago' },
   ]);
   id_pago = signal<number>(0);
+  private returnUrlAfterDelete = '/pago/teamadmin';
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -64,6 +65,7 @@ export class PagoTeamadminDeletePage implements OnInit {
           }
           items.push({ label: 'Pagos', route: cuota ? `/pago/teamadmin/cuota/${cuota.id}` : '/pago/teamadmin' });
           items.push({ label: 'Eliminar Pago' });
+          this.returnUrlAfterDelete = cuota ? `/pago/teamadmin/cuota/${cuota.id}` : '/pago/teamadmin';
           this.breadcrumbItems.set(items);
         },
         error: () => { this.error.set('Error cargando el registro'); },
@@ -77,7 +79,7 @@ export class PagoTeamadminDeletePage implements OnInit {
     this.pagoService.delete(this.id_pago()).subscribe({
       next: () => {
         this.notificacion.info('Pago eliminado/a');
-        this.router.navigate(['/pago/teamadmin']);
+        this.router.navigate([this.returnUrlAfterDelete]);
       },
       error: (err: HttpErrorResponse) => {
         this.error.set('Error eliminando el registro');

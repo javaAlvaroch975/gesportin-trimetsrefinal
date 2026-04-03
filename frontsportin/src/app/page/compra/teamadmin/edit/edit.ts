@@ -46,6 +46,7 @@ export class CompraTeamadminEditPage implements OnInit {
           }
           items.push({ label: 'Compras', route: art ? `/compra/teamadmin/articulo/${art.id}` : '/compra/teamadmin' });
           items.push({ label: 'Editar Compra' });
+          if (art?.id) { this.returnUrl = `/compra/teamadmin/articulo/${art.id}`; }
           this.breadcrumbItems.set(items);
         },
         error: () => {},

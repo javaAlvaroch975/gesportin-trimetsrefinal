@@ -24,6 +24,7 @@ export class PartidoTeamadminDeletePage implements OnInit {
     { label: 'Eliminar Partido' },
   ]);
   id_partido = signal<number>(0);
+  private returnUrlAfterDelete = '/partido/teamadmin';
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -65,6 +66,7 @@ export class PartidoTeamadminDeletePage implements OnInit {
           items.push({ label: 'Partidos', route: liga ? `/partido/teamadmin/liga/${liga.id}` : '/partido/teamadmin' });
           items.push({ label: partido.rival, route: `/partido/teamadmin/view/${partido.id}` });
           items.push({ label: 'Eliminar Partido' });
+          this.returnUrlAfterDelete = liga ? `/partido/teamadmin/liga/${liga.id}` : '/partido/teamadmin';
           this.breadcrumbItems.set(items);
         },
         error: () => { this.error.set('Error cargando el registro'); },
@@ -78,7 +80,7 @@ export class PartidoTeamadminDeletePage implements OnInit {
     this.partidoService.delete(this.id_partido()).subscribe({
       next: () => {
         this.notificacion.info('Partido eliminado/a');
-        this.router.navigate(['/partido/teamadmin']);
+        this.router.navigate([this.returnUrlAfterDelete]);
       },
       error: (err: HttpErrorResponse) => {
         this.error.set('Error eliminando el registro');

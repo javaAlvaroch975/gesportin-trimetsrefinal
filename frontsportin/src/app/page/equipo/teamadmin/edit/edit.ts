@@ -49,6 +49,7 @@ export class EquipoTeamadminEditPage implements OnInit {
           items.push({ label: 'Equipos', route: cat ? `/equipo/teamadmin/categoria/${cat.id}` : '/equipo/teamadmin' });
           items.push({ label: equipo.nombre!, route: `/equipo/teamadmin/view/${equipo.id}` });
           items.push({ label: 'Editar Equipo' });
+          if (cat?.id) { this.returnUrl = `/equipo/teamadmin/categoria/${cat.id}`; }
           this.breadcrumbItems.set(items);
         },
         error: () => {},

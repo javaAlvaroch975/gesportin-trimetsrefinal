@@ -41,6 +41,7 @@ export class CategoriaTeamadminEditPage implements OnInit {
           items.push({ label: 'Categorías', route: temp ? `/categoria/teamadmin/temporada/${temp.id}` : '/categoria/teamadmin' });
           items.push({ label: cat.nombre, route: `/categoria/teamadmin/view/${cat.id}` });
           items.push({ label: 'Editar Categoría' });
+          if (temp?.id) { this.returnUrl = `/categoria/teamadmin/temporada/${temp.id}`; }
           this.breadcrumbItems.set(items);
         },
         error: () => {},
