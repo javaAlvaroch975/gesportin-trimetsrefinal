@@ -149,6 +149,10 @@ public class PuntuacionService {
             if (usuario == null) {
                 continue;
             }
+            // unicidad: un usuario solo puede puntuar una vez cada noticia
+            if (oPuntuacionRepository.existsByNoticiaIdAndUsuarioId(noticia.getId(), usuario.getId())) {
+                continue;
+            }
             oPuntuacion.setNoticia(noticia);
             oPuntuacion.setUsuario(usuario);
             oPuntuacionRepository.save(oPuntuacion);

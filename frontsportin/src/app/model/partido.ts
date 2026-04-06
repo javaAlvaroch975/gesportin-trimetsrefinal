@@ -1,3 +1,4 @@
+import { IEstadopartido } from "./estadopartido";
 import { ILiga } from "./liga";
 
 export interface IPartido {
@@ -6,5 +7,8 @@ export interface IPartido {
     liga: ILiga;
     local: boolean;
     resultado: string;
+    fecha?: string;
+    lugar: string;
+    estadopartido?: IEstadopartido;
 }
 

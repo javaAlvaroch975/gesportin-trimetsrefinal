@@ -22,6 +22,7 @@ import { ComentarioartService } from '../../../service/comentarioart';
 import { UsuarioService } from '../../../service/usuarioService';
 import { TipousuarioService } from '../../../service/tipousuario';
 import { RolusuarioService } from '../../../service/rolusuario';
+import { EstadopartidoService } from '../../../service/estadopartido';
 import { SecurityService } from '../../../service/security.service';
 import { IPage } from '../../../model/plist';
 import { Observable, forkJoin, of } from 'rxjs';
@@ -69,6 +70,7 @@ export class DashboardComponent implements OnInit {
     private usuarioService: UsuarioService,
     private tipousuarioService: TipousuarioService,
     private rolusuarioService: RolusuarioService,
+    private estadopartidoService: EstadopartidoService,
     private security: SecurityService
   ) {}
   cards: DashboardCard[] = [];
@@ -100,7 +102,8 @@ export class DashboardComponent implements OnInit {
     if (!this.security.isClubAdmin()) {
       allCards.push(
         { title: 'Tipos de Usuario', icon: 'tags-fill', count: 0, color: 'warning', route: '/tipousuario' },
-        { title: 'Roles', icon: 'shield-check', count: 0, color: 'info', route: '/rolusuario' },
+        { title: 'Estados de Partido', icon: 'flag-fill', count: 0, color: 'info', route: '/estadopartido' },
+        { title: 'Roles', icon: 'shield-check', count: 0, color: 'secondary', route: '/rolusuario' },
       );
     }
 
@@ -142,6 +145,7 @@ export class DashboardComponent implements OnInit {
         comentariosArt: this.comentarioartService.count(),
         usuarios: this.usuarioService.count(),
         tiposUsuario: this.tipousuarioService.count(),
+        estadosPartido: this.estadopartidoService.count(),
         roles: this.rolusuarioService.count()
       };
     }
@@ -171,6 +175,7 @@ export class DashboardComponent implements OnInit {
         map((items) => items.length),
         catchError(() => of(0))
       ),
+      estadosPartido: this.estadopartidoService.count(),
       roles: this.countFromPage(this.rolusuarioService.getPage(0, 1))
     };
   }
@@ -199,6 +204,7 @@ export class DashboardComponent implements OnInit {
           'Comentarios Artículos': counts['comentariosArt'],
           'Usuarios': counts['usuarios'],
           'Tipos de Usuario': counts['tiposUsuario'],
+          'Estados de Partido': counts['estadosPartido'],
           'Roles': counts['roles'],
         };
         this.cards = this.cards.map(card => ({

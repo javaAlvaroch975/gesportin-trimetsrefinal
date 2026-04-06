@@ -60,7 +60,7 @@
       <table class="table table-striped table-bordered table-sm w-100">
                   <thead>
                     <tr>
-                      <th scope="col" (click)="onOrder('id')" style="cursor: pointer; width: 8%">
+                      <th scope="col" (click)="onOrder('id')" style="cursor: pointer; width: 5%">
                         <div class="header-stacked">
                           <div class="header-top">
                             <i class="bi bi-hash" aria-hidden="true"></i>
@@ -72,7 +72,7 @@
                           <span>ID</span>
                         </div>
                       </th>
-                      <th scope="col" (click)="onOrder('rival')" style="cursor: pointer; width: 22%">
+                      <th scope="col" (click)="onOrder('rival')" style="cursor: pointer; width: 15%">
                         <div class="header-stacked">
                           <div class="header-top">
                             <i class="bi bi-shield" aria-hidden="true"></i>
@@ -84,7 +84,7 @@
                           <span>Rival</span>
                         </div>
                       </th>
-                      <th scope="col" (click)="onOrder('local')" style="cursor: pointer; width: 12%">
+                      <th scope="col" (click)="onOrder('local')" style="cursor: pointer; width: 8%">
                         <div class="header-stacked">
                           <div class="header-top">
                             <i class="bi bi-house" aria-hidden="true"></i>
@@ -96,7 +96,7 @@
                           <span>Local/Visitante</span>
                         </div>
                       </th>
-                      <th scope="col" (click)="onOrder('resultado')" style="cursor: pointer; width: 18%">
+                      <th scope="col" (click)="onOrder('resultado')" style="cursor: pointer; width: 8%">
                         <div class="header-stacked">
                           <div class="header-top">
                             <i class="bi bi-clipboard-data" aria-hidden="true"></i>
@@ -108,7 +108,7 @@
                           <span>Resultado</span>
                         </div>
                       </th>
-                      <th scope="col" (click)="onOrder('id_liga')" style="cursor: pointer; width: 20%">
+                      <th scope="col" (click)="onOrder('id_liga')" style="cursor: pointer; width: 14%">
                         <div class="header-stacked">
                           <div class="header-top">
                             <i class="bi bi-trophy" aria-hidden="true"></i>
@@ -120,7 +120,37 @@
                           <span>Liga</span>
                         </div>
                       </th>
-                      <th scope="col" class="text-center" style="width: 15%">
+                      <th scope="col" (click)="onOrder('fecha')" style="cursor: pointer; width: 13%" class="d-none d-lg-table-cell">
+                        <div class="header-stacked">
+                          <div class="header-top">
+                            <i class="bi bi-calendar-event" aria-hidden="true"></i>
+                            @if (orderField() === 'fecha') {
+                              @if (orderDirection() === 'asc') { <i class="bi bi-caret-up-fill" aria-hidden="true"></i> }
+                              @if (orderDirection() === 'desc') { <i class="bi bi-caret-down-fill" aria-hidden="true"></i> }
+                            }
+                          </div>
+                          <span>Fecha</span>
+                        </div>
+                      </th>
+                      <th scope="col" (click)="onOrder('lugar')" style="cursor: pointer; width: 14%" class="d-none d-md-table-cell">
+                        <div class="header-stacked">
+                          <div class="header-top">
+                            <i class="bi bi-geo-alt" aria-hidden="true"></i>
+                            @if (orderField() === 'lugar') {
+                              @if (orderDirection() === 'asc') { <i class="bi bi-caret-up-fill" aria-hidden="true"></i> }
+                              @if (orderDirection() === 'desc') { <i class="bi bi-caret-down-fill" aria-hidden="true"></i> }
+                            }
+                          </div>
+                          <span>Lugar</span>
+                        </div>
+                      </th>
+                      <th scope="col" style="width: 11%" class="d-none d-md-table-cell">
+                        <div class="header-stacked">
+                          <div class="header-top"><i class="bi bi-flag" aria-hidden="true"></i></div>
+                          <span>Estado</span>
+                        </div>
+                      </th>
+                      <th scope="col" class="text-center" style="width: 12%">
                         <div class="header-stacked">
                           <div class="header-top"><i class="bi bi-gear" aria-hidden="true"></i></div>
                           <span>Acciones</span>
@@ -148,6 +178,20 @@
                             <a [routerLink]="strRole ? ['/liga', strRole, 'view', oPartido.liga.id] : ['/liga/view', oPartido.liga.id]">{{ oPartido.liga.nombre || 'N/A' }}</a>
                             <a class="btn btn-warning btn-sm ms-2 float-end" [routerLink]="strRole ? ['/partido', strRole, 'liga', oPartido.liga.id] : ['/partido/liga', oPartido.liga.id]" role="button" title="Filtrar por liga"><i class="bi bi-funnel-fill" aria-hidden="true"></i></a>
                           }
+                        </td>
+                        <td class="d-none d-lg-table-cell">{{ oPartido.fecha ? (oPartido.fecha | datetime:'solofechacompleta') : '—' }}</td>
+                        <td class="d-none d-md-table-cell">{{ oPartido.lugar || '—' }}</td>
+                        <td class="d-none d-md-table-cell">
+                          @if (oPartido.estadopartido) {
+                            <span class="badge"
+                              [class.bg-secondary]="oPartido.estadopartido.id === 1"
+                              [class.bg-warning]="oPartido.estadopartido.id === 2"
+                              [class.bg-success]="oPartido.estadopartido.id === 3"
+                              [class.bg-danger]="oPartido.estadopartido.id === 4"
+                              [class.bg-info]="oPartido.estadopartido.id === 5">
+                              {{ oPartido.estadopartido.descripcion }}
+                            </span>
+                          } @else { <span class="text-muted">—</span> }
                         </td>
                         <td class="text-center">
                           <app-botonera-actions-plist [id]="oPartido.id" strEntity="partido" [strRole]="strRole"></app-botonera-actions-plist>

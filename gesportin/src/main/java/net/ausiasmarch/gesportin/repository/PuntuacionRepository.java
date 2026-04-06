@@ -14,4 +14,7 @@ public interface PuntuacionRepository extends JpaRepository<PuntuacionEntity, Lo
 
     // helper for equipo-admin to only see ratings for news of their club
     Page<PuntuacionEntity> findByNoticiaClubId(Long clubId, Pageable pageable);
+
+    // unicidad: un usuario solo puede puntuar una vez cada noticia
+    boolean existsByNoticiaIdAndUsuarioId(Long noticiaId, Long usuarioId);
 }

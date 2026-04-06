@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: database:3306
--- Generation Time: Apr 03, 2026 at 02:45 PM
+-- Generation Time: Apr 06, 2026 at 06:52 AM
 -- Server version: 8.1.0
 -- PHP Version: 8.2.10
 
@@ -140,6 +140,28 @@ CREATE TABLE `equipo` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `estadopartido`
+--
+
+CREATE TABLE `estadopartido` (
+  `id` bigint NOT NULL,
+  `descripcion` varchar(255) COLLATE utf32_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
+
+--
+-- Dumping data for table `estadopartido`
+--
+
+INSERT INTO `estadopartido` (`id`, `descripcion`) VALUES
+(1, 'No jugado'),
+(2, 'Aplazado'),
+(3, 'Ganado'),
+(4, 'Perdido'),
+(5, 'Empatado');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `factura`
 --
 
@@ -217,7 +239,10 @@ CREATE TABLE `partido` (
   `rival` varchar(1024) COLLATE utf32_unicode_ci NOT NULL,
   `id_liga` bigint NOT NULL,
   `local` tinyint(1) NOT NULL,
-  `resultado` varchar(1024) COLLATE utf32_unicode_ci NOT NULL
+  `resultado` varchar(1024) COLLATE utf32_unicode_ci NOT NULL,
+  `fecha` datetime DEFAULT NULL,
+  `lugar` varchar(255) COLLATE utf32_unicode_ci NOT NULL,
+  `id_estadopartido` bigint DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_unicode_ci;
 
 -- --------------------------------------------------------
@@ -402,6 +427,12 @@ ALTER TABLE `equipo`
   ADD KEY `FKp0b0mujjs0hljr6sbtopjgvyw` (`id_entrenador`);
 
 --
+-- Indexes for table `estadopartido`
+--
+ALTER TABLE `estadopartido`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `factura`
 --
 ALTER TABLE `factura`
@@ -553,6 +584,12 @@ ALTER TABLE `cuota`
 --
 ALTER TABLE `equipo`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `estadopartido`
+--
+ALTER TABLE `estadopartido`
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `factura`

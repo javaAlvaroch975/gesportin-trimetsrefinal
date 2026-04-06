@@ -3,12 +3,15 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { toIsoDateTime } from '../../../../utils/date-utils';
 import { NotificacionService } from '../../../../service/notificacion';
 import { ModalService } from '../../../shared/modal/modal.service';
 import { PartidoService } from '../../../../service/partido';
 import { LigaService } from '../../../../service/liga';
+import { EstadopartidoService } from '../../../../service/estadopartido';
 import { IPartido } from '../../../../model/partido';
 import { ILiga } from '../../../../model/liga';
+import { IEstadopartido } from '../../../../model/estadopartido';
 import { SessionService } from '../../../../service/session';
 import { LigaAdminPlist } from '../../../liga/admin/plist/plist';
 
@@ -29,6 +32,7 @@ export class PartidoTeamadminForm implements OnInit {
   private notificacion = inject(NotificacionService);
   private oPartidoService = inject(PartidoService);
   private oLigaService = inject(LigaService);
+  private oEstadopartidoService = inject(EstadopartidoService);
   private modalService = inject(ModalService);
   private sessionService = inject(SessionService);
 
@@ -37,9 +41,11 @@ export class PartidoTeamadminForm implements OnInit {
   loading = signal<boolean>(false);
   submitting = signal(false);
   selectedLiga = signal<ILiga | null>(null);
+  estadopartidoList = signal<IEstadopartido[]>([]);
 
   ngOnInit(): void {
     this.initForm();
+    this.oEstadopartidoService.getAll().subscribe({ next: (list) => this.estadopartidoList.set(list) });
 
     if (this.id() > 0) {
       this.loadById(this.id());
@@ -59,6 +65,9 @@ export class PartidoTeamadminForm implements OnInit {
       id_liga: [null, Validators.required],
       local: [null, Validators.required],
       resultado: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(255)]],
+      fecha: [null],
+      lugar: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(255)]],
+      id_estadopartido: [null],
     });
   }
 
@@ -84,6 +93,9 @@ export class PartidoTeamadminForm implements OnInit {
       id_liga: partido.liga?.id,
       local: partido.local ? 1 : 0,
       resultado: partido.resultado,
+      fecha: partido.fecha ? partido.fecha.substring(0, 16) : null,
+      lugar: partido.lugar,
+      id_estadopartido: partido.estadopartido?.id ?? null,
     });
     if (partido.liga?.id) this.loadLiga(partido.liga.id);
   }
@@ -117,6 +129,18 @@ export class PartidoTeamadminForm implements OnInit {
     return this.partidoForm.get('resultado');
   }
 
+  get fecha() {
+    return this.partidoForm.get('fecha');
+  }
+
+  get lugar() {
+    return this.partidoForm.get('lugar');
+  }
+
+  get id_estadopartido() {
+    return this.partidoForm.get('id_estadopartido');
+  }
+
   openLigaFinderModal(): void {
     const ref = this.modalService.open<unknown, ILiga | null>(LigaAdminPlist);
     ref.afterClosed$.subscribe((liga: ILiga | null) => {
@@ -141,6 +165,11 @@ export class PartidoTeamadminForm implements OnInit {
       liga: { id: Number(this.partidoForm.value.id_liga) },
       local: Number(this.partidoForm.value.local) === 1,
       resultado: this.partidoForm.value.resultado,
+      fecha: this.partidoForm.value.fecha ? toIsoDateTime(this.partidoForm.value.fecha) : null,
+      lugar: this.partidoForm.value.lugar,
+      estadopartido: this.partidoForm.value.id_estadopartido
+        ? { id: Number(this.partidoForm.value.id_estadopartido) }
+        : null,
     };
 
     if (this.id() > 0) {

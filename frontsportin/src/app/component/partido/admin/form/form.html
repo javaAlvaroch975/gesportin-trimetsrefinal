@@ -80,6 +80,44 @@
       }
     </div>
 
+    <div class="mb-3">
+      <label for="fecha" class="form-label">Fecha</label>
+      <input
+        id="fecha"
+        type="datetime-local"
+        class="form-control"
+        formControlName="fecha"
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="lugar" class="form-label">Lugar <span class="text-danger">*</span></label>
+      <input
+        id="lugar"
+        type="text"
+        class="form-control"
+        formControlName="lugar"
+        [class.is-invalid]="lugar?.invalid && lugar?.touched"
+      />
+      @if (lugar?.invalid && lugar?.touched) {
+        <div class="invalid-feedback">
+          @if (lugar?.errors?.['required']) { <span>El lugar es obligatorio.</span> }
+          @if (lugar?.errors?.['minlength']) { <span>Debe tener al menos 3 caracteres.</span> }
+          @if (lugar?.errors?.['maxlength']) { <span>Máx 255 caracteres.</span> }
+        </div>
+      }
+    </div>
+
+    <div class="mb-3">
+      <label for="id_estadopartido" class="form-label">Estado</label>
+      <select id="id_estadopartido" class="form-select" formControlName="id_estadopartido">
+        <option [value]="null">— Sin estado —</option>
+        @for (estado of estadopartidoList(); track estado.id) {
+          <option [value]="estado.id">{{ estado.descripcion }}</option>
+        }
+      </select>
+    </div>
+
     <div class="d-flex justify-content-between">
       <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">Cancelar</button>
       <button type="submit" class="btn btn-primary" [disabled]="submitting() || partidoForm.invalid">

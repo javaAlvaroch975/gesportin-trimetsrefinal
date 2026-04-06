@@ -5,6 +5,7 @@ import { serverURL } from '../environment/environment';
 
 export type DataEntityKey =
   | 'tipousuario'
+  | 'estadopartido'
   | 'rolusuario'
   | 'club'
   | 'usuario'
@@ -22,6 +23,7 @@ export type DataEntityKey =
   | 'comentario'
   | 'puntuacion'
   | 'comentarioart'
+  | 'puntuacionart'
   | 'carrito'
   | 'factura'
   | 'compra';
@@ -36,6 +38,7 @@ export interface IEntityMeta {
 /** Creation order respecting FK dependencies. */
 export const FILL_ORDER: readonly DataEntityKey[] = [
   'tipousuario',
+  'estadopartido',
   'rolusuario',
   'club',
   'usuario',
@@ -53,6 +56,7 @@ export const FILL_ORDER: readonly DataEntityKey[] = [
   'comentario',
   'puntuacion',
   'comentarioart',
+  'puntuacionart',
   'carrito',
   'factura',
   'compra',
@@ -63,6 +67,7 @@ export const EMPTY_ORDER: readonly DataEntityKey[] = [...FILL_ORDER].reverse();
 
 export const ENTITY_META: Record<DataEntityKey, IEntityMeta> = {
   tipousuario: { key: 'tipousuario', label: 'Tipo de Usuario', fixedFill: true },
+  estadopartido: { key: 'estadopartido', label: 'Estado de Partido', fixedFill: true },
   rolusuario: { key: 'rolusuario', label: 'Rol de Usuario', fixedFill: true },
   club: { key: 'club', label: 'Club', fixedFill: false },
   usuario: { key: 'usuario', label: 'Usuario', fixedFill: false },
@@ -80,6 +85,7 @@ export const ENTITY_META: Record<DataEntityKey, IEntityMeta> = {
   comentario: { key: 'comentario', label: 'Comentario', fixedFill: false },
   puntuacion: { key: 'puntuacion', label: 'Puntuación', fixedFill: false },
   comentarioart: { key: 'comentarioart', label: 'Comentario de Artículo', fixedFill: false },
+  puntuacionart: { key: 'puntuacionart', label: 'Puntuación de Artículo', fixedFill: false },
   carrito: { key: 'carrito', label: 'Carrito', fixedFill: false },
   factura: { key: 'factura', label: 'Factura', fixedFill: false },
   compra: { key: 'compra', label: 'Compra', fixedFill: false },
@@ -102,8 +108,8 @@ export class AdminDataToolsService {
   fill(entity: DataEntityKey, amount: number): Observable<number> {
     const meta = ENTITY_META[entity];
     if (meta.fixedFill) {
-      // tipousuario → GET /tipousuario/fill  |  rolusuario → POST /rolusuario/fill
-      const method = entity === 'tipousuario' ? 'get' : 'post';
+      // tipousuario, estadopartido → GET /…/fill  |  rolusuario → POST /rolusuario/fill
+      const method = (entity === 'tipousuario' || entity === 'estadopartido') ? 'get' : 'post';
       if (method === 'get') {
         return this.http.get<number>(`${serverURL}/${entity}/fill`);
       }
@@ -128,5 +134,17 @@ export class AdminDataToolsService {
 
   reset(): Observable<number> {
     return this.http.post<number>(`${serverURL}/admin/reset`, null);
+  }
+
+  // ── Reset + AUTO_INCREMENT reset (empty all + reset IDs + seed) ─────────────
+
+  resetComplete(): Observable<number> {
+    return this.http.post<number>(`${serverURL}/admin/resetcomplete`, null);
+  }
+
+  // ── Poblar Gesportin ────────────────────────────────────────────────────────
+
+  fillGesportin(): Observable<number> {
+    return this.http.get<number>(`${serverURL}/club/fillgesportin`);
   }
 }

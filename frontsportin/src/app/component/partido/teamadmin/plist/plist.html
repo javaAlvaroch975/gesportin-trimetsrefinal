@@ -72,6 +72,28 @@
                 <i class="bi bi-clipboard-data text-muted me-1"></i>
                 <span class="text-muted">Resultado:</span> {{ oPartido.resultado || '—' }}
               </li>
+              <li class="mb-1">
+                <i class="bi bi-calendar-event text-muted me-1"></i>
+                <span class="text-muted">Fecha:</span>
+                {{ oPartido.fecha ? (oPartido.fecha | datetime:'solofechacompleta') : '—' }}
+              </li>
+              <li class="mb-1">
+                <i class="bi bi-geo-alt text-muted me-1"></i>
+                <span class="text-muted">Lugar:</span> {{ oPartido.lugar || '—' }}
+              </li>
+              @if (oPartido.estadopartido) {
+                <li class="mb-1">
+                  <i class="bi bi-flag text-muted me-1"></i>
+                  <span class="badge"
+                    [class.bg-secondary]="oPartido.estadopartido.id === 1"
+                    [class.bg-warning]="oPartido.estadopartido.id === 2"
+                    [class.bg-success]="oPartido.estadopartido.id === 3"
+                    [class.bg-danger]="oPartido.estadopartido.id === 4"
+                    [class.bg-info]="oPartido.estadopartido.id === 5">
+                    {{ oPartido.estadopartido.descripcion }}
+                  </span>
+                </li>
+              }
             </ul>
             @if (oPartido.liga) {
               <p class="mb-1">

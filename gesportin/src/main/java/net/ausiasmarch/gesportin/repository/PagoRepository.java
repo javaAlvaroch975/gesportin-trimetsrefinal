@@ -22,4 +22,7 @@ public interface PagoRepository extends JpaRepository<PagoEntity, Long> {
     // support equipo-admin restrictions
     Page<PagoEntity> findByCuotaEquipoCategoriaTemporadaClubId(Long clubId, Pageable pageable);
     Page<PagoEntity> findByJugadorUsuarioClubId(Long clubId, Pageable pageable);
+
+    // unicidad: un jugador no puede pagar la misma cuota dos veces
+    boolean existsByCuotaIdAndJugadorId(Long cuotaId, Long jugadorId);
 }

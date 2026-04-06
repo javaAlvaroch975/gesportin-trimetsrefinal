@@ -158,6 +158,10 @@ public class PagoService {
             if (jugador == null) {
                 continue;
             }
+            // unicidad: un jugador no puede pagar la misma cuota dos veces
+            if (oPagoRepository.existsByCuotaIdAndJugadorId(cuota.getId(), jugador.getId())) {
+                continue;
+            }
             oPagoNuevo.setCuota(cuota);
             oPagoNuevo.setJugador(jugador);
             oPagoNuevo.setAbonado(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 1) == 1);

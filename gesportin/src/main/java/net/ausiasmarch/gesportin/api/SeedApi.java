@@ -30,4 +30,20 @@ public class SeedApi {
     public ResponseEntity<Long> reset() {
         return ResponseEntity.ok(oSeedService.reset());
     }
+
+    /**
+     * Same as /reset but also resets AUTO_INCREMENT counters to 1 for all
+     * tables via ALTER TABLE, so that the next fill() inserts IDs starting
+     * from 1 (or from max(id)+1 for tables that keep seed rows).
+     *
+     * IMPORTANT: the two steps must be called through the Spring proxy
+     * (i.e. from here, not from within SeedService) to ensure
+     * @Transactional on reset() is honoured by Spring AOP.
+     */
+    @PostMapping("/resetcomplete")
+    public ResponseEntity<Long> resetComplete() {
+        long seeded = oSeedService.reset();            // @Transactional — own TX, commits
+        oSeedService.resetAutoIncrements();            // DDL — outside any TX
+        return ResponseEntity.ok(seeded);
+    }
 }

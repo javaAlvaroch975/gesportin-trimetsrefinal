@@ -66,6 +66,22 @@ export class SidebarComponent {
     const comentarioartRoute = isClubAdmin ? '/comentarioart/teamadmin' : '/comentarioart';
     const usuarioRoute = isClubAdmin ? '/usuario/teamadmin' : '/usuario';
 
+    const gestionChildren: any[] = [
+      { label: 'Temporadas', icon: 'calendar', route: temporadaRoute },
+      { label: 'Categorías', icon: 'tags', route: categoriaRoute },
+      { label: 'Equipos', icon: 'people-fill', route: equipoRoute },
+      { label: 'Ligas', icon: 'trophy', route: ligaRoute },
+      { label: 'Partidos', icon: 'play-fill', route: partidoRoute },
+    ];
+    if (isAdmin) {
+      gestionChildren.push({ label: 'Estados de Partido', icon: 'flag-fill', route: '/estadopartido' });
+    }
+    gestionChildren.push(
+      { label: 'Jugadores', icon: 'person-fill', route: jugadorRoute },
+      { label: 'Cuotas', icon: 'credit-card', route: cuotaRoute },
+      { label: 'Pagos', icon: 'cash-coin', route: pagoRoute },
+    );
+
     items.push(
       {
         label: 'Noticias',
@@ -79,16 +95,7 @@ export class SidebarComponent {
       {
         label: 'Gestión',
         icon: 'gear',
-        children: [
-          { label: 'Temporadas', icon: 'calendar', route: temporadaRoute },
-          { label: 'Categorías', icon: 'tags', route: categoriaRoute },
-          { label: 'Equipos', icon: 'people-fill', route: equipoRoute },
-          { label: 'Ligas', icon: 'trophy', route: ligaRoute },
-          { label: 'Partidos', icon: 'play-fill', route: partidoRoute },
-          { label: 'Jugadores', icon: 'person-fill', route: jugadorRoute },
-          { label: 'Cuotas', icon: 'credit-card', route: cuotaRoute },
-          { label: 'Pagos', icon: 'cash-coin', route: pagoRoute },
-        ],
+        children: gestionChildren,
       },
       {
         label: 'Tienda',

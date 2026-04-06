@@ -1,22 +1,44 @@
 package net.ausiasmarch.gesportin.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import net.ausiasmarch.gesportin.entity.ClubEntity;
+import net.ausiasmarch.gesportin.entity.NoticiaEntity;
+import net.ausiasmarch.gesportin.entity.TemporadaEntity;
+import net.ausiasmarch.gesportin.entity.TipoarticuloEntity;
+import net.ausiasmarch.gesportin.entity.UsuarioEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
 import net.ausiasmarch.gesportin.repository.ClubRepository;
+import net.ausiasmarch.gesportin.repository.NoticiaRepository;
+import net.ausiasmarch.gesportin.repository.TemporadaRepository;
+import net.ausiasmarch.gesportin.repository.TipoarticuloRepository;
+import net.ausiasmarch.gesportin.repository.UsuarioRepository;
 
 @Service
 public class ClubService {
 
     @Autowired
     private ClubRepository oClubRepository;
+
+    @Autowired
+    private NoticiaRepository oNoticiaRepository;
+
+    @Autowired
+    private TipoarticuloRepository oTipoarticuloRepository;
+
+    @Autowired
+    private TemporadaRepository oTemporadaRepository;
+
+    @Autowired
+    private UsuarioRepository oUsuarioRepository;
 
     @Autowired
     private SessionService oSessionService;
@@ -151,5 +173,62 @@ public class ClubService {
         }
         int index = random.nextInt(count.intValue());
         return oClubRepository.findAll(Pageable.ofSize(1).withPage(index)).getContent().get(0);
+    }
+
+    public Long fillGesportin() {
+        oSessionService.requireAdmin();
+        ClubEntity gesportin = oClubRepository.findById(1L)
+                .orElseThrow(() -> new ResourceNotFoundException("Club Gesportin no encontrado con id: 1"));
+        long affected = 0L;
+
+        long noticiaCount = oNoticiaRepository.count();
+        if (noticiaCount > 0) {
+            int pages = (int) Math.ceil((double) noticiaCount / 5.0);
+            List<NoticiaEntity> noticias = oNoticiaRepository
+                    .findAll(PageRequest.of(random.nextInt(pages), 5)).getContent();
+            for (NoticiaEntity e : noticias) {
+                e.setClub(gesportin);
+                oNoticiaRepository.save(e);
+                affected++;
+            }
+        }
+
+        long tipoarticuloCount = oTipoarticuloRepository.count();
+        if (tipoarticuloCount > 0) {
+            int pages = (int) Math.ceil((double) tipoarticuloCount / 5.0);
+            List<TipoarticuloEntity> tipos = oTipoarticuloRepository
+                    .findAll(PageRequest.of(random.nextInt(pages), 5)).getContent();
+            for (TipoarticuloEntity e : tipos) {
+                e.setClub(gesportin);
+                oTipoarticuloRepository.save(e);
+                affected++;
+            }
+        }
+
+        long temporadaCount = oTemporadaRepository.count();
+        if (temporadaCount > 0) {
+            int pages = (int) Math.ceil((double) temporadaCount / 5.0);
+            List<TemporadaEntity> temporadas = oTemporadaRepository
+                    .findAll(PageRequest.of(random.nextInt(pages), 5)).getContent();
+            for (TemporadaEntity e : temporadas) {
+                e.setClub(gesportin);
+                oTemporadaRepository.save(e);
+                affected++;
+            }
+        }
+
+        long usuarioCount = oUsuarioRepository.count();
+        if (usuarioCount > 0) {
+            int pages = (int) Math.ceil((double) usuarioCount / 5.0);
+            List<UsuarioEntity> usuarios = oUsuarioRepository
+                    .findAll(PageRequest.of(random.nextInt(pages), 5)).getContent();
+            for (UsuarioEntity e : usuarios) {
+                e.setClub(gesportin);
+                oUsuarioRepository.save(e);
+                affected++;
+            }
+        }
+
+        return affected;
     }
 }

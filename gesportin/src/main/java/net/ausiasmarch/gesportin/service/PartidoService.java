@@ -1,5 +1,7 @@
 package net.ausiasmarch.gesportin.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +23,9 @@ public class PartidoService {
 
     @Autowired
     private LigaService oLigaService;
+
+    @Autowired
+    private EstadopartidoService oEstadopartidoService;
 
     @Autowired
     private SessionService oSessionService;
@@ -84,6 +89,13 @@ public class PartidoService {
         oPartidoExistente.setLiga(oLigaService.get(oPartidoEntity.getLiga().getId()));
         oPartidoExistente.setLocal(oPartidoEntity.getLocal());
         oPartidoExistente.setResultado(oPartidoEntity.getResultado());
+        oPartidoExistente.setFecha(oPartidoEntity.getFecha());
+        oPartidoExistente.setLugar(oPartidoEntity.getLugar());
+        if (oPartidoEntity.getEstadopartido() != null && oPartidoEntity.getEstadopartido().getId() != null) {
+            oPartidoExistente.setEstadopartido(oEstadopartidoService.get(oPartidoEntity.getEstadopartido().getId()));
+        } else {
+            oPartidoExistente.setEstadopartido(null);
+        }
         return oPartidoRepository.save(oPartidoExistente);
     }
 
@@ -113,14 +125,45 @@ public class PartidoService {
 
     public Long fill(Long cantidad) {
         oSessionService.requireAdmin();
+        // IDs en estadopartido: 1=No jugado, 2=Aplazado, 3=Ganado, 4=Perdido, 5=Empatado
+        Long totalEstados = oEstadopartidoService.count();
         for (long j = 0; j < cantidad; j++) {
-            PartidoEntity oPartido = new PartidoEntity();            
+            PartidoEntity oPartido = new PartidoEntity();
             oPartido.setRival(oAleatorioService.generarNombreEquipoAleatorio());
             oPartido.setLiga(oLigaService.getOneRandom());
             oPartido.setLocal(oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 1) == 1);
-            int golesLocal = oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 10);
-            int golesVisitante = oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 10);
-            oPartido.setResultado(golesLocal + "-" + golesVisitante);
+            oPartido.setLugar(oAleatorioService.generarNombreLugarAleatorio());
+
+            // Fecha entre -180 días (pasado) y +90 días (futuro)
+            int diasOffset = oAleatorioService.generarNumeroAleatorioEnteroEnRango(-180, 90);
+            LocalDateTime fecha = LocalDateTime.now().plusDays(diasOffset);
+            oPartido.setFecha(fecha);
+
+            boolean esPasado = diasOffset <= 0;
+            if (esPasado) {
+                // Partido ya jugado: resultado con marcador y estado Ganado/Perdido/Empatado
+                int golesLocal = oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 10);
+                int golesVisitante = oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 10);
+                oPartido.setResultado(golesLocal + "-" + golesVisitante);
+                if (totalEstados >= 5) {
+                    // 3=Ganado, 4=Perdido, 5=Empatado
+                    long estadoId = (golesLocal > golesVisitante) ? 3L
+                            : (golesLocal < golesVisitante) ? 4L : 5L;
+                    oPartido.setEstadopartido(oEstadopartidoService.get(estadoId));
+                } else if (totalEstados > 0) {
+                    oPartido.setEstadopartido(oEstadopartidoService.getOneRandom());
+                }
+            } else {
+                // Partido futuro: sin resultado, estado No jugado (1) o Aplazado (2)
+                oPartido.setResultado("---");
+                if (totalEstados >= 2) {
+                    long estadoId = oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, 4) == 0 ? 2L : 1L;
+                    oPartido.setEstadopartido(oEstadopartidoService.get(estadoId));
+                } else if (totalEstados > 0) {
+                    oPartido.setEstadopartido(oEstadopartidoService.getOneRandom());
+                }
+            }
+
             oPartidoRepository.save(oPartido);
         }
         return cantidad;

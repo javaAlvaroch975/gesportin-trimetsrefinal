@@ -72,7 +72,18 @@ export class AdminDataToolsPage implements OnInit {
     this.running.set(true);
     this.clearLogs();
 
-    this.log(`Iniciando creación de ${amount} registros por entidad en orden de dependencias...`);
+    this.log('Paso 1/2 — Vaciando tablas y restableciendo contadores de ID a 1...');
+    try {
+      const seeded = await firstValueFrom(this.svc.resetComplete());
+      this.log(`  ✓ Tablas vaciadas, AUTO_INCREMENT restablecido. Datos mínimos insertados: ${seeded}`);
+    } catch (err) {
+      this.log(`ERROR al resetear: ${this.errMsg(err)}`);
+      this.running.set(false);
+      await this.loadCounts();
+      return;
+    }
+
+    this.log(`Paso 2/2 — Creando ${amount} registros por entidad en orden de dependencias...`);
     this.log(`Orden: ${FILL_ORDER.map((k) => ENTITY_META[k].label).join(' → ')}`);
 
     try {
@@ -82,7 +93,7 @@ export class AdminDataToolsPage implements OnInit {
         const n = await firstValueFrom(this.svc.fill(entity, amount));
         this.log(`  ✓ ${label}: ${n} registro(s) creado(s)`);
       }
-      this.log('Proceso de creación finalizado correctamente.');
+      this.log('Proceso de creación finalizado correctamente. Los IDs empiezan desde 1.');
     } catch (err) {
       this.log(`ERROR en creación: ${this.errMsg(err)}`);
     } finally {
@@ -118,6 +129,27 @@ export class AdminDataToolsPage implements OnInit {
       this.log('La aplicación conserva los datos mínimos del sistema.');
     } catch (err) {
       this.log(`ERROR en reset: ${this.errMsg(err)}`);
+    } finally {
+      this.running.set(false);
+      await this.loadCounts();
+    }
+  }
+
+  // ── Poblar Gesportin ────────────────────────────────────────────────────────
+
+  async runFillGesportin(): Promise<void> {
+    if (this.running()) return;
+    this.running.set(true);
+    this.clearLogs();
+
+    this.log('Poblando Gesportin (club id=1) con entidades aleatorias...');
+
+    try {
+      const n = await firstValueFrom(this.svc.fillGesportin());
+      this.log(`  ✓ Poblar Gesportin completado: ${n} registro(s) actualizados.`);
+      this.log('    Se han asignado hasta 5 entidades de cada tipo (noticia, tipo artículo, temporada, usuario) al club Gesportin.');
+    } catch (err) {
+      this.log(`ERROR en poblar Gesportin: ${this.errMsg(err)}`);
     } finally {
       this.running.set(false);
       await this.loadCounts();

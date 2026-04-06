@@ -40,6 +40,18 @@ public class AleatorioService {
         return primeraMayuscuString(nombre);
     }
 
+    private static final String[] LUGARES = {
+        "Estadio Municipal", "Polideportivo Central", "Campo Norte", "Pabellón Sur",
+        "Estadio La Rosaleda", "Campo de Los Pinos", "Instalaciones Deportivas Norte",
+        "Pabellón Polideportivo", "Estadio El Sardinero", "Campo Municipal de Deportes",
+        "Pabellón de los Deportes", "Complejo Deportivo", "Estadio Nuevo Arcángel",
+        "Campo de Fútbol Municipal", "Piscina Cubierta", "Velódromo Municipal"
+    };
+
+    public String generarNombreLugarAleatorio() {
+        return LUGARES[(int) (Math.random() * LUGARES.length)];
+    }
+
     public int generarNumeroAleatorioEnteroEnRango(int min, int max) {
         return (int) (Math.random() * (max - min + 1)) + min;
     }

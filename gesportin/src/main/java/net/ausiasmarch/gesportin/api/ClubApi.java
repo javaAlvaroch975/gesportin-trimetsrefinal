@@ -62,4 +62,9 @@ public class ClubApi {
         return ResponseEntity.ok(oClubService.count());
     }
 
+    @GetMapping("/fillgesportin")
+    public ResponseEntity<Long> fillGesportin() {
+        return ResponseEntity.ok(oClubService.fillGesportin());
+    }
+
 }

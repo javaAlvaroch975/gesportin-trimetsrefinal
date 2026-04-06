@@ -12,11 +12,12 @@ import { PartidoService } from '../../../../service/partido';
 import { BotoneraRpp } from '../../../shared/botonera-rpp/botonera-rpp';
 import { Paginacion } from '../../../shared/paginacion/paginacion';
 import { BotoneraActionsPlist } from '../../../shared/botonera-actions-plist/botonera-actions-plist';
+import { DatetimePipe } from '../../../../pipe/datetime-pipe';
 
 @Component({
   standalone: true,
   selector: 'app-partido-teamadmin-plist',
-  imports: [RouterLink, BotoneraRpp, Paginacion, BotoneraActionsPlist],
+  imports: [RouterLink, BotoneraRpp, Paginacion, BotoneraActionsPlist, DatetimePipe],
   templateUrl: './plist.html',
   styleUrl: './plist.css',
 })

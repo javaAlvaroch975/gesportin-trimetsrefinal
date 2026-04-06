@@ -144,7 +144,9 @@ public class EquipoService {
             Long clubId = categoria.getTemporada().getClub().getId();
             net.ausiasmarch.gesportin.entity.UsuarioEntity entrenador = oUsuarioService.getOneRandomFromClub(clubId);
             if (entrenador == null) {
-                entrenador = oUsuarioService.getOneRandom();
+                // No hay usuarios en este club: saltamos este registro para
+                // respetar que el entrenador debe pertenecer al mismo club que el equipo.
+                continue;
             }
             oEquipo.setCategoria(categoria);
             oEquipo.setEntrenador(entrenador);

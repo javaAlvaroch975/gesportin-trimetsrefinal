@@ -118,6 +118,10 @@ import { TipousuarioAdminPlistPage } from './page/tipousuario/admin/plist/plist'
 import { TipousuarioAdminViewPage } from './page/tipousuario/admin/view/view';
 import { TipousuarioAdminNewPage } from './page/tipousuario/admin/new/new';
 import { TipousuarioAdminEditPage } from './page/tipousuario/admin/edit/edit';
+import { EstadopartidoAdminPlistPage } from './page/estadopartido/admin/plist/plist';
+import { EstadopartidoAdminViewPage } from './page/estadopartido/admin/view/view';
+import { EstadopartidoAdminNewPage } from './page/estadopartido/admin/new/new';
+import { EstadopartidoAdminEditPage } from './page/estadopartido/admin/edit/edit';
 import { UsuarioAdminPlistPage } from './page/usuario/admin/plist/plist';
 import { UsuarioAdminViewPage } from './page/usuario/admin/view/view';
 import { UsuarioAdminNewPage } from './page/usuario/admin/new/new';
@@ -327,6 +331,10 @@ const protectedRoutes: Routes = [
   { path: 'tipousuario/view/:id', component: TipousuarioAdminViewPage },
   { path: 'tipousuario/new', component: TipousuarioAdminNewPage },
   { path: 'tipousuario/edit/:id', component: TipousuarioAdminEditPage },
+  { path: 'estadopartido', component: EstadopartidoAdminPlistPage },
+  { path: 'estadopartido/view/:id', component: EstadopartidoAdminViewPage },
+  { path: 'estadopartido/new', component: EstadopartidoAdminNewPage },
+  { path: 'estadopartido/edit/:id', component: EstadopartidoAdminEditPage },
   { path: 'equipo', component: EquipoAdminPlistPage },
   { path: 'equipo/teamadmin', component: EquipoTeamadminPlistPage, canActivate: [ClubAdminGuard] },
 

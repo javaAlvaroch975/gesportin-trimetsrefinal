@@ -30,6 +30,23 @@
           <div class="col-7 fw-semibold small">@if (oPartido()?.local) { <span class='badge bg-success'>Local</span> } @else { <span class='badge bg-info text-dark'>Visitante</span> }</div>
           <div class="col-5 text-muted small text-uppercase">Resultado</div>
           <div class="col-7 fw-semibold small">{{ oPartido()?.resultado || '-' }}</div>
+          <div class="col-5 text-muted small text-uppercase">Fecha</div>
+          <div class="col-7 fw-semibold small">{{ oPartido()?.fecha ? (oPartido()!.fecha | datetime:'solofechacompleta') : '-' }}</div>
+          <div class="col-5 text-muted small text-uppercase">Lugar</div>
+          <div class="col-7 fw-semibold small">{{ oPartido()?.lugar || '-' }}</div>
+          <div class="col-5 text-muted small text-uppercase">Estado</div>
+          <div class="col-7 fw-semibold small">
+            @if (oPartido()?.estadopartido) {
+              <span class="badge"
+                [class.bg-secondary]="oPartido()!.estadopartido!.id === 1"
+                [class.bg-warning]="oPartido()!.estadopartido!.id === 2"
+                [class.bg-success]="oPartido()!.estadopartido!.id === 3"
+                [class.bg-danger]="oPartido()!.estadopartido!.id === 4"
+                [class.bg-info]="oPartido()!.estadopartido!.id === 5">
+                {{ oPartido()!.estadopartido!.descripcion }}
+              </span>
+            } @else { <span class="text-muted">-</span> }
+          </div>
         </div>
         <div class="card border-start border-3 border-info mt-3">
           <div class="card-header py-1 d-flex align-items-center gap-2 bg-info bg-opacity-10">
