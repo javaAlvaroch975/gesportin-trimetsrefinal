@@ -25,6 +25,9 @@ public class EquipoService {
     private CategoriaService oCategoriaService;
 
     @Autowired
+    private TemporadaService oTemporadaService;
+
+    @Autowired
     private AleatorioService oAleatorioService;
 
     @Autowired
@@ -172,6 +175,14 @@ public class EquipoService {
             int index = oAleatorioService.generarNumeroAleatorioEnteroEnRango(0, equipos.size() - 1);
             return equipos.get(index);
         }
+    }
+
+    public Long countByTemporada(Long id_temporada) {
+        if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
+            Long clubId = oTemporadaService.get(id_temporada).getClub().getId();
+            oSessionService.checkSameClub(clubId);
+        }
+        return oEquipoRepository.countByCategoriaTemporadaId(id_temporada);
     }
 
 

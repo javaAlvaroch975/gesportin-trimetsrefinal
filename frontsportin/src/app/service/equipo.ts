@@ -82,4 +82,8 @@ export class EquipoService {
   count(): Observable<number> {
     return this.oHttp.get<number>(serverURL + '/equipo/count');
   }
+
+  countByTemporada(id_temporada: number): Observable<number> {
+    return this.oHttp.get<number>(`${serverURL}/equipo/countByTemporada/${id_temporada}`);
+  }
 }

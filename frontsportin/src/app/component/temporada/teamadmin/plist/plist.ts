@@ -4,6 +4,7 @@ import { ITemporada } from '../../../../model/temporada';
 import { debounceTime, distinctUntilChanged, Subject, Subscription } from 'rxjs';
 import { debounceTimeSearch } from '../../../../environment/environment';
 import { TemporadaService } from '../../../../service/temporada';
+import { EquipoService } from '../../../../service/equipo';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Paginacion } from '../../../shared/paginacion/paginacion';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -33,7 +34,10 @@ export class TemporadaTeamadminPlist {
   descripcion = signal<string>('');
   private searchSubscription?: Subscription;
 
+  equiposByTemporada = signal<Map<number, number>>(new Map());
+
   oTemporadaService = inject(TemporadaService);
+  private equipoService = inject(EquipoService);
   private route = inject(ActivatedRoute);
   session: SessionService = inject(SessionService);
 
@@ -60,6 +64,19 @@ export class TemporadaTeamadminPlist {
       .subscribe({
         next: (data: IPage<ITemporada>) => {
           this.oPage.set(data);
+          this.equiposByTemporada.set(new Map());
+          data.content.forEach((temporada) => {
+            this.equipoService.countByTemporada(temporada.id).subscribe({
+              next: (count: number) => {
+                this.equiposByTemporada.update((map) => {
+                  const newMap = new Map(map);
+                  newMap.set(temporada.id, count);
+                  return newMap;
+                });
+              },
+              error: (err: HttpErrorResponse) => console.error(err),
+            });
+          });
           if (this.numPage() > 0 && this.numPage() >= data.totalPages) {
             this.numPage.set(data.totalPages - 1);
             this.getPage();
@@ -69,6 +86,10 @@ export class TemporadaTeamadminPlist {
           console.error(error);
         },
       });
+  }
+
+  getEquiposForTemporada(temporadaId: number): number {
+    return this.equiposByTemporada().get(temporadaId) ?? 0;
   }
 
   goToPage(page: number): void {

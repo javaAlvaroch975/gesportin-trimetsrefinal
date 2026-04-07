@@ -32,4 +32,6 @@ public interface EquipoRepository extends JpaRepository<EquipoEntity, Long> {
                         AND e.id_categoria=c.id 
                         """, nativeQuery = true)
     List<EquipoEntity> getAllEquiposFromClub(Long id_club);
+
+    long countByCategoriaTemporadaId(Long id_temporada);
 }

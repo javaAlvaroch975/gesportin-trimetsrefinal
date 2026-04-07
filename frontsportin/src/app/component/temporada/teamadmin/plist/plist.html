@@ -59,12 +59,12 @@
           @if (oTemporada.categorias === 0) {
           <a [routerLink]="['/categoria/teamadmin/new']" [queryParams]="{ id_temporada: oTemporada.id }"
             class="badge big-badge bg-warning text-dark text-decoration-none" title="Crear primera categoría">
-            <i class="bi bi-plus-circle me-1"></i>0 categorías
+            <i class="bi bi-plus-circle me-1"></i>0 categorías · 0 equipos
           </a>
           } @else {
           <a [routerLink]="['/categoria/teamadmin/temporada', oTemporada.id]"
             class="badge big-badge bg-primary text-decoration-none" title="Ver categorías de temporada">
-            <i class="bi bi-tags-fill me-1"></i>{{ oTemporada.categorias }} categorías
+            <i class="bi bi-tags-fill me-1"></i>{{ oTemporada.categorias }} categorías · {{ getEquiposForTemporada(oTemporada.id) }} equipos
           </a>
           }
           <app-botonera-actions-plist [id]="oTemporada.id" strEntity="temporada"

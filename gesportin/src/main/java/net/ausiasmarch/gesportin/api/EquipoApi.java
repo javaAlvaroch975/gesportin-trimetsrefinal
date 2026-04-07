@@ -71,4 +71,9 @@ public class EquipoApi {
         return ResponseEntity.ok(oEquipoService.count());
     }
 
+    @GetMapping("/countByTemporada/{id_temporada}")
+    public ResponseEntity<Long> countByTemporada(@PathVariable Long id_temporada) {
+        return ResponseEntity.ok(oEquipoService.countByTemporada(id_temporada));
+    }
+
 }
