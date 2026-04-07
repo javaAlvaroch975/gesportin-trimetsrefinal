@@ -27,7 +27,7 @@ export class TemporadaTeamadminPlist {
   totalRecords = computed(() => this.oPage()?.totalElements ?? 0);
 
   orderField = signal<string>('id');
-  orderDirection = signal<'asc' | 'desc'>('asc');
+  orderDirection = signal<'asc' | 'desc'>('desc');
 
   private searchSubject = new Subject<string>();
   descripcion = signal<string>('');
