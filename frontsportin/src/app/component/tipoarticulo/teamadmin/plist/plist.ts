@@ -1,5 +1,6 @@
 import { Component, computed, inject, Input, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { DecimalPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Subject, Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { ModalRef } from '../../../shared/modal/modal-ref';
@@ -16,7 +17,7 @@ import { BotoneraActionsPlist } from '../../../shared/botonera-actions-plist/bot
 @Component({
   standalone: true,
   selector: 'app-tipoarticulo-teamadmin-plist',
-  imports: [RouterLink, BotoneraRpp, Paginacion, BotoneraActionsPlist],
+  imports: [RouterLink, DecimalPipe, BotoneraRpp, Paginacion, BotoneraActionsPlist],
   templateUrl: './plist.html',
   styleUrl: './plist.css',
 })

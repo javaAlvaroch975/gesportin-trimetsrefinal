@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import net.ausiasmarch.gesportin.dto.TipoarticuloDTO;
 import net.ausiasmarch.gesportin.entity.TipoarticuloEntity;
 import net.ausiasmarch.gesportin.service.TipoarticuloService;
 
@@ -28,16 +29,16 @@ public class TipoarticuloApi {
     private TipoarticuloService oTipoarticuloService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<TipoarticuloEntity> get(@PathVariable Long id) {
-        return ResponseEntity.ok(oTipoarticuloService.get(id));
+    public ResponseEntity<TipoarticuloDTO> get(@PathVariable Long id) {
+        return ResponseEntity.ok(oTipoarticuloService.getDTO(id));
     }
 
     @GetMapping
-    public ResponseEntity<Page<TipoarticuloEntity>> getPage(
+    public ResponseEntity<Page<TipoarticuloDTO>> getPage(
             @PageableDefault(size = 1000) Pageable oPageable,
             @RequestParam(required = false) String descripcion,
             @RequestParam(required = false) Long id_club) {
-        return ResponseEntity.ok(oTipoarticuloService.getPage(oPageable, descripcion, id_club));
+        return ResponseEntity.ok(oTipoarticuloService.getPageDTO(oPageable, descripcion, id_club));
     }
 
     @PostMapping

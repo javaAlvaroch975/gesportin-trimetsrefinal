@@ -6,9 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import net.ausiasmarch.gesportin.dto.TipoarticuloDTO;
 import net.ausiasmarch.gesportin.entity.TipoarticuloEntity;
 import net.ausiasmarch.gesportin.exception.ResourceNotFoundException;
 import net.ausiasmarch.gesportin.exception.UnauthorizedException;
+import net.ausiasmarch.gesportin.repository.CompraRepository;
 import net.ausiasmarch.gesportin.repository.TipoarticuloRepository;
 
 @Service
@@ -16,6 +18,9 @@ public class TipoarticuloService {
 
     @Autowired
     private TipoarticuloRepository oTipoarticuloRepository;
+
+    @Autowired
+    private CompraRepository oCompraRepository;
 
     @Autowired
     private ClubService oClubService;
@@ -46,6 +51,12 @@ public class TipoarticuloService {
         return e;
     }
 
+    public TipoarticuloDTO getDTO(Long id) {
+        TipoarticuloEntity e = get(id);
+        Double totalVentas = oCompraRepository.sumVentasByTipoarticuloId(id);
+        return new TipoarticuloDTO(e, totalVentas);
+    }
+
     public Page<TipoarticuloEntity> getPage(Pageable oPageable, String descripcion, Long idClub) {
         if (oSessionService.isEquipoAdmin() || oSessionService.isUsuario()) {
             Long myClub = oSessionService.getIdClub();
@@ -64,6 +75,11 @@ public class TipoarticuloService {
         } else {
             return oTipoarticuloRepository.findAll(oPageable);
         }
+    }
+
+    public Page<TipoarticuloDTO> getPageDTO(Pageable oPageable, String descripcion, Long idClub) {
+        return getPage(oPageable, descripcion, idClub)
+                .map(e -> new TipoarticuloDTO(e, oCompraRepository.sumVentasByTipoarticuloId(e.getId())));
     }
 
     public TipoarticuloEntity create(TipoarticuloEntity oTipoarticuloEntity) {
@@ -133,4 +149,5 @@ public class TipoarticuloService {
         int index = (int) (Math.random() * count);
         return oTipoarticuloRepository.findAll(Pageable.ofSize(1).withPage(index)).getContent().get(0);
     }
+
 }

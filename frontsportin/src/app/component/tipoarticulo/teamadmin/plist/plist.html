@@ -79,6 +79,12 @@
                 <span>Artículos</span>
               </div>
             </th>
+            <th scope="col" class="text-end" style="width: 15%">
+              <div class="header-stacked">
+                <div class="header-top"><i class="bi bi-currency-euro" aria-hidden="true"></i></div>
+                <span>Total ventas</span>
+              </div>
+            </th>
             <th scope="col" class="text-center" style="width: 15%">
               <div class="header-stacked">
                 <div class="header-top"><i class="bi bi-gear" aria-hidden="true"></i></div>
@@ -101,6 +107,13 @@
                   } @else {
                     <a [routerLink]="['/articulo/teamadmin/tipoarticulo', oTipoarticulo.id]">{{ oTipoarticulo.articulos }}</a>
                   }
+                }
+              </td>
+              <td class="text-end">
+                @if (oTipoarticulo.totalVentas > 0) {
+                  <span class="fw-semibold">{{ oTipoarticulo.totalVentas | number:'1.2-2' }} €</span>
+                } @else {
+                  <span class="text-muted">0,00 €</span>
                 }
               </td>
               <td class="text-center">

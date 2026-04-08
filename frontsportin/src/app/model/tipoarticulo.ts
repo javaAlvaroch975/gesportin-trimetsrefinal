@@ -5,6 +5,7 @@ export interface ITipoarticulo {
   descripcion: string
   club: IClub
   articulos: number
+  totalVentas: number
 }
 
 
